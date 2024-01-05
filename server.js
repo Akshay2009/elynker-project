@@ -7,7 +7,7 @@ const express = require("express"),
 const app = express();
 
 var corsOptions = {
-  origin: "http://localhost:3000"
+  origin: "http://172.20.2.38:3000"
 };
 
 app.use(cors(corsOptions));
@@ -60,7 +60,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000",
+        url: "http://172.20.2.38:3000",
       },
     ],
   },
