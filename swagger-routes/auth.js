@@ -8,6 +8,7 @@
  *         - username
  *         - email
  *         - password
+ *         - roles
  *       properties:
  *         id:
  *           type: string
@@ -21,14 +22,17 @@
  *         password:
  *           type: boolean
  *           description: Password for the users
- *         createdAt:
- *           type: string
- *           format: date
- *           description: The date the user was added
+ *         roles:
+ *           type: array
+ *           format: string array
+ *           description: The roles for user was added
  *       example:
  *         username: AlexDew
  *         email: alexdew@elynker
  *         password: '#4565Ast'
+ *         roles:
+ *          - user
+ *          - admin
  */
 
 /**
