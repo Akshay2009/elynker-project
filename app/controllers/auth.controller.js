@@ -11,9 +11,10 @@ var bcrypt = require("bcryptjs");
 exports.signup = (req, res) => {
   // Save User to Database
   User.create({
-    username: req.body.username,
+    name: req.body.name,
     email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8)
+    mobile_number: req.body.mobile_number,
+    //password: bcrypt.hashSync(req.body.password, 8)
   })
     .then(user => {
       if (req.body.roles) {
@@ -25,13 +26,13 @@ exports.signup = (req, res) => {
           }
         }).then(roles => {
           user.setRoles(roles).then(() => {
-            res.send({ message: "User registered successfully!" });
+            res.send({ message: user });
           });
         });
       } else {
         // user role = 1
         user.setRoles([1]).then(() => {
-          res.send({ message: "User registered successfully!" });
+          res.send({ message: user });
         });
       }
     })
@@ -43,7 +44,7 @@ exports.signup = (req, res) => {
 exports.signin = (req, res) => {
   User.findOne({
     where: {
-      username: req.body.username
+      mobile_number: req.body.mobile_number
     }
   })
     .then(user => {
@@ -51,17 +52,17 @@ exports.signin = (req, res) => {
         return res.status(404).send({ message: "User Not found." });
       }
 
-      var passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
+      // var passwordIsValid = bcrypt.compareSync(
+      //   req.body.password,
+      //   user.password
+      // );
 
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!"
-        });
-      }
+      // if (!passwordIsValid) {
+      //   return res.status(401).send({
+      //     accessToken: null,
+      //     message: "Invalid Password!"
+      //   });
+      // }
 
       const token = jwt.sign({ id: user.id },
                               config.secret,
@@ -78,7 +79,8 @@ exports.signin = (req, res) => {
         }
         res.status(200).send({
           id: user.id,
-          username: user.username,
+          name: user.name,
+          mobile_number: user.mobile_number,
           email: user.email,
           roles: authorities,
           accessToken: token

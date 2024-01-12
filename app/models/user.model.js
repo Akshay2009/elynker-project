@@ -1,9 +1,9 @@
 module.exports = (sequelize, Sequelize) => {
   const User = sequelize.define("users", {
-    id: {
-      type: Sequelize.NUMERIC,
-      primaryKey: true
-    },
+    // id: {
+    //   type: Sequelize.NUMERIC,
+    //   primaryKey: true
+    // },
     email: {
       type: Sequelize.STRING(100)
     },
@@ -12,6 +12,8 @@ module.exports = (sequelize, Sequelize) => {
     },
     mobile_number: {
       type: Sequelize.STRING(10),
+      unique: true, // This makes the 'mobile_number' field unique
+      allowNull: false,
     },
     created_by: {
       type: Sequelize.NUMERIC

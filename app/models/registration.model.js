@@ -20,7 +20,7 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING(20)
     },
     registration_type: {
-      type: Sequelize.INT
+      type: Sequelize.INTEGER
     },
     dob: {
       type: Sequelize.DATE
@@ -32,10 +32,10 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING(20)
     },
     registration_status: {
-      type: Sequelize.INT
+      type: Sequelize.INTEGER
     },
     registration_steps_completed: {
-      type: Sequelize.INT
+      type: Sequelize.INTEGER
     },
     city: {
       type: Sequelize.STRING(50)
@@ -50,19 +50,19 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING(50)
     },
     country: {
-      type: Sequelize.INT
+      type: Sequelize.INTEGER
     },
     company_name: {
-      type: Sequelize.INT
+      type: Sequelize.INTEGER
     },
     business_description : {
-      type: Sequelize.INT
+      type: Sequelize.INTEGER
     },
     education: {
-      type: Sequelize.INT
+      type: Sequelize.INTEGER
     },
     available_hrs_per_week: {
-      type: Sequelize.INT
+      type: Sequelize.INTEGER
     },
     hourly_rate: {
       type: Sequelize.NUMERIC(9,2)
@@ -71,7 +71,7 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.NUMERIC(9,2)
     },
     currency_id: {
-      type: Sequelize.INT
+      type: Sequelize.INTEGER
     },
     created_by: {
       type: Sequelize.NUMERIC
