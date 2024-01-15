@@ -28,7 +28,7 @@ const Role = db.role;
 db.sequelize.sync({force: false}).then(() => {
   console.log('Drop and Resync Database with { force: true }');
   //initial();
-});
+}); 
 
 //to set view engine
 app.set('view engine','ejs');
