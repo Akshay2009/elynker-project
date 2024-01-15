@@ -20,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // database
 const db = require("./app/models");
+const path = require("path");
 const Role = db.role;
 
 // db.sequelize.sync();
@@ -28,6 +29,10 @@ db.sequelize.sync({force: false}).then(() => {
   console.log('Drop and Resync Database with { force: true }');
   //initial();
 });
+
+//to set view engine
+app.set('view engine','ejs');
+app.set('views',path.join(__dirname,'app','views'));
 
 // simple route
 app.get("/", (req, res) => {
@@ -38,6 +43,8 @@ app.get("/", (req, res) => {
 // routes
 require('./app/routes/auth.routes')(app);
 require('./app/routes/user.routes')(app);
+require('./app/routes/registration.routes')(app);
+require('./app/routes/product.routes')(app);
 
 //Swagger options
 const options = {

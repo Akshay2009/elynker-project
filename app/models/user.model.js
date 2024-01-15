@@ -10,6 +10,12 @@ module.exports = (sequelize, Sequelize) => {
     name: {
       type: Sequelize.STRING(50)
     },
+    city: {
+      type: Sequelize.STRING(50)
+    },
+    country_code:{
+      type: Sequelize.STRING(10)
+    },
     mobile_number: {
       type: Sequelize.STRING(10),
       unique: true, // This makes the 'mobile_number' field unique
