@@ -27,11 +27,11 @@
  *           format: string array
  *           description: The roles for user was added
  *       example:
- *         username: AlexDew
- *         email: alexdew@elynker.com
- *          city: Lucknow,
- *          country_code:+91,
- *          mobile_number:"6666666666"
+ *         name: AlexDew
+ *         email: alexdew@elynker
+ *         city: 'Lucknow'
+ *         country_code: '+91'
+ *         mobile_number: 9999999999
  */
 
 /**
@@ -51,8 +51,8 @@
  *           type: boolean
  *           description: Password for the users
  *       example:
- *         username: AlexDew
- *         password: '#4565Ast'
+ *         mobile_number: AlexDew
+ *         otp: '454545'
  */
 
 /**
