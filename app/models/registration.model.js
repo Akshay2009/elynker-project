@@ -1,17 +1,10 @@
 module.exports = (sequelize, Sequelize) => {
   const Registration = sequelize.define("registration", {
-    id: {
-      type: Sequelize.NUMERIC,
-      primaryKey: true
-    },
-    user_id: {
-      type: Sequelize.NUMERIC
-    },
     name: {
       type: Sequelize.STRING(50)
     },
     image_path: {
-      type: Sequelize.STRING(200)
+      type: Sequelize.TEXT
     },
     isActive: {
       type: Sequelize.BOOLEAN
@@ -50,16 +43,19 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING(50)
     },
     country: {
-      type: Sequelize.INTEGER
+      type: Sequelize.STRING(100)
     },
     company_name: {
+      type: Sequelize.STRING(100)
+    },
+    business_type: {
       type: Sequelize.INTEGER
     },
     business_description : {
-      type: Sequelize.INTEGER
+      type: Sequelize.STRING(1000)
     },
     education: {
-      type: Sequelize.INTEGER
+      type: Sequelize.STRING(200)
     },
     available_hrs_per_week: {
       type: Sequelize.INTEGER
