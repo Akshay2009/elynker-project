@@ -28,11 +28,10 @@
  *           description: The roles for user was added
  *       example:
  *         username: AlexDew
- *         email: alexdew@elynker
- *         password: '#4565Ast'
- *         roles:
- *          - user
- *          - admin
+ *         email: alexdew@elynker.com
+ *          city: Lucknow,
+ *          country_code:+91,
+ *          mobile_number:"6666666666"
  */
 
 /**
