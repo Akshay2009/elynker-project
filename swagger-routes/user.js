@@ -30,6 +30,11 @@
  *         updatedAt:
  *           type: string
  *           format: date-time
+ *     ErrorResponse:
+ *       type: object
+ *       properties:
+ *         message:
+ *           type: string
  * paths:
  *   /api/users/{id}:
  *     get:
@@ -42,6 +47,12 @@
  *           description: User ID
  *           schema:
  *             type: integer
+ *         - name: x-access-token
+ *           in: header
+ *           description: Access token for authentication
+ *           required: true
+ *           schema:
+ *             type: string
  *       responses:
  *         '200':
  *           description: Successful response
@@ -58,6 +69,8 @@
  *                 updated_by: null
  *                 createdAt: '2024-01-16T14:03:40.727Z'
  *                 updatedAt: '2024-01-16T14:03:40.727Z'
+ *         '401':
+ *           description: Unauthorized - Access token is missing or invalid
  *         '404':
  *           description: User not found
  *         '500':
@@ -72,6 +85,12 @@
  *           description: User ID
  *           schema:
  *             type: integer
+ *         - name: x-access-token
+ *           in: header
+ *           description: Access token for authentication
+ *           required: true
+ *           schema:
+ *             type: string
  *       requestBody:
  *         required: true
  *         content:
@@ -85,6 +104,8 @@
  *             application/json:
  *               example:
  *                 message: User updated successfully
+ *         '401':
+ *           description: Unauthorized - Access token is missing or invalid
  *         '404':
  *           description: User not found
  *         '500':
