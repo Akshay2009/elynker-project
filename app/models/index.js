@@ -30,7 +30,7 @@ db.cityMaster = require('../models/cityMaster.js')(sequelize, Sequelize);
 db.stateMaster = require('../models/stateMaster.js')(sequelize, Sequelize);
 db.currencyMaster = require('../models/currencyMaster.js')(sequelize, Sequelize);
 db.registrationTypesMaster= require('../models/registrationTypesMaster.js')(sequelize, Sequelize);
-
+db.businessDetail= require('../models/business_detail.model.js')(sequelize, Sequelize);
 db.role.belongsToMany(db.user, {
   through: "user_roles"
 });
@@ -42,4 +42,9 @@ db.ROLES = ["user", "admin", "moderator"];
 //associate user and registration as 1:1
 db.user.hasOne(db.registration);
 db.registration.belongsTo(db.user);
+
+//associate registration and document as 1:1
+db.registration.hasOne(db.businessDetail);
+db.businessDetail.belongsTo(db.registration);
+
 module.exports = db;

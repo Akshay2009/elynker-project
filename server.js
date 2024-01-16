@@ -6,10 +6,6 @@ const express = require("express"),
 
 const app = express();
 
-var corsOptions = {
-  origin: ["*"]
-};
-
 app.use(cors({
   origin: '*',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -34,7 +30,7 @@ const Role = db.role;
 // force: true will drop the table if it already exists
 db.sequelize.sync({alter: true}).then(() => {
   console.log('Drop and Resync Database with { force: true }');
-  //initial();
+  // initial();
 }); 
 
 //to set view engine
