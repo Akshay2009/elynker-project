@@ -6,6 +6,12 @@ const COMPANY_LOGO_PATH = path.join("/uploads/company/company_logo");
 const Registration = db.registration;
 const BusinessDetail = db.businessDetail;
 
+/**
+ * Controller function to update company logo .
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 module.exports.updateCompanyLogo = async function (req, res) {
   if (req.userId) {
     try {
@@ -26,7 +32,12 @@ module.exports.updateCompanyLogo = async function (req, res) {
   }
 };
 
-
+/**
+ * Controller function for save business details .
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 module.exports.saveBusinessDetail = async function (req, res) {
   try {
     const { company_name, document } = req.body;
@@ -53,6 +64,12 @@ module.exports.saveBusinessDetail = async function (req, res) {
   }
 };
 
+/**
+ * Controller function for get business details .
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 module.exports.getBusinessDetail = async function (req, res) {
   try {
     const { reg_id } = req.params;
@@ -77,7 +94,7 @@ module.exports.getBusinessDetail = async function (req, res) {
 
 
 /**
- * Controller function for updating business details and company name on registration .
+ * Controller function for updating business details.
  * 
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.

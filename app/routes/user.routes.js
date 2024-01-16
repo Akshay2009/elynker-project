@@ -10,33 +10,22 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/user/all", controller.allAccess);
-
-  app.get(
-    "/api/user/user",
+    
+/**
+ * Update user details by user ID from the database.
+ *
+ */
+  app.put('/api/users/:id', 
     [authJwt.verifyToken],
-    controller.userBoard
-  );
-
-  app.get(
-    "/api/user/mod",
-    [authJwt.verifyToken, authJwt.isModerator],
-    controller.moderatorBoard
-  );
-
-  app.get(
-    "/api/user/admin",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    controller.adminBoard
-  );
-  
-  app.put('/api/user/elynker/:id', 
-    //[authJwt.verifyToken],
     controller.updateUser
   )
 
-  app.get('/api/user/elynker/:id',
-    //[authJwt.verifyToken],
+/**
+ * Retrieve user details by user ID from the database.
+ *
+ */
+  app.get('/api/users/:id',
+    [authJwt.verifyToken],
     controller.getUserById
   )
 };

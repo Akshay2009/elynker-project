@@ -2,22 +2,13 @@ const db = require("../models");
 const User = db.user;
 const Registration = db.registration;
 
-
-exports.allAccess = (req, res) => {
-  res.status(200).send("Public Content.");
-};
-
-exports.userBoard = (req, res) => {
-  res.status(200).send("User Content.");
-};
-
-exports.adminBoard = (req, res) => {
-  res.status(200).send("Admin Content.");
-};
-
-exports.moderatorBoard = (req, res) => {
-  res.status(200).send("Moderator Content.");
-};
+/**
+ * Update user details in the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} - Promise representing the completion of the update operation.
+ */
 
 module.exports.updateUser = async function(req,res){
   try{
@@ -45,6 +36,15 @@ module.exports.updateUser = async function(req,res){
     res.status(500).json({error : 'Internal Server Error'+err.message})
   }
 }
+
+
+/**
+ * Retrieve user details by user ID from the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
 
 module.exports.getUserById = async function(req,res){
   try{
