@@ -10,7 +10,14 @@ var corsOptions = {
   origin: ["*"]
 };
 
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: false,
+  optionsSuccessStatus: 204,
+}));
+
+//app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
 app.use(express.json());
