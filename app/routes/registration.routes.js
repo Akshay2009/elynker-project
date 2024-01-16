@@ -16,25 +16,27 @@ const { authJwt } = require("../middleware");
 const registrationController = require("../controllers/registration.controller");
 
 module.exports = function (app) {
-  app.get("/api/company", function (req, res) {
-    return res.render("company");
-  });
 
-  app.post(
-    "/api/update/:id",
+  app.put(
+    "/api/update/company/:id", //here id is of Registration Table to update the company logo
     [authJwt.verifyToken, multer({ storage }).single("company_logo")],
     registrationController.updateCompanyLogo
   );
 
   app.get(
     "/api/business/:reg_id",
-  //  [authJwt.verifyToken],
+    [authJwt.verifyToken],
     registrationController.getBusinessDetail
   );
 
   app.post(
-    "/api/business/:reg_id",
-  //  [authJwt.verifyToken],
+    "/api/business/:reg_id", // here reg_id is the id of Registration Table
+    [authJwt.verifyToken],
     registrationController.saveBusinessDetail
+  );
+  app.put(
+    "/api/business/:id", // here id is of BusinessDetail table
+    [authJwt.verifyToken],
+    registrationController.updateBusinessDetail
   );
 };

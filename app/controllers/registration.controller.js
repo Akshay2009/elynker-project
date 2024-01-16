@@ -26,14 +26,6 @@ module.exports.updateCompanyLogo = async function (req, res) {
   }
 };
 
-// module.exports.getBusinessDetail = async function(req,res){
-//     try{
-//        const regId =  req.params.reg_id
-
-//     }catch{
-
-//     }
-// }
 
 module.exports.saveBusinessDetail = async function (req, res) {
   try {
@@ -45,6 +37,12 @@ module.exports.saveBusinessDetail = async function (req, res) {
       document: document,
       registrationId: reg_Id,
     });
+
+    // Perform the update operation and get the number of updated rows
+    const [numberOfUpdatedRows, updatedRecords] = await Registration.update(
+      { company_name },
+      { where: { id: reg_Id } }
+    );
 
     res.status(200).json(businessDetailRecord);
   } catch (err) {
@@ -74,5 +72,45 @@ module.exports.getBusinessDetail = async function (req, res) {
     res
       .status(500)
       .json({ error: "Internal Server Error. Error:" + err.message });
+  }
+};
+
+
+/**
+ * Controller function for updating business details and company name on registration .
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.updateBusinessDetail = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+    const { company_name, document } = req.body;
+
+    //Perform the update operation and get the number of updated rows
+    const [numberOfUpdatedRows, updatedRecords] = await BusinessDetail.update(
+      { company_name, document },
+      { where: { id: id }, returning: true }
+    );
+
+    if (updatedRecords) {
+      // Perform the update operation and get the number of updated rows
+      const returns = await Registration.update(
+        { company_name },
+        { where: { id: updatedRecords[0].registrationId } }
+      );
+
+      res.json({
+        message: "Business Details updated successfully",
+        businessdetails: updatedRecords,
+      });
+    } else {
+      res.status(404).json({ error: "Business Details not found" });
+    }
+  } catch (error) {
+    console.error("Error updating business details:", error);
+    res.status(500).json({ error: "Internal Server Error: " + error.message });
   }
 };
