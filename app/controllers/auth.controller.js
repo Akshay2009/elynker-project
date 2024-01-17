@@ -27,7 +27,7 @@ exports.signup = async (req, res) => {
       //password: bcrypt.hashSync(req.body.password, 8)
     });
     if (user) {
-      await Registration.create({
+      const registration = await Registration.create({
         name : req.body.name,
         city: req.body.city,
         isActive: true,
@@ -47,7 +47,7 @@ exports.signup = async (req, res) => {
       else {
         await user.setRoles([1]);
       }
-      res.send({ message: user });
+      res.send({ message: user , registration : registration});
     } else {
       res.status(500).send({ message: 'Error in creating user' });
     }
@@ -62,16 +62,22 @@ exports.signup = async (req, res) => {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-exports.signin = (req, res) => {
+exports.signin = async (req, res) => {
   User.findOne({
     where: {
       mobile_number: req.body.mobile_number
     }
   })
-    .then(user => {
+    .then(async user => {
       if (!user) {
         return res.status(404).send({ message: "User Not found." });
       }
+
+     const result = await Registration.findOne({
+        where: {
+          userId: user.id
+        }
+      })
 
       const token = jwt.sign({ id: user.id },
         config.secret,
@@ -92,7 +98,8 @@ exports.signin = (req, res) => {
           mobile_number: user.mobile_number,
           email: user.email,
           roles: authorities,
-          accessToken: token
+          accessToken: token,
+          registration: [result]
         });
       });
     })
