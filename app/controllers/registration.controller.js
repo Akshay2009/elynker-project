@@ -8,7 +8,6 @@ const BusinessDetail = db.businessDetail;
 
 /**
  * Controller function to update company logo .
- * 
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
@@ -32,41 +31,77 @@ module.exports.updateCompanyLogo = async function (req, res) {
   }
 };
 
-/**
- * Controller function for save business details .
- * 
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
-module.exports.saveBusinessDetail = async function (req, res) {
-  try {
-    const { company_name, document } = req.body;
-    const reg_Id = req.params.reg_id;
 
-    const businessDetailRecord = await BusinessDetail.create({
-      company_name: company_name,
-      document: document,
-      registrationId: reg_Id,
-    });
 
-    // Perform the update operation and get the number of updated rows
-    const [numberOfUpdatedRows, updatedRecords] = await Registration.update(
-      { company_name },
-      { where: { id: reg_Id } }
-    );
 
-    res.status(200).json(businessDetailRecord);
-  } catch (err) {
-    console.error(err); // Log the error for debugging
-    res
-      .status(500)
-      .json({ error: "Internal Server Error. Error:" + err.message });
-  }
-};
+
+
+module.exports.saveBusinessDetail = async function(req,res){
+    try{
+        const reg_Id = req.params.reg_id;
+        let arr = req.body;
+        let registration_company_name;
+        for(let i=0;i<arr.length;i++){
+            let {
+              company_name,
+              document,
+              upload_date,
+              is_active,
+              document_name,
+              document_number,
+              file_location,
+              file_name,
+              id
+            } = arr[i];
+            registration_company_name = company_name,
+            id = id ? id: null;
+            const [record,created] = await BusinessDetail.findOrCreate({ where : {id},
+                defaults:{
+                    company_name,
+                    document,
+                    upload_date,
+                    is_active,
+                    document_name,
+                    document_number,
+                    file_location,
+                    file_name,
+                    registrationId: reg_Id
+                }
+            
+            });
+            if(!created){
+                await BusinessDetail.update({
+                  company_name: company_name,
+                  document: document,
+                  upload_date: upload_date,
+                  is_active: is_active,
+                  document_name: document_name,
+                  document_number: document_number,
+                  file_location: file_location,
+                  file_name: file_name, 
+                },{
+                    where : {
+                        id: id
+                    }
+                });
+            }
+        }
+        const [numberOfUpdatedRows, updatedRecords] = await Registration.update(
+          { company_name : registration_company_name },
+          { where: { id: reg_Id } }
+        );
+        res.status(200).json({success : "BusinessDetails Successfully inserted"});
+    }catch (err) {
+        console.error(err); // Log the error for debugging
+        res
+        .status(500)
+        .json({ error: "Internal Server Error. Error:" + err.message });
+    }
+}
 
 /**
  * Controller function for get business details .
- * 
+ *
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
@@ -76,7 +111,7 @@ module.exports.getBusinessDetail = async function (req, res) {
     console.log(reg_id);
 
     // Fetch the details by ID
-    const businessDetails = await BusinessDetail.findByPk(reg_id);
+    const businessDetails = await BusinessDetail.findAll({registrationId: reg_id});
 
     if (businessDetails) {
       // Return the details in the response
@@ -92,42 +127,3 @@ module.exports.getBusinessDetail = async function (req, res) {
   }
 };
 
-
-/**
- * Controller function for updating business details.
- * 
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
-
-module.exports.updateBusinessDetail = async (req, res) => {
-  try {
-    const { id } = req.params;
-    console.log(id);
-    const { company_name, document } = req.body;
-
-    //Perform the update operation and get the number of updated rows
-    const [numberOfUpdatedRows, updatedRecords] = await BusinessDetail.update(
-      { company_name, document },
-      { where: { id: id }, returning: true }
-    );
-
-    if (updatedRecords) {
-      // Perform the update operation and get the number of updated rows
-      const returns = await Registration.update(
-        { company_name },
-        { where: { id: updatedRecords[0].registrationId } }
-      );
-
-      res.json({
-        message: "Business Details updated successfully",
-        businessdetails: updatedRecords,
-      });
-    } else {
-      res.status(404).json({ error: "Business Details not found" });
-    }
-  } catch (error) {
-    console.error("Error updating business details:", error);
-    res.status(500).json({ error: "Internal Server Error: " + error.message });
-  }
-};
