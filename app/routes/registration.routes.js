@@ -46,7 +46,7 @@ module.exports = function (app) {
    */
   app.get(
     "/api/business/:reg_id",
-    [authJwt.verifyToken],
+    // [authJwt.verifyToken],
     registrationController.getBusinessDetail
   );
 
@@ -61,22 +61,9 @@ module.exports = function (app) {
    */
   app.post(
     "/api/business/:reg_id",
-    [authJwt.verifyToken],
+    // [authJwt.verifyToken],
     registrationController.saveBusinessDetail
   );
 
-  /**
-   * Endpoint to update business details by business ID.
-   * Requires authentication.
-   *
-   * @param {String} "/api/business/:id" - API endpoint path.
-   * @param {Function[]} [authJwt.verifyToken] - Middleware functions.
-   * @param {Function} registrationController.updateBusinessDetail - Controller function to update business details.
-   */
-  app.put(
-    "/api/business/:id",
-    [authJwt.verifyToken],
-    registrationController.updateBusinessDetail
-  );
 
 };
