@@ -44,7 +44,7 @@ db.user.hasOne(db.registration);
 db.registration.belongsTo(db.user);
 
 //associate registration and document as 1:1
-db.registration.hasOne(db.businessDetail);
+db.registration.hasMany(db.businessDetail);
 db.businessDetail.belongsTo(db.registration);
 
 module.exports = db;
