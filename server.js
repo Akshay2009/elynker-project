@@ -92,7 +92,7 @@ app.use(
   swaggerUi.serve,
   swaggerUi.setup(specs)
 );
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true, swaggerOptions: { docExpansion: 'list', defaultModelsExpandDepth: -1, defaultModelExpandDepth: -1, showRequestHeaders: true } }));
+//app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true, swaggerOptions: { docExpansion: 'list', defaultModelsExpandDepth: -1, defaultModelExpandDepth: -1, showRequestHeaders: true } }));
 
 
 // set port, listen for requests
