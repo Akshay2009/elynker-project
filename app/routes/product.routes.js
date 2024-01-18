@@ -11,13 +11,59 @@ let storage = multer.diskStorage({
         cb(null, file.originalname);
     }
 });
+const fileFilter2 = function (req, file, cb) {
+    try {
+        const allowedFileTypes = /jpeg|jpg|png/;
+        const mimetype = allowedFileTypes.test(file.mimetype);
+        const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
+
+        if (mimetype && extname) {
+            return cb(null, true);
+        }
+
+        const error = new Error('Only JPEG, JPG, and PNG files are allowed!');
+        error.status = 400; // Set the status code for the error
+
+        cb(error);
+    } catch (err) {
+        console.log('error in fileFilter function', err.message);
+    }
+};
+
+const fileFilter = function (req, file, cb) {
+    try {
+        const allowedFileTypes = /csv/;
+        const mimetype = allowedFileTypes.test(file.mimetype);
+        const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
+
+        if (mimetype && extname) {
+            return cb(null, true);
+        }
+
+        const error = new Error('Only CSV files are allowed!');
+        error.status = 400; // Set the status code for the error
+
+        cb(error);
+    } catch (err) {
+        console.log('error in fileFilter function', err.message);
+    }
+};
 
 const upload = multer({
     storage: storage,
+    fileFilter : fileFilter,
     limits: {
         fileSize: 1024 * 1024 //1MB
     }
 });
+const upload2 = multer({
+    storage: storage,
+    fileFilter: fileFilter2,
+    limits: {
+        fileSize: 1024 * 1024 //1MB
+    }
+});
+
 const handleMulterError = function (err, req, res, next) {
     if (err) {
         console.error('Multer error:', err.message);
@@ -29,14 +75,14 @@ const handleMulterError = function (err, req, res, next) {
 const productController = require("../controllers/product.controller");
 
 module.exports = function (app) {
-   /* End Point to  create a categories Record
+   /* End Point to  create a Products Record
         POST - /api/products API endpoint
         productController.createProduct - Controller function to Create Records in Product Table and if already present then update based on sku
     */
     app.post('/api/products',
-        [authJwt.verifyToken], 
+        //[authJwt.verifyToken], 
         upload.fields([
-            { name: 'images', maxCount: 10 }, //  allow up to 10 images
+            //{ name: 'images', maxCount: 10 }, //  allow up to 10 images
             {name: 'csvFilePath'}
         ]),
         handleMulterError,productController.createProduct
@@ -47,7 +93,7 @@ module.exports = function (app) {
         productController.getAllProducts - Controller function to get All Product Records
     */
     app.get('/api/products',
-        [authJwt.verifyToken], 
+        //[authJwt.verifyToken], 
         productController.getAllProducts
     )
     
@@ -56,8 +102,21 @@ module.exports = function (app) {
         productController.getProductBySKU - Controller function to get Product Record based on sku
     */
     app.get('/api/products/:sku',
-        [authJwt.verifyToken], 
+        //[authJwt.verifyToken], 
         productController.getProductBySKU
     )
+
+    /* End Point to  just insert images
+        POST - /api/products/images API endpoint
+        productController.createProductsImages - Controller function to just to send response we are not storing images to the db
+    */
+
+    app.post('/api/products/images',
+        //[authJwt.verifyToken], 
+        upload2.fields([
+            { name: 'images' }, //  allow up to 10 images
+        ]),
+        handleMulterError,productController.createProductsImages
+    );
 
 };

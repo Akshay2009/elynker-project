@@ -42,7 +42,7 @@ module.exports.getProductBySKU = async function (req, res) {
 module.exports.createProduct = async function (req, res) {
     try {
         const { type, registrationId } = req.body;
-        const imageFileNames = req.files['images'].map((file) => path.basename(file.path));
+        //const imageFileNames = req.files['images'].map((file) => path.basename(file.path));
         
         if (req.files && req.files['csvFilePath'][0].path) {
             const csvData = await parseCSV(req.files['csvFilePath'][0].path);
@@ -60,7 +60,7 @@ module.exports.createProduct = async function (req, res) {
                             description: row.description,
                             type: type,
                             registrationId,
-                            images: imageFileNames,
+                            //images: imageFileNames,
                             default_image: row.default_image,
                             product_images: productImagesString
                         }
@@ -73,7 +73,7 @@ module.exports.createProduct = async function (req, res) {
                             description: row.description,
                             type: type,
                             registrationId,
-                            images: imageFileNames,
+                            //images: imageFileNames,
                             default_image: row.default_image,
                             product_images: productImagesString
                         },{
@@ -96,4 +96,14 @@ module.exports.createProduct = async function (req, res) {
         res.status(500).json({ message: 'Internal server error ' + error.message });
     }
 };
+
+
+module.exports.createProductsImages = async function(req,res){
+    try{
+        res.status(200).json({message: 'Images Uploaded Successfully'});
+    }catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error ' + error.message });
+    }
+}
 

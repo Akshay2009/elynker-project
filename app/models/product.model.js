@@ -9,10 +9,6 @@ module.exports = (sequelize, Sequelize) => {
       type:{
         type: Sequelize.INTEGER,
       },
-      images: {
-        type: Sequelize.ARRAY(Sequelize.STRING),
-        allowNull: true
-      },
       default_image: {
         type: Sequelize.TEXT,
         allowNull: true,
