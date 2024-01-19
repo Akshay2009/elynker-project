@@ -61,14 +61,14 @@ module.exports = function (app) {
    */
   app.post(
     "/api/business/:reg_id",
-    // [authJwt.verifyToken],
+     [authJwt.verifyToken],
     registrationController.saveBusinessDetail
   );
 //post registration details--
 
 app.put(
     "/api/registration/:reg_id",
-    // [authJwt.verifyToken],
+    [authJwt.verifyToken],
     registrationController.putRegDetail
   );
 
