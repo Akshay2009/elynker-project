@@ -99,7 +99,7 @@ exports.signin = async (req, res) => {
           email: user.email,
           roles: authorities,
           accessToken: token,
-          registration: [result]
+          registration: result
         });
       });
     })
