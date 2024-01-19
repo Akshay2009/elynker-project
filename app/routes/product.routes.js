@@ -49,14 +49,14 @@ const fileFilter = function (req, file, cb) {
     }
 };
 
-const upload = multer({
+const uploadCsv = multer({
     storage: storage,
     fileFilter : fileFilter,
     limits: {
         fileSize: 1024 * 1024 //1MB
     }
 });
-const upload2 = multer({
+const uploadImages = multer({
     storage: storage,
     fileFilter: fileFilter2,
     limits: {
@@ -80,9 +80,8 @@ module.exports = function (app) {
         productController.createProduct - Controller function to Create Records in Product Table and if already present then update based on sku
     */
     app.post('/api/products',
-        //[authJwt.verifyToken], 
-        upload.fields([
-            //{ name: 'images', maxCount: 10 }, //  allow up to 10 images
+        [authJwt.verifyToken], 
+        uploadCsv.fields([
             {name: 'csvFilePath'}
         ]),
         handleMulterError,productController.createProduct
@@ -93,7 +92,7 @@ module.exports = function (app) {
         productController.getAllProducts - Controller function to get All Product Records
     */
     app.get('/api/products',
-        //[authJwt.verifyToken], 
+        [authJwt.verifyToken], 
         productController.getAllProducts
     )
     
@@ -102,7 +101,7 @@ module.exports = function (app) {
         productController.getProductBySKU - Controller function to get Product Record based on sku
     */
     app.get('/api/products/:sku',
-        //[authJwt.verifyToken], 
+        [authJwt.verifyToken], 
         productController.getProductBySKU
     )
 
@@ -112,8 +111,8 @@ module.exports = function (app) {
     */
 
     app.post('/api/products/images',
-        //[authJwt.verifyToken], 
-        upload2.fields([
+        [authJwt.verifyToken], 
+        uploadImages.fields([
             { name: 'images' }, //  allow up to 10 images
         ]),
         handleMulterError,productController.createProductsImages
