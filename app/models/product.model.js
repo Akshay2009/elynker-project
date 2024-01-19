@@ -6,18 +6,28 @@ module.exports = (sequelize, Sequelize) => {
       description: {
         type: Sequelize.TEXT
       },
-      image: {
-        type: Sequelize.TEXT,
-        allowNull: true
-      },
-      banner_image: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
-      parent_id: {
+      type:{
         type: Sequelize.INTEGER,
+      },
+      default_image: {
+        type: Sequelize.TEXT,
         allowNull: true,
-      }
+      },
+      product_images: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      sku:{
+        type : Sequelize.STRING(50),
+        allowNull: false,
+        unique:  true
+      },
+      created_by: {
+        type: Sequelize.NUMERIC
+      },
+      updated_by: {
+        type: Sequelize.NUMERIC
+      },
     });
   
     return Product;
