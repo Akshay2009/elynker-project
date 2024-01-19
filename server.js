@@ -76,6 +76,15 @@ const options = {
       },
     ],
   },
+  components: {
+    securitySchemes: {
+      api_key: {
+        type: 'apiKey',
+        in: 'header',
+        name: 'x-access-token',
+      },
+    },
+  },
   apis: ["./swagger-routes/*.js"],
 };
 
