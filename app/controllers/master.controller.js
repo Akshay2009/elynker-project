@@ -1,12 +1,9 @@
 const db = require("../models");
 const { Op, DataTypes, Sequelize } = require("sequelize");
 const CityMaster = db.cityMaster;
-<<<<<<< HEAD
-=======
 const CurrencyMaster = db.currencyMaster;
 const StateMaster = db.stateMaster;
 const RegistrationTypesMaster=db.registrationTypesMaster;
->>>>>>> b76e6b50dbf4f9ca8424f6055fcdae9d28e65cd4
 
 //city master controller saving data in database---
 
@@ -60,20 +57,9 @@ module.exports.updateCityMasterById = async function (req, res) {
   try {
     const { id } = req.params;
     const { name } = req.body;
-<<<<<<< HEAD
-
-    // Perform the update operation
-    const [updatedRows] = await CityMaster.update({ name }, { where: { id } });
-
-    if (updatedRows > 0) {
-      // Fetch the updated record from the database
-      const updatedMaster = await CityMaster.findByPk(id);
-
-=======
     const [updatedRows] = await CityMaster.update({ name }, { where: { id } });
     if (updatedRows > 0) {
       const updatedMaster = await CityMaster.findByPk(id);
->>>>>>> b76e6b50dbf4f9ca8424f6055fcdae9d28e65cd4
       if (updatedMaster) {
         res.json({
           message: "User updated successfully",
@@ -90,10 +76,6 @@ module.exports.updateCityMasterById = async function (req, res) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-<<<<<<< HEAD
-=======
-
->>>>>>> b76e6b50dbf4f9ca8424f6055fcdae9d28e65cd4
 //getting currency master details--
 
 module.exports.getAllcurrencyMaster = async function (req, res) {
@@ -106,9 +88,6 @@ module.exports.getAllcurrencyMaster = async function (req, res) {
   }
 };
 
-<<<<<<< HEAD
-//putting currency Master details--
-=======
 //saving currency Master details--
 
 module.exports.createCurrencyMaster = async function (req, res) {
@@ -236,4 +215,3 @@ module.exports.saveRegistrationTypeMaster = async function (req, res) {
 };
 
 
->>>>>>> b76e6b50dbf4f9ca8424f6055fcdae9d28e65cd4

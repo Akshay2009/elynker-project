@@ -71,5 +71,4 @@ app.put(
     [authJwt.verifyToken],
     registrationController.putRegDetail
   );
-
 };
