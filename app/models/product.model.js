@@ -9,6 +9,12 @@ module.exports = (sequelize, Sequelize) => {
       type:{
         type: Sequelize.INTEGER,
       },
+      budget:{
+        type: Sequelize.INTEGER,
+      },
+      moq:{
+        type: Sequelize.INTEGER,
+      },
       default_image: {
         type: Sequelize.TEXT,
         allowNull: true,

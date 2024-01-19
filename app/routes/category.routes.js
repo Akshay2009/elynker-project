@@ -1,0 +1,100 @@
+const { authJwt } = require("../middleware");
+const multer = require('multer');
+const path = require('path');
+const categoryController = require("../controllers/category.controller");
+
+const CATEGORY_LOGO_PATH = path.join('/uploads/category/category_logo');
+
+let storage = multer.diskStorage({
+    destination: function (req, res, cb) {
+        cb(null, path.join(__dirname, '..', CATEGORY_LOGO_PATH));
+    },
+    filename: function (req, res, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 100);
+        cb(null, 'logo' + '-' + uniqueSuffix);
+    }
+});
+const fileFilter = function (req, file, cb) {
+    try {
+        const allowedFileTypes = /jpeg|jpg|png/;
+        const mimetype = allowedFileTypes.test(file.mimetype);
+        const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
+
+        if (mimetype && extname) {
+            return cb(null, true);
+        }
+
+        const error = new Error('Only JPEG, JPG, and PNG files are allowed!');
+        error.status = 400; // Set the status code for the error
+
+        cb(error);
+    } catch (err) {
+        console.log('error in fileFilter function', err.message);
+    }
+};
+const upload = multer({
+    storage: storage,
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 1024 * 1024 //1MB
+    }
+});
+
+const handleMulterError = function (err, req, res, next) {
+    if (err) {
+        console.error('Multer error:', err.message);
+        res.status(err.status || 500).json({ error: err.message });
+    } else {
+        next();
+    }
+};
+
+module.exports = function (app) {
+
+    /* End Point to  get all the categories Record
+        GET - /api/categories API endpoint
+        categoryController.getAllCategory - Controller function to get All Categories
+    */
+    app.get('/api/categories', 
+        [authJwt.verifyToken], 
+        categoryController.getAllCategory
+    );
+
+    /* End Point to  create a categories Record
+        POST - /api/categories API endpoint
+        categoryController.createCategory - Controller function to Create a categories record
+    */
+    app.post('/api/categories',
+        [authJwt.verifyToken], 
+        // upload.fields([
+        //     { name: 'image_path', maxCount: 10 }, //  allow up to 10 images
+        //     { name: 'banner_image', maxCount: 1 }
+        // ]),
+        //handleMulterError,
+        categoryController.createCategory
+    );
+
+    /* End Point to  get  a categories Record by categoryId : id
+        POST - /api/categories/:categoryId API endpoint
+        categoryController.getCategoryById - Controller function to get a categories record with categoryId
+    */
+    app.get('/api/categories/:categoryId', 
+        [authJwt.verifyToken], 
+        categoryController.getCategoryById
+    );
+    
+    
+    /* End Point to  update a categories Record by categoryId : id
+        PUT - /api/categories/:categoryId API endpoint
+        categoryController.updateCategory - Controller function to update a categories record with categoryId
+    */
+    app.put('/api/categories/:categoryId',
+        [authJwt.verifyToken], 
+        // upload.fields([
+        //     { name: 'image_path', maxCount: 10 }, //  allow up to 10 images
+        //     { name: 'banner_image', maxCount: 1 }
+        // ]),
+        //handleMulterError, 
+        categoryController.updateCategory);
+    
+};

@@ -31,7 +31,7 @@ db.stateMaster = require('../models/stateMaster.js')(sequelize, Sequelize);
 db.currencyMaster = require('../models/currencyMaster.js')(sequelize, Sequelize);
 db.registrationTypesMaster= require('../models/registrationTypesMaster.js')(sequelize, Sequelize);
 db.businessDetail= require('../models/business_detail.model.js')(sequelize, Sequelize);
-//db.category = require('../models/category.model.js')(sequelize,Sequelize);
+db.category = require('../models/category.model.js')(sequelize,Sequelize);
 
 db.role.belongsToMany(db.user, {
   through: "user_roles"
