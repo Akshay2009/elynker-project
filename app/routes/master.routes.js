@@ -88,4 +88,11 @@ module.exports = function (app) {
     // [authJwt.verifyToken],
     masterController.saveRegistrationTypeMaster
   );
+
+//saving registration master---
+// app.put(
+//   "/api/Registration/:id",
+//   // [authJwt.verifyToken],
+//   masterController.putRegDetail
+// );
 };

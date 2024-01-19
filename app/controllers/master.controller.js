@@ -76,7 +76,6 @@ module.exports.updateCityMasterById = async function (req, res) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 //getting currency master details--
 
 module.exports.getAllcurrencyMaster = async function (req, res) {

@@ -6,12 +6,14 @@ const express = require("express"),
 
 const app = express();
 
-app.use(cors({
-  origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: false,
-  optionsSuccessStatus: 204,
-}));
+app.use(
+  cors({
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: false,
+    optionsSuccessStatus: 204,
+  })
+);
 
 //app.use(cors(corsOptions));
 
@@ -28,26 +30,26 @@ const Role = db.role;
 
 // db.sequelize.sync();
 // force: true will drop the table if it already exists
-db.sequelize.sync({alter: true}).then(() => {
-  console.log('Drop and Resync Database with { force: true }');
+db.sequelize.sync({ alter: true }).then(() => {
+  console.log("Drop and Resync Database with { alter: true }");
   // initial();
-}); 
+});
 
 //to set view engine
-app.set('view engine','ejs');
-app.set('views',path.join(__dirname,'app','views'));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "app", "views"));
 
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Nodejs application." });
 });
 
-
 // routes
-require('./app/routes/auth.routes')(app);
-require('./app/routes/user.routes')(app);
-require('./app/routes/registration.routes')(app);
-require('./app/routes/product.routes')(app);
+require("./app/routes/auth.routes")(app);
+require("./app/routes/user.routes")(app);
+require("./app/routes/registration.routes")(app);
+require("./app/routes/product.routes")(app);
+require("./app/routes/master.routes")(app);
 
 //Swagger options
 const options = {
@@ -87,11 +89,7 @@ const options = {
 };
 
 const specs = swaggerJsdoc(options);
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(specs)
-);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
@@ -102,16 +100,16 @@ app.listen(PORT, () => {
 function initial() {
   Role.create({
     id: 1,
-    name: "user"
+    name: "user",
   });
- 
+
   Role.create({
     id: 2,
-    name: "moderator"
+    name: "moderator",
   });
- 
+
   Role.create({
     id: 3,
-    name: "admin"
+    name: "admin",
   });
 }

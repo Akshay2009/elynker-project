@@ -140,6 +140,7 @@ module.exports.putRegDetail = async function (req, res) {
       address1,
       address2,
       state,
+      city,
       country,
       education,
       available_hrs_per_week,
@@ -156,43 +157,44 @@ module.exports.putRegDetail = async function (req, res) {
     if (!existingRegistration) {
       return res.status(404).json({ error: "Registration record not found" });
     } else if (existingRegistration) {
-      const [row,record]=await Registration.update({
-        ip_address,
-        registration_type,
-        dob,
-        latitude,
-        longitude,
-        registration_status,
-        registration_steps_completed,
-        address1,
-        address2,
-        state,
-        country,
-        education,
-        available_hrs_per_week,
-        hourly_rate,
-        service_fee,
-        currency_id,
-        created_by,
-        updated_by,
-      },{
-        where :{
-            id:registrationId
+      const [row, record] = await Registration.update(
+        {
+          ip_address,
+          registration_type,
+          dob,
+          latitude,
+          longitude,
+          registration_status,
+          registration_steps_completed,
+          address1,
+          address2,
+          city,
+          state,
+          country,
+          education,
+          available_hrs_per_week,
+          hourly_rate,
+          service_fee,
+          currency_id,
+          created_by,
+          updated_by,
         },
-        returning: true,
-      });
+        {
+          where: {
+            id: registrationId,
+          },
+          returning: true,
+        }
+      );
       if (row > 0) {
         res.status(200).json({
           message: "Registration record updated successfully",
           updatedRegistration: record[0],
         });
       }
+    } else {
+      res.status(400).json({ error: "Internal Server Error" });
     }
-    else{
-        res.status(400).json({ error: "Internal Server Error" });
-    }
-
-    
   } catch (error) {
     console.error("Error updating registration record:", error);
     res.status(500).json({ error: "Internal Server Error" });
