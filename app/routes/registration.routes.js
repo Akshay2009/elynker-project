@@ -64,6 +64,12 @@ module.exports = function (app) {
     // [authJwt.verifyToken],
     registrationController.saveBusinessDetail
   );
+//post registration details--
 
+app.put(
+    "/api/registration/:reg_id",
+    // [authJwt.verifyToken],
+    registrationController.putRegDetail
+  );
 
 };
