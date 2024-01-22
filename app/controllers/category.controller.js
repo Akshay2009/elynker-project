@@ -18,21 +18,29 @@ module.exports.getAllCategory = async function (req, res) {
 module.exports.createCategory = async function (req, res) {
     try {
 
-        const { title, description, parent_id } = req.body;
+        const { title, description, parent_id,category_type} = req.body;
         // const imagePaths = req.files['image_path'].map((file) => file.path);
         // const bannerImagePath = req.files['banner_image'][0].path;
         if (parent_id) {
-            const newCategory = await Category.create({
-                title,
-                description,
-                // image_path: imagePaths,
-                // banner_image: bannerImagePath,
-                parent_id: parent_id
-            });
-            if (newCategory) {
-                res.status(200).json(newCategory);
-            } else {
-                res.status(404).json({ error: 'Category not created' });
+            const record = await Category.findOne({ where: { id : parent_id}});
+            if(record){
+                const category = await Category.create({
+                    title,
+                    description,
+                    // image_path: imagePaths,
+                    // banner_image: bannerImagePath,
+                    parent_id: parent_id ,
+                    category_type
+                });
+        
+                if(category){
+                    res.status(202).json(category);
+                }
+                else{
+                    res.status(404).json({ error: 'No Category created' });
+                }
+            }else{
+                res.status(404).json({ error: 'No Category found exist with this parent_id' });
             }
         }
         else {
@@ -41,7 +49,8 @@ module.exports.createCategory = async function (req, res) {
                 description,
                 // image_path: imagePaths,
                 // banner_image: bannerImagePath,
-                parent_id: null
+                parent_id: null,
+                category_type
             });
 
             if (newCategory) {
@@ -76,7 +85,7 @@ module.exports.getCategoryById = async function (req, res) {
 module.exports.updateCategory = async function (req, res) {
     try {
         const categoryId = req.params.categoryId;
-        const { title, description, parent_id } = req.body;
+        const { title, description, parent_id,category_type } = req.body;
         // const imagePaths = req.files['image_path'].map((file) => file.path);
         // const bannerImagePath = req.files['banner_image'][0].path;
         if(parent_id){
@@ -88,6 +97,7 @@ module.exports.updateCategory = async function (req, res) {
                     // image_path: imagePaths,
                     // banner_image: bannerImagePath,
                     parent_id: parent_id ,
+                    category_type
                 },{
                     where: {
                         id: categoryId
@@ -112,6 +122,7 @@ module.exports.updateCategory = async function (req, res) {
                 // image_path: imagePaths,
                 // banner_image: bannerImagePath,
                 parent_id: null ,
+                category_type
             },{
                 where: {
                     id: categoryId
