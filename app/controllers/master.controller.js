@@ -62,14 +62,14 @@ module.exports.updateCityMasterById = async function (req, res) {
       const updatedMaster = await CityMaster.findByPk(id);
       if (updatedMaster) {
         res.json({
-          message: "User updated successfully",
+          message: "city updated successfully",
           Master: updatedMaster.toJSON(),
         });
       } else {
-        res.status(404).json({ error: "User not found" });
+        res.status(404).json({ error: "city not found" });
       }
     } else {
-      res.status(404).json({ error: "User not found" });
+      res.status(404).json({ error: "city not found" });
     }
   } catch (error) {
     console.error("Error updating user:", error);
