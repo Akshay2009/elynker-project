@@ -14,14 +14,14 @@ module.exports = function (app) {
 
   app.post(
     "/api/citymaster/",
-    // [authJwt.verifyToken],
+   [authJwt.verifyToken],
     masterController.saveCityMaster
   );
   //getting city master-----------------------------------------
 
   app.get(
     "/api/citymaster/",
-    // [authJwt.verifyToken],
+   [authJwt.verifyToken],
     masterController.getAllCityMasters
   );
 
@@ -29,27 +29,27 @@ module.exports = function (app) {
 
   app.get(
     "/api/citymaster/:id",
-    // [authJwt.verifyToken],
+   [authJwt.verifyToken],
     masterController.getCityMasters
   );
 
   //updating citymaster ---------------------------------
   app.put(
     "/api/citymaster/:id",
-    // [authJwt.verifyToken],
+   [authJwt.verifyToken],
     masterController.updateCityMasterById
   );
   //currency master data handling------------------------------
   app.get(
     "/api/currencymaster/",
-    // [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.getAllcurrencyMaster
   );
 
   //save currency master details-----------------------
   app.post(
     "/api/currencymaster/",
-    // [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.createCurrencyMaster
   );
 
@@ -57,7 +57,7 @@ module.exports = function (app) {
 
   app.put(
     "/api/currencymaster/:id",
-    // [authJwt.verifyToken],
+     [authJwt.verifyToken],
     masterController.updateCurrencyMasterById
   );
 
@@ -65,27 +65,27 @@ module.exports = function (app) {
 
   app.post(
     "/api/statemaster/",
-    // [authJwt.verifyToken],
+     [authJwt.verifyToken],
     masterController.createStateMaster
   );
 
   //getting all state masters-----------------------------------
   app.get(
     "/api/statemaster/",
-    // [authJwt.verifyToken],
+     [authJwt.verifyToken],
     masterController.getAllStateMaster
   );
 
   //updating state masters---------------------------------------
   app.put(
     "/api/statemaster/:id",
-    // [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.updateStateMaster
   );
   //saving RegistrationTypeMaster------------------------
   app.post(
     "/api/RegistrationTypeMaster/",
-    // [authJwt.verifyToken],
+     [authJwt.verifyToken],
     masterController.saveRegistrationTypeMaster
   );
 

@@ -1,8 +1,11 @@
 const cors = require("cors");
+const https = require('https');
+const fs = require("fs");
 const express = require("express"),
   bodyParser = require("body-parser"),
   swaggerJsdoc = require("swagger-jsdoc"),
   swaggerUi = require("swagger-ui-express");
+
 
 const app = express();
 
@@ -30,7 +33,7 @@ const Role = db.role;
 
 // db.sequelize.sync();
 // force: true will drop the table if it already exists
-db.sequelize.sync({ alter: true }).then(() => {
+db.sequelize.sync({ force: true }).then(() => {
   console.log("Drop and Resync Database with { alter: true }");
   // initial();
 });
@@ -50,6 +53,7 @@ require("./app/routes/user.routes")(app);
 require("./app/routes/registration.routes")(app);
 require("./app/routes/product.routes")(app);
 require("./app/routes/master.routes")(app);
+require('./app/routes/category.routes')(app);
 
 //Swagger options
 const options = {
@@ -90,6 +94,7 @@ const options = {
 
 const specs = swaggerJsdoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
