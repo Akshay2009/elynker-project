@@ -45,7 +45,7 @@ module.exports.getProductBySKU = async function (req, res) {
 
 module.exports.createProduct = async function (req, res) {
     try {
-        const { type, registrationId } = req.body;
+        const { type, registrationId,category_id } = req.body;
         //const imageFileNames = req.files['images'].map((file) => path.basename(file.path));
         
         if (req.files && req.files['csvFilePath'][0].path) {
@@ -66,6 +66,7 @@ module.exports.createProduct = async function (req, res) {
                             registrationId,
                             budget: row.budget,
                             moq: row.moq,
+                            category_id:category_id,
                             //images: imageFileNames,
                             default_image: row.default_image,
                             product_images: productImagesString
@@ -81,6 +82,7 @@ module.exports.createProduct = async function (req, res) {
                             registrationId,
                             budget: row.budget,
                             moq: row.moq,
+                            category_id: category_id,
                             //images: imageFileNames,
                             default_image: row.default_image,
                             product_images: productImagesString
@@ -118,7 +120,7 @@ module.exports.createProductsImages = async function(req,res){
 
 module.exports.createProductsSingleRecord = async function(req,res){
     try{
-        const { type, registrationId,title,description,budget,moq } = req.body;
+        const { type, registrationId,title,description,budget,moq,category_id } = req.body;
         const imageFileNames = req.files['images'].map((file) => path.basename(file.path));
         const sku = generateUniqueSKU();
         const productImagesString = imageFileNames.join(',');
@@ -128,6 +130,7 @@ module.exports.createProductsSingleRecord = async function(req,res){
             sku: sku,
             type: type,
             registrationId,
+            category_id,
             budget:budget,
             moq:moq,
             default_image: imageFileNames[0],
@@ -148,7 +151,7 @@ module.exports.createProductsSingleRecord = async function(req,res){
 module.exports.updateProducts = async function(req,res){
     try{
         const sku = req.params.sku;
-        const { title,description,budget,moq } = req.body;
+        const { title,description,budget,moq,category_id } = req.body;
         let productImagesString;
         let imageFileNames;
         if(req.files['images']){ // if images are uploaded then then update product_images and default_image field
@@ -159,6 +162,7 @@ module.exports.updateProducts = async function(req,res){
                 description,
                 budget,
                 moq,
+                category_id,
                 default_image: imageFileNames[0],
                 product_images: productImagesString
             }, {
@@ -178,6 +182,7 @@ module.exports.updateProducts = async function(req,res){
                 description,
                 budget,
                 moq,
+                category_id,
             }, {
                 where: {
                     sku: sku
