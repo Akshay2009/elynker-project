@@ -7,11 +7,6 @@ const express = require("express"),
   swaggerUi = require("swagger-ui-express");
 
 
-  const server = https.createServer({
-    key: fs.readFileSync('/etc/ssl/private/server.key'),
-    cert: fs.readFileSync('/etc/ssl/certs/server.crt'),
-}, app);
-
 const app = express();
 
 app.use(
@@ -103,7 +98,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 
