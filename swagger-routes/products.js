@@ -8,154 +8,168 @@
 /**
  * @swagger
  * /api/products:
- *   post:
- *     summary: Create a new product
- *     tags: [Products]
- *     security:
- *       - jwt: []
- *     consumes:
- *       - multipart/form-data
- *     parameters:
- *       - in: formData
- *         name: csvFilePath
- *         type: file
- *         description: CSV file path
- *     responses:
- *       200:
- *         description: Product created successfully
- *       401:
- *         description: Unauthorized - Invalid token
- *       500:
- *         description: Internal Server Error
- */
-
-/**
- * @swagger
- * /api/products:
  *   get:
  *     summary: Get all products
  *     tags: [Products]
  *     security:
- *       - jwt: []
+ *       - api_key: []
  *     responses:
  *       200:
- *         description: List of products
- *       401:
- *         description: Unauthorized - Invalid token
+ *         description: A list of products
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Product'
  *       500:
- *         description: Internal Server Error
- */
+ *         description: Internal server error
 
-/**
- * @swagger
  * /api/products/{sku}:
  *   get:
- *     summary: Get product by SKU
+ *     summary: Get a product by SKU
  *     tags: [Products]
- *     security:
- *       - jwt: []
  *     parameters:
  *       - in: path
  *         name: sku
  *         required: true
- *         type: string
- *         description: SKU of the product
+ *         description: SKU of the product to retrieve
+ *         schema:
+ *           type: string
+ *     security:
+ *       - api_key: []
  *     responses:
  *       200:
- *         description: Product details
- *       401:
- *         description: Unauthorized - Invalid token
+ *         description: The requested product
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Product not found
  *       500:
- *         description: Internal Server Error
- */
+ *         description: Internal server error
 
-/**
- * @swagger
- * /api/products/images:
+ * /api/products:
  *   post:
- *     summary: Upload product images
+ *     summary: Create products from CSV file
  *     tags: [Products]
- *     security:
- *       - jwt: []
- *     consumes:
- *       - multipart/form-data
- *     parameters:
- *       - in: formData
- *         name: images
- *         type: file
- *         description: Product images (up to 10 images)
- *     responses:
- *       200:
- *         description: Images uploaded successfully
- *       401:
- *         description: Unauthorized - Invalid token
- *       500:
- *         description: Internal Server Error
- */
-
-
-/**
- * @swagger
- * tags:
- *   name: Products
- *   description: Operations related to Product management
- */
-
-/**
- * @swagger
- * /api/products/product:
- *   post:
- *     summary: Create a single record in the Product Table
- *     tags: [Products]
- *     security:
- *       - jwt: []
  *     requestBody:
- *       description: Data for creating a new product record
  *       required: true
  *       content:
  *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
+ *               csvFilePath:
+ *                 type: string
+ *                 format: binary
  *               type:
  *                 type: string
- *                 description: Type of the product
  *               registrationId:
  *                 type: integer
- *                 description: ID of the registration associated with the product
- *               title:
- *                 type: string
- *                 description: Title of the product
- *               description:
- *                 type: string
- *                 description: Description of the product
- *               budget:
- *                 type: number
- *                 description: Budget for the product
- *               moq:
+ *               category_id:
  *                 type: integer
- *                 description: Minimum Order Quantity for the product
+ *     security:
+ *       - api_key: []
+ *     responses:
+ *       200:
+ *         description: Products created successfully
+ *       500:
+ *         description: Internal server error
+
+ * /api/products/product:
+ *   post:
+ *     summary: Create a single product record
+ *     tags: [Products]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
  *               images:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: Array of images (multipart/form-data)
+ *                   format: binary
+ *               type:
+ *                 type: string
+ *               registrationId:
+ *                 type: integer
+ *               category_id:
+ *                 type: integer
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               budget:
+ *                 type: number
+ *               moq:
+ *                 type: number
+ *     security:
+ *       - api_key: []
  *     responses:
  *       200:
- *         description: New product record created successfully
+ *         description: The created product
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Product'
  *       400:
- *         description: Bad Request - Product not inserted
- *       401:
- *         description: Unauthorized - Invalid token
+ *         description: Product not inserted
  *       500:
- *         description: Internal Server Error
+ *         description: Internal server error
+
+ * /api/products/{sku}:
+ *   put:
+ *     summary: Update a product by SKU
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: sku
+ *         required: true
+ *         description: SKU of the product to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               budget:
+ *                 type: number
+ *               moq:
+ *                 type: number
+ *               category_id:
+ *                 type: integer
+ *     security:
+ *       - api_key: []
+ *     responses:
+ *       200:
+ *         description: The updated product
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *       404:
+ *         description: Product not found
+ *       500:
+ *         description: Internal server error
  */
 
-// Define the components section with schemas for Product
 /**
  * @swagger
  * components:
@@ -163,32 +177,36 @@
  *     Product:
  *       type: object
  *       properties:
+ *         id:
+ *           type: integer
  *         title:
  *           type: string
- *           description: Title of the product
  *         description:
  *           type: string
- *           description: Description of the product
  *         sku:
  *           type: string
- *           description: Stock Keeping Unit (SKU) of the product
  *         type:
  *           type: string
- *           description: Type of the product
  *         registrationId:
  *           type: integer
- *           description: ID of the registration associated with the product
+ *         category_id:
+ *           type: integer
  *         budget:
  *           type: number
- *           description: Budget for the product
  *         moq:
- *           type: integer
- *           description: Minimum Order Quantity for the product
+ *           type: number
  *         default_image:
  *           type: string
- *           description: Filename of the default image for the product
  *         product_images:
  *           type: string
- *           description: Comma-separated list of filenames for additional product images
+ *       required:
+ *         - title
+ *         - description
+ *         - type
+ *         - registrationId
+ *         - category_id
+ *         - budget
+ *         - moq
+ *         - default_image
+ *         - product_images
  */
-
