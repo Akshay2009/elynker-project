@@ -134,3 +134,56 @@ module.exports.updateCategory = async function (req, res) {
     }
 
 }
+
+
+module.exports.createMultipleCategory = async function (req, res) {
+    try {
+        const parent_id = req.params.parent_id;
+        const categories = req.body;
+        if (parent_id) {
+            const record = await Category.findOne({ where: { id : parent_id}});
+            const returnArr=[];
+            if(record){
+                for(const category of categories){
+                    const { title, description,category_type} = category;
+                    const newCategory = await Category.create({
+                        title,
+                        description,
+                        parent_id: parent_id ,
+                        category_type
+                    });
+                    returnArr.push(newCategory);
+                }
+                if(returnArr.length>0){
+                    res.status(202).json(returnArr);
+                }
+                else{
+                    res.status(404).json({ error: 'No Category created' });
+                }
+            }else{
+                res.status(404).json({ error: 'No Category found exist with this parent_id' });
+            }
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Internal ServerError ' + err.message });
+    }
+
+}
+
+module.exports.getSubcategories = async function (req, res) {
+    try {
+        const parent_id = req.params.parent_id;
+        const categories = await Category.findAll({
+            where: {
+                parent_id: parent_id
+            }
+        });
+        if (categories.length>0) {
+            res.status(200).json(categories);
+        } else {
+            res.status(404).json({ error: 'No Sub Category Returned' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Internal Server Error'+err.message });
+    }
+}

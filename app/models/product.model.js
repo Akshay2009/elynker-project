@@ -9,6 +9,9 @@ module.exports = (sequelize, Sequelize) => {
       type:{
         type: Sequelize.INTEGER,
       },
+      category_id:{
+        type: Sequelize.INTEGER,
+      },
       budget:{
         type: Sequelize.INTEGER,
       },

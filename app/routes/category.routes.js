@@ -85,6 +85,46 @@ module.exports = function (app) {
     */
     app.put('/api/categories/:categoryId',
         [authJwt.verifyToken], 
-        categoryController.updateCategory);
+        categoryController.updateCategory
+    );
+
+    /* End Point to  create multiple category record based on parent_id
+       POST - /api/categories/multiple/:parent_id API endpoint
+       parent_id  in params
+       ---- in body array of object------
+       [
+            {
+                "title":"tmt bars",
+                "description":"tmt",
+                "category_type":"business"
+            },
+            {
+                "title":"steel plates",
+                "description":"steel plates",
+                "category_type":"business"
+            },
+            {
+                "title":"Stainless Steel Sheet",
+                "description":"Stainless Steel Sheet",
+                "category_type":"business"
+            }
+        ]
+        -------------------------------------------
+       categoryController.createMultipleCategory - Controller function to get All Categories
+   */
+       app.post('/api/categories/multiple/:parent_id',
+       [authJwt.verifyToken], 
+       categoryController.createMultipleCategory
+   );
+
+
+   /* End Point to  get  all categories Record having parent_id as parent_id passed in params
+       POST - /api/categories/subcategories/:parent_id API endpoint
+       categoryController.getSubcategories - Controller function to get a categories record with parent_id
+   */
+   app.get('/api/categories/subcategories/:parent_id',
+       [authJwt.verifyToken], 
+       categoryController.getSubcategories
+   );
     
 };
