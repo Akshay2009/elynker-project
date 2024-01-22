@@ -27,8 +27,6 @@ module.exports.createCategory = async function (req, res) {
                 const category = await Category.create({
                     title,
                     description,
-                    // image_path: imagePaths,
-                    // banner_image: bannerImagePath,
                     parent_id: parent_id ,
                     category_type
                 });
@@ -47,8 +45,6 @@ module.exports.createCategory = async function (req, res) {
             const newCategory = await Category.create({
                 title,
                 description,
-                // image_path: imagePaths,
-                // banner_image: bannerImagePath,
                 parent_id: null,
                 category_type
             });
@@ -94,8 +90,6 @@ module.exports.updateCategory = async function (req, res) {
                 const [rowCount, updatedCategory] = await Category.update({
                     title,
                     description,
-                    // image_path: imagePaths,
-                    // banner_image: bannerImagePath,
                     parent_id: parent_id ,
                     category_type
                 },{
@@ -119,8 +113,6 @@ module.exports.updateCategory = async function (req, res) {
             const [rowCount, updatedCategory] = await Category.update({
                 title,
                 description,
-                // image_path: imagePaths,
-                // banner_image: bannerImagePath,
                 parent_id: null ,
                 category_type
             },{

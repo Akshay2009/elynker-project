@@ -66,11 +66,6 @@ module.exports = function (app) {
     */
     app.post('/api/categories',
         [authJwt.verifyToken], 
-        // upload.fields([
-        //     { name: 'image_path', maxCount: 10 }, //  allow up to 10 images
-        //     { name: 'banner_image', maxCount: 1 }
-        // ]),
-        //handleMulterError,
         categoryController.createCategory
     );
 
@@ -90,11 +85,6 @@ module.exports = function (app) {
     */
     app.put('/api/categories/:categoryId',
         [authJwt.verifyToken], 
-        // upload.fields([
-        //     { name: 'image_path', maxCount: 10 }, //  allow up to 10 images
-        //     { name: 'banner_image', maxCount: 1 }
-        // ]),
-        //handleMulterError, 
         categoryController.updateCategory);
     
 };
