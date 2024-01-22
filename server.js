@@ -33,7 +33,7 @@ const Role = db.role;
 
 // db.sequelize.sync();
 // force: true will drop the table if it already exists
-db.sequelize.sync({ force: true }).then(() => {
+db.sequelize.sync({ alter: true }).then(() => {
   console.log("Drop and Resync Database with { alter: true }");
   // initial();
 });
@@ -54,7 +54,7 @@ require("./app/routes/registration.routes")(app);
 require("./app/routes/product.routes")(app);
 require("./app/routes/master.routes")(app);
 require('./app/routes/category.routes')(app);
-
+require('./app/routes/certificate.routes')(app);
 //Swagger options
 const options = {
   definition: {

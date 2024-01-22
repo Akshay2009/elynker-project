@@ -83,7 +83,7 @@ module.exports = function (app) {
     masterController.updateStateMaster
   );
   //saving RegistrationTypeMaster------------------------
-  app.get(
+  app.post(
     "/api/RegistrationTypeMaster/",
      [authJwt.verifyToken],
     masterController.saveRegistrationTypeMaster
