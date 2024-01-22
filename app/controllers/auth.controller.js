@@ -34,6 +34,7 @@ exports.signup = async (req, res) => {
         registration_type: req.body.registration_type || 1,
         userId: user.id
       });
+      
       if (req.body.roles) {
         const roles = await Role.findAll({
           where: {
@@ -47,7 +48,16 @@ exports.signup = async (req, res) => {
       else {
         await user.setRoles([1]);
       }
-      res.send({ message: user , registration : registration});
+
+      const token = jwt.sign({ id: user.id },
+        config.secret,
+        {
+          algorithm: 'HS256',
+          allowInsecureKeySizes: true,
+          expiresIn: 86400, // 24 hours
+        });
+
+      res.send({ message: user , registration : registration,  accessToken: token});
     } else {
       res.status(500).send({ message: 'Error in creating user' });
     }
