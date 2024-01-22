@@ -58,6 +58,7 @@ require("./app/routes/user.routes")(app);
 require("./app/routes/registration.routes")(app);
 require("./app/routes/product.routes")(app);
 require("./app/routes/master.routes")(app);
+require('./app/routes/category.routes')(app);
 
 //Swagger options
 const options = {

@@ -118,4 +118,27 @@ module.exports = function (app) {
         handleMulterError,productController.createProductsImages
     );
 
+    /* End Point to insert Record of Product Table for Screen 9
+        POST - /api/products/product API endpoint
+        productController.createProductsSingleRecord - Controller function to insert record in Product Table
+    */
+    app.post('/api/products/product',
+        [authJwt.verifyToken], 
+        uploadImages.fields([
+            { name: 'images' }, 
+        ]),
+        handleMulterError,productController.createProductsSingleRecord
+    );
+    /* End Point to update Record of  Product Table based on sku passed in params
+        PUT - /api/products/:sku API endpoint
+        productController.updateProducts - Controller function to update record in Product Table
+    */
+    app.put('/api/products/:sku',
+        [authJwt.verifyToken], 
+        uploadImages.fields([
+            { name: 'images' }, 
+        ]),
+        handleMulterError,productController.updateProducts
+    );
+
 };

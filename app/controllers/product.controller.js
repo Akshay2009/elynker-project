@@ -5,6 +5,10 @@ const Product = db.product;
 const Registration = db.registration;
 const parseCSV = require('./csvParser');
 
+function generateUniqueSKU() {
+    return 'SKU_' + Date.now().toString() + Math.floor(Math.random() * 1000);
+  }
+
 
 module.exports.getAllProducts = async function (req, res) {
     try{
@@ -60,6 +64,8 @@ module.exports.createProduct = async function (req, res) {
                             description: row.description,
                             type: type,
                             registrationId,
+                            budget: row.budget,
+                            moq: row.moq,
                             //images: imageFileNames,
                             default_image: row.default_image,
                             product_images: productImagesString
@@ -73,6 +79,8 @@ module.exports.createProduct = async function (req, res) {
                             description: row.description,
                             type: type,
                             registrationId,
+                            budget: row.budget,
+                            moq: row.moq,
                             //images: imageFileNames,
                             default_image: row.default_image,
                             product_images: productImagesString
@@ -107,3 +115,83 @@ module.exports.createProductsImages = async function(req,res){
     }
 }
 
+
+module.exports.createProductsSingleRecord = async function(req,res){
+    try{
+        const { type, registrationId,title,description,budget,moq } = req.body;
+        const imageFileNames = req.files['images'].map((file) => path.basename(file.path));
+        const sku = generateUniqueSKU();
+        const productImagesString = imageFileNames.join(',');
+        const product = await Product.create({
+            title: title,
+            description: description,
+            sku: sku,
+            type: type,
+            registrationId,
+            budget:budget,
+            moq:moq,
+            default_image: imageFileNames[0],
+            product_images: productImagesString
+        });
+        if(product){
+            res.status(200).json(product);
+        }else{
+            res.status(400).json({error : 'Product not inserted'});
+        }
+
+    }catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error ' + error.message });
+    }
+}
+
+module.exports.updateProducts = async function(req,res){
+    try{
+        const sku = req.params.sku;
+        const { title,description,budget,moq } = req.body;
+        let productImagesString;
+        let imageFileNames;
+        if(req.files['images']){ // if images are uploaded then then update product_images and default_image field
+            imageFileNames = req.files['images'].map((file) => path.basename(file.path));
+            productImagesString = imageFileNames.join(',');
+            const [rowUpdated, productUpdated] = await Product.update({
+                title,
+                description,
+                budget,
+                moq,
+                default_image: imageFileNames[0],
+                product_images: productImagesString
+            }, {
+                where: {
+                    sku: sku
+                },
+                returning: true
+            });
+            if(rowUpdated>0){
+                res.status(200).json(productUpdated[0]);
+            }else{
+                res.status(404).json({error : 'No Product found with this sku'});
+            }
+        }else{ // here product_images and default_image are not updated
+            const [rowUpdated, productUpdated] = await Product.update({
+                title,
+                description,
+                budget,
+                moq,
+            }, {
+                where: {
+                    sku: sku
+                },
+                returning: true
+            });
+            if(rowUpdated>0){
+                res.status(200).json(productUpdated[0]);
+            }else{
+                res.status(404).json({error : 'No Product found with this sku'});
+            }
+        }
+    }catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error ' + error.message });
+    }
+}
