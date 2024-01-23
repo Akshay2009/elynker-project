@@ -32,7 +32,8 @@ db.currencyMaster = require('../models/currencyMaster.js')(sequelize, Sequelize)
 db.registrationTypesMaster= require('../models/registrationTypesMaster.js')(sequelize, Sequelize);
 db.businessDetail= require('../models/business_detail.model.js')(sequelize, Sequelize);
 db.category = require('../models/category.model.js')(sequelize,Sequelize);
-
+db.certificate=require('../models/certificate.js')(sequelize,Sequelize);
+db.sociallinks=require('../models/sociallinks.model.js')(sequelize,Sequelize);
 db.role.belongsToMany(db.user, {
   through: "user_roles"
 });
@@ -52,5 +53,13 @@ db.businessDetail.belongsTo(db.registration);
 //associate registration and product as 1:1 with foreign key on product model
 db.registration.hasOne(db.product);
 db.product.belongsTo(db.registration);
+
+//associate certificate with registration as 1:1 foreign key on certificate
+db.registration.hasOne(db.certificate);
+db.certificate.belongsTo(db.registration);
+
+//associate sociallinks associated with registration as 1:1 foreign key on certificate
+db.registration.hasOne(db.sociallinks);
+db.sociallinks.belongsTo(db.registration);
 
 module.exports = db;
