@@ -23,17 +23,17 @@ app.use(
 
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
-initializeRoutes(app);
 app.use(cors({
     origin: "*",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: false,
     optionsSuccessStatus: 204,
 }));
-
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
+//Initialized app to models
+initializeRoutes(app);
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Nodejs application." });
