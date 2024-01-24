@@ -8,7 +8,7 @@ module.exports = function (app) {
 
   app.post(
     "/api/sociallinks/",
-    //  [authJwt.verifyToken],
+    [authJwt.verifyToken],
     sociallinksController.createSociallinks
   );
 
@@ -19,7 +19,7 @@ module.exports = function (app) {
 
   app.get(
     "/api/sociallinks/",
-    //  [authJwt.verifyToken],
+    [authJwt.verifyToken],
     sociallinksController.getSociallinks
   );
 
@@ -29,7 +29,7 @@ module.exports = function (app) {
 
   app.get(
     "/api/sociallinks/:social_id",
-    //  [authJwt.verifyToken],
+    [authJwt.verifyToken],
     sociallinksController.getSociallinksById
   );
 
@@ -39,7 +39,7 @@ module.exports = function (app) {
         sociallinksController.updateSociallinksById - Controller function to update social links record*/
   app.put(
     "/api/sociallinks/:social_id",
-    //  [authJwt.verifyToken],
+    [authJwt.verifyToken],
     sociallinksController.updateSociallinksById
   );
 };
