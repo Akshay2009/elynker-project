@@ -1,15 +1,11 @@
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const swaggerOptions = require("./swagger-routes/swagger");  // Adjust the path based on your project structure
 const initializeRoutes = require("./app/routes/routeInitializer")
-const db = require("./app/models");
 const bodyParser = require('body-parser')
 require('dotenv').config();
-
-const Role = db.role;
 
 const app = express();
 app.use(
