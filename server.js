@@ -55,6 +55,7 @@ require("./app/routes/product.routes")(app);
 require("./app/routes/master.routes")(app);
 require('./app/routes/category.routes')(app);
 require('./app/routes/certificate.routes')(app);
+require('./app/routes/sociallinks.routes')(app);
 //Swagger options
 const options = {
   definition: {
