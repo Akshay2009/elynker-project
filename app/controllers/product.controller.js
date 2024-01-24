@@ -66,7 +66,7 @@ module.exports.createProduct = async function (req, res) {
                             registrationId,
                             budget: row.budget,
                             moq: row.moq,
-                            category_id:category_id,
+                            category_id:row.category_id || category_id,
                             //images: imageFileNames,
                             default_image: row.default_image,
                             product_images: productImagesString
@@ -82,12 +82,10 @@ module.exports.createProduct = async function (req, res) {
                             registrationId,
                             budget: row.budget,
                             moq: row.moq,
-                            category_id: category_id,
+                            category_id: row.category_id || category_id,
                             //images: imageFileNames,
                             default_image: row.default_image,
                             product_images: productImagesString
-                        },{
-                            where : { sku: row.sku },
                         });
                     }
                 }
