@@ -17,6 +17,7 @@ var bcrypt = require("bcryptjs");
  */
 
 exports.signup = async (req, res) => {
+  console.log(req.body)
   try {
     const user = await User.create({
       name: req.body.name,
