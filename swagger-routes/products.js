@@ -176,48 +176,6 @@
  *           description: Bad request
  *         '500':
  *           description: Some server error
- *   /api/products/{sku}:
- *     put:
- *       summary: Update product by SKU
- *       tags: [Products]
- *       parameters:
- *         - name: sku
- *           in: path
- *           required: true
- *           description: Product SKU
- *           schema:
- *             type: string
- *         - name: type
- *           in: query
- *           required: true
- *           description: Type of product
- *           schema:
- *             type: string
- *         - name: registrationId
- *           in: query
- *           required: true
- *           description: Registration ID
- *           schema:
- *             type: integer
- *       requestBody:
- *         required: true
- *         content:
- *           multipart/form-data:
- *             schema:
- *               type: object
- *               properties:
- *                 images:
- *                   type: string
- *                   format: binary
- *       responses:
- *         '200':
- *           description: Product updated successfully
- *         '400':
- *           description: Bad request
- *         '404':
- *           description: Product not found
- *         '500':
- *           description: Some server error
  *   /api/users/products/{registrationId}:
  *     get:
  *       summary: Get all products by registration ID
