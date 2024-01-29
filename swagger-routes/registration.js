@@ -2,115 +2,145 @@
  * @swagger
  * tags:
  *   name: Registration
- *   description: Registration related operations
- *
- * /api/registration/{reg_id}:
- *   put:
- *     summary: Update registration details
- *     tags: [Registration]
- *     security:
- *       - jwt: []
- *     parameters:
- *       - in: path
- *         name: reg_id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID of the registration to update
- *     requestBody:
- *       description: Registration details to update
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/RegistrationUpdate'
- *     responses:
- *       200:
- *         description: Registration details updated successfully
- *       401:
- *         description: Unauthorized - Invalid token
- *       404:
- *         description: Registration not found
- *       500:
- *         description: Internal Server Error
- */
-
-// Define the RegistrationUpdate schema in the components section
-/**
- * @swagger
+ *   description: API for managing user registration
  * components:
  *   schemas:
- *     RegistrationUpdate:
+ *     Registration:
  *       type: object
  *       properties:
- *         isActive:
- *           type: boolean
- *           description: Whether the registration is active
  *         ip_address:
  *           type: string
- *           description: IP address of the registration
  *         registration_type:
- *           type: integer
- *           description: Type of registration
+ *           type: string
  *         dob:
  *           type: string
- *           format: date
- *           description: Date of birth
  *         latitude:
- *           type: string
- *           description: Latitude
+ *           type: number
  *         longitude:
- *           type: string
- *           description: Longitude
- *         registration_status:
+ *           type: number
+ *         steps_completed:
  *           type: integer
- *           description: Registration status
- *         registration_steps_completed:
+ *         active_steps:
  *           type: integer
- *           description: Number of registration steps completed
- *         city:
- *           type: string
- *           description: City
  *         address1:
  *           type: string
- *           description: Address line 1
  *         address2:
  *           type: string
- *           description: Address line 2
+ *         city:
+ *           type: string
  *         state:
  *           type: string
- *           description: State
  *         country:
  *           type: string
- *           description: Country
- *         company_name:
- *           type: string
- *           description: Company name
- *         business_type:
- *           type: integer
- *           description: Type of business
- *         business_description:
- *           type: string
- *           description: Business description
  *         education:
  *           type: string
- *           description: Education details
  *         available_hrs_per_week:
  *           type: integer
- *           description: Available hours per week
  *         hourly_rate:
  *           type: number
- *           description: Hourly rate
  *         service_fee:
  *           type: number
- *           description: Service fee
  *         currency_id:
  *           type: integer
- *           description: Currency ID
  *         created_by:
- *           type: integer
- *           description: ID of the user who created the registration
+ *           type: string
  *         updated_by:
+ *           type: string
+ *         id:
+ *           type: string
+ *
+ *     RegistrationInput:
+ *       type: object
+ *       properties:
+ *         ip_address:
+ *           type: string
+ *         registration_type:
+ *           type: string
+ *         dob:
+ *           type: string
+ *         latitude:
+ *           type: number
+ *         longitude:
+ *           type: number
+ *         steps_completed:
  *           type: integer
- *           description: ID of the user who updated the registration
- */
+ *         active_steps:
+ *           type: integer
+ *         address1:
+ *           type: string
+ *         address2:
+ *           type: string
+ *         city:
+ *           type: string
+ *         state:
+ *           type: string
+ *         country:
+ *           type: string
+ *         education:
+ *           type: string
+ *         available_hrs_per_week:
+ *           type: integer
+ *         hourly_rate:
+ *           type: number
+ *         service_fee:
+ *           type: number
+ *         currency_id:
+ *           type: integer
+ *         created_by:
+ *           type: string
+ *         updated_by:
+ *           type: string
+ *
+ * paths:
+ *   /api/registration/{reg_id}:
+ *     put:
+ *       summary: Update Registration Record
+ *       tags: [Registration]
+ *       parameters:
+ *         - name: reg_id
+ *           in: path
+ *           required: true
+ *           description: Registration ID
+ *           schema:
+ *             type: string
+ *       security:
+ *         - api_key: []
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/RegistrationInput'
+ *       responses:
+ *         '200':
+ *           description: Registration record updated successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Registration record updated successfully
+ *                 updatedRegistration:
+ *                   id: '123'
+ *                   ip_address: '127.0.0.1'
+ *                   registration_type: 'user'
+ *                   dob: '1990-01-01'
+ *                   latitude: 40.7128
+ *                   longitude: -74.0060
+ *                   steps_completed: 3
+ *                   active_steps: 2
+ *                   address1: '123 Main St'
+ *                   address2: 'Apt 4'
+ *                   city: 'City'
+ *                   state: 'State'
+ *                   country: 'Country'
+ *                   education: 'Graduate'
+ *                   available_hrs_per_week: 40
+ *                   hourly_rate: 25.5
+ *                   service_fee: 5.0
+ *                   currency_id: 1
+ *                   created_by: 'user123'
+ *                   updated_by: 'user456'
+ *         '404':
+ *           description: Registration record not found
+ *         '500':
+ *           description: Internal Server Error
+ *  */
