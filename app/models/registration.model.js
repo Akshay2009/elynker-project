@@ -48,10 +48,10 @@ module.exports = (sequelize, Sequelize) => {
         },
       },
     },
-    registration_status: {
-      type: Sequelize.INTEGER
+    steps_completed: {
+      type: Sequelize.BOOLEAN
     },
-    registration_steps_completed: {
+    active_steps: {
       type: Sequelize.INTEGER
     },
     city: {

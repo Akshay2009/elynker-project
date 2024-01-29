@@ -12,7 +12,6 @@ const BusinessDetail = db.businessDetail;
  * @param {Object} res - Express response object.
  */
 module.exports.updateCompanyLogo = async function (req, res) {
-  if (req.userId) {
     try {
       let registration = await Registration.findByPk(req.params.id);
       if (req.file) {
@@ -22,13 +21,10 @@ module.exports.updateCompanyLogo = async function (req, res) {
         registration.image_path = COMPANY_LOGO_PATH + "/" + req.file.filename;
       }
       await registration.save();
-      res.redirect("back");
+      res.status(200).json({registration : registration });
     } catch (err) {
       res.status(500).json({ error: "error in updating company logo" });
     }
-  } else {
-    res.status(401).json({ error: "Unauthorized" });
-  }
 };
 
 module.exports.saveBusinessDetail = async function (req, res) {
@@ -135,8 +131,8 @@ module.exports.putRegDetail = async function (req, res) {
       dob,
       latitude,
       longitude,
-      registration_status,
-      registration_steps_completed,
+      steps_completed,
+      active_steps,
       address1,
       address2,
       state,
@@ -164,8 +160,8 @@ module.exports.putRegDetail = async function (req, res) {
           dob,
           latitude,
           longitude,
-          registration_status,
-          registration_steps_completed,
+          steps_completed,
+          active_steps,
           address1,
           address2,
           city,
