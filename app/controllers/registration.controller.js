@@ -30,8 +30,20 @@ module.exports.updateCompanyLogo = async function (req, res) {
 module.exports.saveBusinessDetail = async function (req, res) {
   try {
     const reg_Id = req.params.reg_id;
+    const existingRegistration = await Registration.findByPk(reg_Id);
+
+    if(!existingRegistration){
+      res.status(401).json({ success: "Provided registration Id does not exists!" });
+      return
+    }
+
     let arr = req.body;
     let registration_company_name;
+    if(!arr.length){
+      res.status(401).json({ success: "Please provide your business data in json array[]!" });
+      return
+    }
+
     for (let i = 0; i < arr.length; i++) {
       let {
         company_name,
@@ -101,11 +113,16 @@ module.exports.saveBusinessDetail = async function (req, res) {
 module.exports.getBusinessDetail = async function (req, res) {
   try {
     const { reg_id } = req.params;
-    console.log(reg_id);
-
     // Fetch the details by ID
+    const existingRegistration = await Registration.findByPk(reg_id);
+
+    if(!existingRegistration){
+      res.status(401).json({ success: "Provided registration Id does not exists!" });
+      return
+    }
+
     const businessDetails = await BusinessDetail.findAll({
-      registrationId: reg_id,
+      where: { registrationId: reg_id },
     });
 
     if (businessDetails) {
