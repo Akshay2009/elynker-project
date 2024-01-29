@@ -1,97 +1,154 @@
 /**
  * @swagger
  * tags:
- *   name: Registration
- *   description: API for managing user registration
+ *   name: Business
+ *   description: API for managing business information
  * components:
  *   schemas:
- *     Registration:
+ *     Business:
  *       type: object
  *       properties:
- *         ip_address:
+ *         company_name:
  *           type: string
- *         registration_type:
+ *         document:
  *           type: string
- *         dob:
- *           type: string
- *         latitude:
- *           type: number
- *         longitude:
- *           type: number
- *         steps_completed:
+ *         is_active:
  *           type: integer
- *         active_steps:
- *           type: integer
- *         address1:
+ *         document_name:
  *           type: string
- *         address2:
+ *         document_number:
  *           type: string
- *         city:
+ *         file_location:
  *           type: string
- *         state:
- *           type: string
- *         country:
- *           type: string
- *         education:
- *           type: string
- *         available_hrs_per_week:
- *           type: integer
- *         hourly_rate:
- *           type: number
- *         service_fee:
- *           type: number
- *         currency_id:
- *           type: integer
- *         created_by:
- *           type: string
- *         updated_by:
+ *         file_name:
  *           type: string
  *         id:
  *           type: string
- *
- *     RegistrationInput:
+ *     BusinessInput:
  *       type: object
  *       properties:
- *         ip_address:
+ *         company_name:
  *           type: string
- *         registration_type:
+ *         document:
  *           type: string
- *         dob:
- *           type: string
- *         latitude:
- *           type: number
- *         longitude:
- *           type: number
- *         steps_completed:
+ *         is_active:
  *           type: integer
- *         active_steps:
- *           type: integer
- *         address1:
+ *         document_name:
  *           type: string
- *         address2:
+ *         document_number:
  *           type: string
- *         city:
+ *         file_location:
  *           type: string
- *         state:
+ *         file_name:
  *           type: string
- *         country:
- *           type: string
- *         education:
- *           type: string
- *         available_hrs_per_week:
- *           type: integer
- *         hourly_rate:
- *           type: number
- *         service_fee:
- *           type: number
- *         currency_id:
- *           type: integer
- *         created_by:
- *           type: string
- *         updated_by:
- *           type: string
- *
  * paths:
+ *   /api/update/companyLogo/{id}:
+ *     put:
+ *       summary: Update Company Logo
+ *       tags: [Business]
+ *       parameters:
+ *         - name: id
+ *           in: path
+ *           required: true
+ *           description: Company ID
+ *           schema:
+ *             type: string
+ *       security:
+ *         - api_key: []
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           multipart/form-data:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 company_logo:
+ *                   type: string
+ *                   format: binary
+ *       responses:
+ *         '200':
+ *           description: Company logo updated successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Company logo updated successfully
+ *                 registration:
+ *                   id: '123'
+ *                   image_path: '/uploads/company/company_logo/logo-123456.jpg'
+ *         '404':
+ *           description: Company not found
+ *         '500':
+ *           description: Internal Server Error
+ * 
+ *   /api/business/{reg_id}:
+ *     get:
+ *       summary: Get business details by registration ID
+ *       tags: [Business]
+ *       parameters:
+ *         - name: reg_id
+ *           in: path
+ *           required: true
+ *           description: Registration ID
+ *           schema:
+ *             type: string
+ *       security:
+ *         - api_key: []
+ *       responses:
+ *         '200':
+ *           description: Successful response
+ *           content:
+ *             application/json:
+ *               example:
+ *                 - company_name: TIN
+ *                   document: N/A
+ *                   is_active: 1
+ *                   document_name: CIN
+ *                   document_number: '1111111'
+ *                   file_location: ''
+ *                   file_name: TCS.exc
+ *                   id: '28'
+ *                 - company_name: ABC Ltd.
+ *                   document: Certificate of Incorporation
+ *                   is_active: 1
+ *                   document_name: CIN
+ *                   document_number: '987654'
+ *                   file_location: ''
+ *                   file_name: ABC_Certificate.pdf
+ *                   id: '29'
+ *         '404':
+ *           description: Business details not found
+ *         '500':
+ *           description: Internal Server Error
+ *     post:
+ *       summary: Save business details by registration ID
+ *       tags: [Business]
+ *       parameters:
+ *         - name: reg_id
+ *           in: path
+ *           required: true
+ *           description: Registration ID
+ *           schema:
+ *             type: string
+ *       security:
+ *         - api_key: []
+ *       requestBody:
+ *         required: true
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/BusinessInput'
+ *       responses:
+ *         '200':
+ *           description: Business details saved successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 success: Business details successfully inserted
+ *         '500':
+ *           description: Internal Server Error
+ * 
  *   /api/registration/{reg_id}:
  *     put:
  *       summary: Update Registration Record
@@ -143,4 +200,4 @@
  *           description: Registration record not found
  *         '500':
  *           description: Internal Server Error
- *  */
+ */

@@ -17,6 +17,8 @@ app.use(
   })
 );
 
+app.use('/uploads', express.static('app/uploads'));
+
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
