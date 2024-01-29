@@ -2,6 +2,11 @@ const db = require("../models");
 const { Op, DataTypes, Sequelize } = require('sequelize');
 const Category = db.category;
 
+/**
+ * Controller function to get all the Category record .
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 module.exports.getAllCategory = async function (req, res) {
     try {
         const categories = await Category.findAll({
@@ -15,6 +20,12 @@ module.exports.getAllCategory = async function (req, res) {
         res.status(500).json({ error: 'Internal Server Error '+err.message });
     }
 }
+
+/**
+ * Controller function to create a Category record .
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 module.exports.createCategory = async function (req, res) {
     try {
 
@@ -60,6 +71,13 @@ module.exports.createCategory = async function (req, res) {
     }
 
 }
+
+/**
+ * Controller function to create a Category record by id.
+ * categoryId is passed in params
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 module.exports.getCategoryById = async function (req, res) {
     try {
         const categoryId = req.params.categoryId;
@@ -78,6 +96,14 @@ module.exports.getCategoryById = async function (req, res) {
     }
 }
 
+
+/**
+ * Controller function to update a Category record .
+ * categoryId is passed in params
+ * title, description, parent_id,category_type is passed in body
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 module.exports.updateCategory = async function (req, res) {
     try {
         const categoryId = req.params.categoryId;
@@ -136,6 +162,13 @@ module.exports.updateCategory = async function (req, res) {
 }
 
 
+/**
+ * Controller function to create multiple Category record .
+ * parent_id is passed in params
+ * array of object is passed in body
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 module.exports.createMultipleCategory = async function (req, res) {
     try {
         const parent_id = req.params.parent_id;
@@ -170,6 +203,12 @@ module.exports.createMultipleCategory = async function (req, res) {
 
 }
 
+/**
+ * Controller function to get all subcategories of a category .
+ * parent_id is passed in params
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 module.exports.getSubcategories = async function (req, res) {
     try {
         const parent_id = req.params.parent_id;

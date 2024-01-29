@@ -80,7 +80,7 @@ module.exports = function (app) {
         productController.createProduct - Controller function to Create Records in Product Table and if already present then update based on sku
     */
     app.post('/api/products',
-        [authJwt.verifyToken], 
+        //[authJwt.verifyToken], 
         uploadCsv.fields([
             {name: 'csvFilePath'}
         ]),
@@ -113,7 +113,7 @@ module.exports = function (app) {
     app.post('/api/products/images',
         [authJwt.verifyToken], 
         uploadImages.fields([
-            { name: 'images' }, //  allow up to 10 images
+            { name: 'images' }, 
         ]),
         handleMulterError,productController.createProductsImages
     );
@@ -123,7 +123,7 @@ module.exports = function (app) {
         productController.createProductsSingleRecord - Controller function to insert record in Product Table
     */
     app.post('/api/products/product',
-        [authJwt.verifyToken], 
+        //[authJwt.verifyToken], 
         uploadImages.fields([
             { name: 'images' }, 
         ]),
@@ -134,7 +134,7 @@ module.exports = function (app) {
         productController.updateProducts - Controller function to update record in Product Table
     */
     app.put('/api/products/:sku',
-        [authJwt.verifyToken], 
+        //[authJwt.verifyToken], 
         uploadImages.fields([
             { name: 'images' }, 
         ]),

@@ -62,4 +62,12 @@ db.certificate.belongsTo(db.registration);
 db.registration.hasOne(db.sociallinks);
 db.sociallinks.belongsTo(db.registration);
 
+//associate Product and Category as m:m
+db.product.belongsToMany(db.category, {
+  through: "product_category"
+});
+db.category.belongsToMany(db.product, {
+  through: "product_category"
+});
+
 module.exports = db;
