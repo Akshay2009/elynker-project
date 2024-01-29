@@ -42,7 +42,7 @@
  *         file_name:
  *           type: string
  * paths:
- *   /api/update/companyLogo/{id}:
+ *   /api/update/companyLogo/{reg_id}:
  *     put:
  *       summary: Update Company Logo
  *       tags: [Business]
@@ -50,7 +50,7 @@
  *         - name: id
  *           in: path
  *           required: true
- *           description: Company ID
+ *           description: Registration ID
  *           schema:
  *             type: string
  *       security:
