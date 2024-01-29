@@ -290,3 +290,22 @@ module.exports.updateProducts = async function(req,res){
         res.status(500).json({ message: 'Internal server error ' + error.message });
     }
 }
+
+module.exports.getProductByRegistrationId = async function (req, res) {
+    const registrationId = req.params.registrationId;
+    try{
+        const products = await Product.findAll({
+            where:{
+                registrationId: registrationId
+            }
+        });
+        if(products.length>0){
+            res.status(200).json(products);
+        }else{
+            res.status(500).json({error : 'No Product Found'});
+        }
+    }catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error ' + error.message });
+    }
+}

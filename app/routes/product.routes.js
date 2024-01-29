@@ -141,4 +141,13 @@ module.exports = function (app) {
         handleMulterError,productController.updateProducts
     );
 
+    /* End Point to  get All Products with registrationId
+        GET - /api/users/products/:registrationId End Point
+        productController.getProductByRegistrationId - Controller function to get All Product Records with registrationId
+    */
+        app.get('/api/users/products/:registrationId',
+        [authJwt.verifyToken], 
+        productController.getProductByRegistrationId
+    )
+
 };
