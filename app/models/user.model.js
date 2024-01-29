@@ -1,9 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
   const User = sequelize.define("users", {
-    // id: {
-    //   type: Sequelize.NUMERIC,
-    //   primaryKey: true
-    // },
     email: {
       type: Sequelize.STRING(200),
       validate: {
@@ -20,8 +16,8 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING(50),
       validate: {
         len: {
-          args: [5, 50],
-          msg: "User Name length must be between 5 to 50 characters",
+          args: [3, 50],
+          msg: "User Name length must be between 3 to 50 characters",
         },
       },
     },

@@ -58,7 +58,19 @@ exports.signup = async (req, res) => {
           expiresIn: 86400, // 24 hours
         });
 
-      res.send({ message: user , registration : registration,  accessToken: token});
+        var authorities = [];
+        user.getRoles().then(roles => {
+          for (let i = 0; i < roles.length; i++) {
+            authorities.push("ROLE_" + roles[i].name.toUpperCase());
+          }
+          res.status(200).send({
+            user: user,
+            roles: authorities,
+            accessToken: token,
+            registration: registration
+          });
+        });
+
     } else {
       res.status(500).send({ message: 'Error in creating user' });
     }
@@ -68,7 +80,7 @@ exports.signup = async (req, res) => {
 }
 
 /**
- * Controller function for get business details and signin.
+ * Controller function for get business details and sign-in.
  * 
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
@@ -104,10 +116,7 @@ exports.signin = async (req, res) => {
           authorities.push("ROLE_" + roles[i].name.toUpperCase());
         }
         res.status(200).send({
-          id: user.id,
-          name: user.name,
-          mobile_number: user.mobile_number,
-          email: user.email,
+          user: user,
           roles: authorities,
           accessToken: token,
           registration: result

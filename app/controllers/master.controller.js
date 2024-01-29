@@ -31,7 +31,7 @@ module.exports.getAllCityMasters = async function (req, res) {
   }
 };
 
-//city master controller ghetting data by ID from database---
+//city master controller getting data by ID from database---
 
 module.exports.getCityMasters = async function (req, res) {
   try {
