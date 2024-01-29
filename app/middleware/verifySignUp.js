@@ -2,6 +2,13 @@ const db = require("../models");
 const ROLES = db.ROLES;
 const User = db.user;
 
+checkMobileNumberExist = (req,res,next) =>{
+  if(!req.body.mobile_number){
+    return res.status(404).send({message:'Mobile Number is mandatory'});
+  }
+  next();
+}
+
 checkDuplicateUsernameOrEmail = (req, res, next) => {
   console.log(req.body.mobile_number);
   // Username
@@ -36,6 +43,7 @@ checkRolesExisted = (req, res, next) => {
 };
 
 const verifySignUp = {
+  checkMobileNumberExist: checkMobileNumberExist,
   checkDuplicateUsernameOrEmail: checkDuplicateUsernameOrEmail,
   checkRolesExisted: checkRolesExisted
 };

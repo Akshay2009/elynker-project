@@ -1,7 +1,13 @@
 module.exports = (sequelize, Sequelize) => {
     const Product = sequelize.define("product", {
       title: {
-        type: Sequelize.STRING(50)
+        type: Sequelize.STRING(100),
+        validate: {
+          len: {
+            args: [0, 100],
+            msg: "Product Title length must be less than equal to 100 characters",
+          },
+        },
       },
       description: {
         type: Sequelize.TEXT
