@@ -46,7 +46,7 @@ module.exports = function (app) {
    */
   app.get(
     "/api/business/:reg_id",
-    // [authJwt.verifyToken],
+     [authJwt.verifyToken],
     registrationController.getBusinessDetail
   );
 
