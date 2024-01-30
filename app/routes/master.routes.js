@@ -25,7 +25,7 @@ module.exports = function (app) {
         masterController.delCityMaster - Controller function to DELETE a citymasters record Id
     */
   app.delete(
-    "/api/citymaster/:id",
+    "/api/citymaster/:city_id",
     [authJwt.verifyToken],
     masterController.delCityMaster
   );
