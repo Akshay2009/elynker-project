@@ -10,89 +10,141 @@ module.exports = function (app) {
     next();
   });
 
-  //city master data handling------------------------------------
+  /* End Point to  create a citymaster Record
+        POST - /api/citymaster/ API endpoint
+        masterController.saveCityMaster - Controller function to Create a citymasters record
+    */
 
   app.post(
     "/api/citymaster/",
-   [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.saveCityMaster
   );
-  //getting city master-----------------------------------------
+  /* End Point to  Delete a citymaster Record by id
+        DELETE - /api/citymaster/:id API endpoint
+        masterController.delCityMaster - Controller function to DELETE a citymasters record Id
+    */
+  app.delete(
+    "/api/citymaster/:id",
+    [authJwt.verifyToken],
+    masterController.delCityMaster
+  );
+  /* End Point to  GET citymaster Record
+        GET - /api/citymaster/ API endpoint
+        masterController.getAllCityMasters - Controller function to GET citymasters record
+    */
 
   app.get(
     "/api/citymaster/",
-   [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.getAllCityMasters
   );
 
-  //getting city master by id ----------------------------------------
+  /* End Point to  GET citymaster Record BYid
+        GET - /api/citymaster/:id API endpoint
+        masterController.getCityMasters- Controller function to GET citymasters record BYID
+    */
 
   app.get(
     "/api/citymaster/:id",
-   [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.getCityMasters
   );
-
-  //updating citymaster ---------------------------------
+  /* End Point to UPDATE citymaster Record BYid
+        PUT- /api/citymaster/:id API endpoint
+         masterController.updateCityMasterById - Controller function to UPDATE citymasters record BYID
+    */
   app.put(
     "/api/citymaster/:id",
-   [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.updateCityMasterById
   );
-  //currency master data handling------------------------------
+  /* End Point to  GET Currency master Record
+        GET- /api/currencymaster/ API endpoint
+         masterController.getAllcurrencyMaster - Controller function to get currencymaster record
+    */
   app.get(
     "/api/currencymaster/",
     [authJwt.verifyToken],
     masterController.getAllcurrencyMaster
   );
 
-  //save currency master details-----------------------
+  /* End Point to POST Currency master Record
+       POST- /api/currencymaster/ API endpoint
+         masterController.createCurrencyMaster - Controller function to save currencymaster record
+    */
   app.post(
     "/api/currencymaster/",
     [authJwt.verifyToken],
     masterController.createCurrencyMaster
   );
 
-  //updating currency master details--------------------------
+  /* End Point to UPDATE Currency master Record By Id
+       PUT- /api/currencymaster/:id API endpoint
+         masterController.updateCurrencyMasterById - Controller function to update currencymaster record by id
+    */
 
   app.put(
     "/api/currencymaster/:id",
-     [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.updateCurrencyMasterById
   );
 
-  //saving state master route-------------------------------
+  /* End Point to save StateMaster Record
+       POST- /api/StateMaster/ API endpoint
+          masterController.createStateMaster - Controller function to save StateMaster record
+    */
 
   app.post(
     "/api/statemaster/",
-     [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.createStateMaster
   );
-
-  //getting all state masters-----------------------------------
+  /* End Point to GET StateMaster Record
+       GET- /api/StateMaster/ API endpoint
+          masterController.getAllStateMaster - Controller function to GET StateMaster record
+    */
   app.get(
     "/api/statemaster/",
-     [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.getAllStateMaster
   );
 
-  //updating state masters---------------------------------------
+  /* End Point to UPDATE StateMaster Record BY id
+       PUT- /api/StateMaster/:id API endpoint
+          masterController.updateStateMaster - Controller function to update StateMaster record by id
+    */
   app.put(
     "/api/statemaster/:id",
     [authJwt.verifyToken],
     masterController.updateStateMaster
   );
-  //saving RegistrationTypeMaster------------------------
+  /* End Point to save RegistrationTypeMaster Record
+       POST- /api/RegistrationTypeMaster/ API endpoint
+          masterController.saveRegistrationTypeMaster - Controller function to update RegistrationTypeMaster record
+    */
   app.post(
     "/api/RegistrationTypeMaster/",
-     [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.saveRegistrationTypeMaster
   );
 
-//saving registration master---
-// app.put(
-//   "/api/Registration/:id",
-//   // [authJwt.verifyToken],
-//   masterController.putRegDetail
-// );
+  /* End Point to delete Currency master Record by id
+      DELETE- /api/currencymaster/:currency_id API endpoint
+          masterController.delCurrencyMaster - Controller function to delete currencymaster record by id
+    */
+  app.delete(
+    "/api/currencymaster/:currency_id",
+    [authJwt.verifyToken],
+    masterController.delCurrencyMaster
+  );
+  /* End Point to delete State master Record by id
+      DELETE- "/api/statemaster/:id",state_id API endpoint
+         masterController.delStateMaster - Controller function to delete State master record by id
+    */
+  app.delete(
+    "/api/statemaster/:state_id",
+    [authJwt.verifyToken],
+    masterController.delStateMaster
+  );
 };

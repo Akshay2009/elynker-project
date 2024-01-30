@@ -96,3 +96,24 @@ module.exports.updateSociallinksById = async function (req, res) {
     }
   };
   
+  /**
+ * Controller function to Delete social links by id .
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.delSociallinksById = async function (req, res) {
+  try {
+    const { social_id } = req.params;
+    const delSocialLink = await Sociallinks.destroy({
+      where: { id: social_id },
+    });
+    if (delSocialLink === 0) {
+      return res.status(404).json({ error: "Social link not found" });
+    }
+    res.status(200).json({ message: "link deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting social link:", error);
+    res.status(500).json({ error: "Failed to delete social link" });
+  }
+};

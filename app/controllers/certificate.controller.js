@@ -107,3 +107,23 @@ module.exports.updateCertificateById = async function (req, res) {
     res.status(500).json({ error: "Failed to update certificate record" });
   }
 };
+
+
+/**
+ * Controller function to Delete certificate details by Id-
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.delCertificate = async function (req, res) {
+  try {
+    const { certificate_id } = req.params;
+    const delCertificate = await Certificate.destroy({ where: { id:certificate_id} });
+    if (delCertificate == 0) {
+      return res.status(404).json({ error: "certificate not found" });
+    }
+    res.json({ message: "certificate deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting certificate:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

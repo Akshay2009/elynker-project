@@ -42,4 +42,16 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     sociallinksController.updateSociallinksById
   );
-};
+
+  /* End Point to Delete a social link Record by ID
+        DELETE - /api/sociallinks/:social_id API endpoint
+        sociallinksController.delSociallinksById - Controller function to delete a social links record by Id*/
+        app.delete(
+          "/api/sociallinks/:social_id",
+          [authJwt.verifyToken],
+          sociallinksController.delSociallinksById
+        );
+      };
+      
+
+

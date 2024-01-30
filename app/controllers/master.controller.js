@@ -3,9 +3,13 @@ const { Op, DataTypes, Sequelize } = require("sequelize");
 const CityMaster = db.cityMaster;
 const CurrencyMaster = db.currencyMaster;
 const StateMaster = db.stateMaster;
-const RegistrationTypesMaster=db.registrationTypesMaster;
+const RegistrationTypesMaster = db.registrationTypesMaster;
 
-//city master controller saving data in database---
+/**
+ * Controller function to save City Master details---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 
 module.exports.saveCityMaster = async function (req, res) {
   try {
@@ -13,13 +17,18 @@ module.exports.saveCityMaster = async function (req, res) {
     const cityRecord = await CityMaster.create({
       name: name,
     });
-    res.status(200).json(cityRecord);
+    res.status(200).json({message:"City Record saved Succesfully",cityRecord});
   } catch (err) {
     console.error("Error saving city master:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-//city master controller getting all data from database---
+
+/**
+ * Controller function to get all City Master details--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 
 module.exports.getAllCityMasters = async function (req, res) {
   try {
@@ -51,7 +60,11 @@ module.exports.getCityMasters = async function (req, res) {
   }
 };
 
-//update city master--
+/**
+ * Controller function to update City Master details by Id--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 
 module.exports.updateCityMasterById = async function (req, res) {
   try {
@@ -76,7 +89,31 @@ module.exports.updateCityMasterById = async function (req, res) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-//getting currency master details--
+
+/**
+ * Controller function to Delete City Master details by Id--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.delCityMaster = async function (req, res) {
+  try {
+    const { city_id } = req.params;
+    const delCity = await CityMaster.destroy({ where: { id: city_id } });
+    if (delCity == 0) {
+      return res.status(404).json({ error: "city not found" });
+    }
+    res.json({ message: "City deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting city:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+/**
+ * Controller function to get currency Master details--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 
 module.exports.getAllcurrencyMaster = async function (req, res) {
   try {
@@ -88,7 +125,11 @@ module.exports.getAllcurrencyMaster = async function (req, res) {
   }
 };
 
-//saving currency Master details--
+/**
+ * Controller function to save currency Master details--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 
 module.exports.createCurrencyMaster = async function (req, res) {
   try {
@@ -109,7 +150,11 @@ module.exports.createCurrencyMaster = async function (req, res) {
   }
 };
 
-//updating currency master details--
+/**
+ * Controller function to update currency Master details by Id--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 module.exports.updateCurrencyMasterById = async function (req, res) {
   try {
     const { id } = req.params;
@@ -134,7 +179,11 @@ module.exports.updateCurrencyMasterById = async function (req, res) {
   }
 };
 
-//state master saving ----
+/**
+ * Controller function to save State Master details--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 
 module.exports.createStateMaster = async function (req, res) {
   try {
@@ -152,7 +201,11 @@ module.exports.createStateMaster = async function (req, res) {
   }
 };
 
-//getting state master details-
+/**
+ * Controller function to get all State Master details--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 module.exports.getAllStateMaster = async function (req, res) {
   try {
     const getStateRecords = await StateMaster.findAll();
@@ -162,7 +215,11 @@ module.exports.getAllStateMaster = async function (req, res) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-//updating state masters by id--
+/**
+ * Controller function to update State Master by Id--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 
 module.exports.updateStateMaster = async function (req, res) {
   try {
@@ -176,16 +233,20 @@ module.exports.updateStateMaster = async function (req, res) {
       name,
     });
     res.status(200).json({
-      message:"State record updated successfully",
-      updated_State_Record:existingStateRecord,
+      message: "State record updated successfully",
+      updated_State_Record: existingStateRecord,
     });
   } catch (error) {
     console.error("Error updating state details:", error);
-    res.status(500).json({ error:"Failed to update state record" });
+    res.status(500).json({ error: "Failed to update state record" });
   }
-}
+};
 
-  //saving registration type master details--
+/**
+ * Controller function to save Registration Type Master--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 module.exports.saveRegistrationTypeMaster = async function (req, res) {
   try {
     await RegistrationTypesMaster.create({
@@ -213,5 +274,43 @@ module.exports.saveRegistrationTypeMaster = async function (req, res) {
       .json({ error: "Failed to create registration type records" });
   }
 };
-
-
+/**
+ * Controller function to Delete City Master details by Id--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.delCurrencyMaster = async function (req, res) {
+  try {
+    const { currency_id } = req.params;
+    const delCurrency = await CurrencyMaster.destroy({
+      where: { id: currency_id },
+    });
+    if (delCurrency == 0) {
+      return res.status(404).json({ error: "currency not found" });
+    }
+    res.json({ message: "Currency deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting Currency:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+/**
+ * Controller function to Delete STATE Master details by Id--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.delStateMaster = async function (req, res) {
+  try {
+    const { state_id } = req.params;
+    const delState = await StateMaster.destroy({
+      where: { id: state_id },
+    });
+    if (delState == 0) {
+      return res.status(404).json({ error: "State not found" });
+    }
+    res.json({ message: "State deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting State:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
