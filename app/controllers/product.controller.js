@@ -69,8 +69,25 @@ module.exports.createProduct = async function (req, res) {
     try {
         const { type, registrationId,category_id } = req.body;
         // Split comma-separated category IDs into an array
-        const categoryIdsArray = category_id.split(',');
+        let categoryIdsArray = category_id.split(',');
         let categoryIds;
+        let catIdArr =[];
+        for(let i=0;i<categoryIdsArray.length;i++){
+            const category = await Category.findOne({
+                where: {
+                  id: categoryIdsArray[i],
+                },
+            });
+            if(category){
+                catIdArr.push(category.id);
+            }
+        }
+        
+        console.log('****',catIdArr);
+        if(catIdArr.length==0){
+            return res.status(200).json({error: 'No category with this id'});
+        }
+        categoryIdsArray = catIdArr;
         //const imageFileNames = req.files['images'].map((file) => path.basename(file.path));
         
         if (req.files && req.files['csvFilePath'][0].path) {
@@ -82,9 +99,20 @@ module.exports.createProduct = async function (req, res) {
                 let catIdArray;
                 // Split comma-separated category IDs into an array
                 const rowCategoryIdsArray = row.category_id?row.category_id.split(','):[];
-                if(rowCategoryIdsArray.length >0){
-                    catIdArray = rowCategoryIdsArray;
-                    categoryIds = rowCategoryIdsArray.join(',');
+                let rowCatIdArr = [];
+                for(let i=0;i<rowCategoryIdsArray.length;i++){
+                    const category = await Category.findOne({
+                        where: {
+                          id: rowCategoryIdsArray[i],
+                        },
+                    });
+                    if(category){
+                        rowCatIdArr.push(category.id);
+                    }
+                }
+                if(rowCatIdArr.length >0){
+                    catIdArray = rowCatIdArr;
+                    categoryIds = rowCatIdArr.join(',');
                 }else{
                     catIdArray = categoryIdsArray;
                     categoryIds = categoryIdsArray.join(',');
@@ -172,18 +200,37 @@ module.exports.createProductsImages = async function(req,res){
 module.exports.createProductsSingleRecord = async function(req,res){
     try{
         const { type, registrationId,title,description,budget,moq,category_id } = req.body;
+        if(!category_id){
+            return res.status(401).json({error: 'No category Provided'});
+        }
         const imageFileNames = req.files['images'].map((file) => path.basename(file.path));
         const sku = generateUniqueSKU();
         const productImagesString = imageFileNames.join(',');
         // Split comma-separated category IDs into an array
         const categoryIdsArray = category_id.split(',');
+        let catIdArr =[];
+        for(let i=0;i<categoryIdsArray.length;i++){
+            const category = await Category.findOne({
+                where: {
+                  id: categoryIdsArray[i],
+                },
+            });
+            if(category){
+                catIdArr.push(category.id);
+            }
+        }
+        
+        console.log('****',catIdArr);
+        if(catIdArr.length==0){
+            return res.status(401).json({error: 'No category with this category_id'});
+        }
         const product = await Product.create({
             title: title,
             description: description,
             sku: sku,
             type: type,
             registrationId,
-            category_id: categoryIdsArray.join(','),
+            category_id: catIdArr.join(','),
             budget:budget,
             moq:moq,
             default_image: imageFileNames[0],
@@ -191,9 +238,10 @@ module.exports.createProductsSingleRecord = async function(req,res){
         });
         const categories = await Category.findAll({
             where: {
-              id: categoryIdsArray,
+              id: catIdArr,
             },
         });
+        
       
         // Associate the product with categories
         await product.addCategories(categories);
@@ -224,8 +272,27 @@ module.exports.updateProducts = async function(req,res){
     try{
         const sku = req.params.sku;
         const { title,description,budget,moq,category_id } = req.body;
+        if(!category_id){
+            return res.status(401).json({error: 'No category Provided'});
+        }
         // Split comma-separated category IDs into an array
         const categoryIdsArray = category_id.split(',');
+        let catIdArr =[];
+        for(let i=0;i<categoryIdsArray.length;i++){
+            const category = await Category.findOne({
+                where: {
+                  id: categoryIdsArray[i],
+                },
+            });
+            if(category){
+                catIdArr.push(category.id);
+            }
+        }
+        
+        console.log('****',catIdArr);
+        if(catIdArr.length==0){
+            return res.status(401).json({error: 'No category with this id'});
+        }
         let productImagesString;
         let imageFileNames;
         if(req.files['images']){ // if images are uploaded then then update product_images and default_image field
@@ -236,7 +303,7 @@ module.exports.updateProducts = async function(req,res){
                 description,
                 budget,
                 moq,
-                category_id: categoryIdsArray.join(','),
+                category_id: catIdArr.join(','),
                 default_image: imageFileNames[0],
                 product_images: productImagesString
             }, {
@@ -247,7 +314,7 @@ module.exports.updateProducts = async function(req,res){
             });
             const categories = await Category.findAll({
                 where: {
-                    id: categoryIdsArray,
+                    id: catIdArr,
                 },
             });
 
@@ -264,7 +331,7 @@ module.exports.updateProducts = async function(req,res){
                 description,
                 budget,
                 moq,
-                category_id: categoryIdsArray.join(','),
+                category_id: catIdArr.join(','),
             }, {
                 where: {
                     sku: sku
@@ -273,7 +340,7 @@ module.exports.updateProducts = async function(req,res){
             });
             const categories = await Category.findAll({
                 where: {
-                    id: categoryIdsArray,
+                    id: catIdArr,
                 },
             });
 
