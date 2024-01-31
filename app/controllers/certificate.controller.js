@@ -14,6 +14,9 @@ module.exports.createCertificate = async function (req, res) {
       modified_by,
       registrationId,
     } = req.body;
+    if(!registrationId){
+      return res.status(404).json({ërror:"Registration id not found kindly provide correct registration id"})
+    }
     const newCertificate = await Certificate.create({
       email,
       name,
@@ -23,7 +26,7 @@ module.exports.createCertificate = async function (req, res) {
       modified_by,
       registrationId,
     });
-    res.status(201).json({
+    res.status(200).json({
       message: "Certificate created successfully",
       newCertificate,
     });
@@ -54,7 +57,7 @@ module.exports.getCertificate = async function (req, res) {
 module.exports.getCertificateById = async function (req, res) {
   try {
     const { reg_id } = req.params;
-    const CertificateDetails = await Certificate.findOne({
+    const CertificateDetails = await Certificate.findAll({
       where: { registrationId: reg_id },
     });
 
@@ -83,6 +86,9 @@ module.exports.updateCertificateById = async function (req, res) {
       modified_by,
       registrationId,
     } = req.body;
+    if(!registrationId){
+      return res.status(404).json({error:"Registration id not found kindly provide correct registration id"})
+    }
     const existingCertificateRecord = await Certificate.findByPk(
       certificate_id
     );
@@ -121,7 +127,7 @@ module.exports.delCertificate = async function (req, res) {
     if (delCertificate == 0) {
       return res.status(404).json({ error: "certificate not found" });
     }
-    res.json({ message: "certificate deleted successfully" });
+    res.status(200).json({ message: "certificate deleted successfully" });
   } catch (error) {
     console.error("Error deleting certificate:", error);
     res.status(500).json({ error: "Internal Server Error" });

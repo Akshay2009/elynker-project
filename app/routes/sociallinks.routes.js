@@ -12,7 +12,6 @@ module.exports = function (app) {
     sociallinksController.createSociallinks
   );
 
-  
   /* End Point to  get social link Record
         POST - /api/sociallinks/ API endpoint
         sociallinksController.getSociallinks - Controller function to get social links record*/
@@ -33,8 +32,7 @@ module.exports = function (app) {
     sociallinksController.getSociallinksById
   );
 
-
-  /* End Point to update a social link Record
+  /* End Point to update a social link Record 
         POST - /api/sociallinks/:social_id API endpoint
         sociallinksController.updateSociallinksById - Controller function to update social links record*/
   app.put(
@@ -46,12 +44,9 @@ module.exports = function (app) {
   /* End Point to Delete a social link Record by ID
         DELETE - /api/sociallinks/:social_id API endpoint
         sociallinksController.delSociallinksById - Controller function to delete a social links record by Id*/
-        app.delete(
-          "/api/sociallinks/:social_id",
-          [authJwt.verifyToken],
-          sociallinksController.delSociallinksById
-        );
-      };
-      
-
-
+  app.delete(
+    "/api/sociallinks/:social_id",
+    [authJwt.verifyToken],
+    sociallinksController.delSociallinksById
+  );
+};
