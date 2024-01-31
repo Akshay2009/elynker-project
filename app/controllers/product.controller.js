@@ -312,3 +312,32 @@ module.exports.getProductByRegistrationId = async function (req, res) {
         res.status(500).json({ message: 'Internal server error ' + error.message });
     }
 }
+
+module.exports.deleteProductBySku = async function(req,res){
+    try{
+        const sku = req.params.sku;
+        const productToDelete = await Product.findOne({
+            where:{
+                sku:sku
+            }
+        });
+        if(!productToDelete){
+            return res.status(404).json({error : 'No Product found'});
+        }
+        const deletedProduct = await Product.destroy({
+            where: {
+                sku:sku
+            },
+            returning: true,
+            raw: true,
+        });
+        if(deletedProduct){
+            return res.status(200).json({message:'Product Deleted Successfully',product: productToDelete });
+        }else{
+            return res.status(401).json({ error : 'No Product Deleted'});
+        }
+        
+    }catch(err){
+        res.status(500).json({error: 'Internal Server Error '+err.message});
+    }
+}

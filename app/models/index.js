@@ -66,10 +66,12 @@ db.sociallinks.belongsTo(db.registration);
 
 //associate Product and Category as m:m
 db.product.belongsToMany(db.category, {
-  through: "product_category"
+  through: "product_category",
+  onDelete: 'CASCADE',
 });
 db.category.belongsToMany(db.product, {
-  through: "product_category"
+  through: "product_category",
+  onDelete: 'CASCADE',
 });
 
 
