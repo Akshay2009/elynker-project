@@ -7,6 +7,12 @@ module.exports.createSociallinks = async function (req, res) {
   try {
     const { social_name, social_url, created_by, modified_by, registrationId } =
       req.body;
+    if (!registrationId || registrationId === "") {
+      return res.status(404).json({
+        message: "registration id not found,kindly provide correct registration id",
+      });
+    }
+
     const newSociallinks = await Sociallinks.create({
       social_name,
       social_url,
@@ -64,39 +70,35 @@ module.exports.getSociallinksById = async function (req, res) {
 //update social links by id--
 
 module.exports.updateSociallinksById = async function (req, res) {
-    try {
-      const { social_id } = req.params;
-      const {
-        social_name,
-        social_url,
-        created_by,
-        modified_by,
-        registrationId,
-      } = req.body;
-      const existingSociallinks = await Sociallinks.findByPk(
-        social_id
-      );
-      if (!existingSociallinks) {
-        return res.status(404).json({ error: "Social Links not found" });
+  try {
+    const { social_id } = req.params;
+    const { social_name, social_url, created_by, modified_by, registrationId } =
+      req.body;
+      if (!registrationId || registrationId===""){
+        return res.status(404).json({error:"registration is not found"})
       }
-      await existingSociallinks.update({
-        social_name,
-        social_url,
-        created_by,
-        modified_by,
-        registrationId,
-      });
-      res.status(200).json({
-        message: "Social links record updated successfully",
-        updatedSociallinksRecord:existingSociallinks.toJSON(),
-      });
-    } catch (error) {
-      console.error("Error updating social links details:", error);
-      res.status(500).json({ error: "Failed to update social links record" });
+    const existingSociallinks = await Sociallinks.findByPk(social_id);
+    if (!existingSociallinks) {
+      return res.status(404).json({ error: "Social Links not found" });
     }
-  };
-  
-  /**
+    await existingSociallinks.update({
+      social_name,
+      social_url,
+      created_by,
+      modified_by,
+      registrationId,
+    });
+    res.status(200).json({
+      message: "Social links record updated successfully",
+      updatedSociallinksRecord: existingSociallinks.toJSON(),
+    });
+  } catch (error) {
+    console.error("Error updating social links details:", error);
+    res.status(500).json({ error: "Failed to update social links record" });
+  }
+};
+
+/**
  * Controller function to Delete social links by id .
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
