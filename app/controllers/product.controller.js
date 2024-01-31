@@ -8,11 +8,8 @@ const parseCSV = require('./csvParser');
 /**
  method to generate unique SKU in form SKU_****
  */
-function generateUniqueSKU() {
-    const randomNumber = Math.floor(Math.random() * 10000000000); // 10-digit random number
-    const timestamp = Date.now().toString();
-    const uniqueSKU = 'SKU_' + timestamp + randomNumber.toString().padStart(6, '0');
-    return uniqueSKU;
+ function generateUniqueSKU() {
+    return 'SKU_' + Date.now().toString() + Math.floor(Math.random() * 1000);
 }
 
 
@@ -174,27 +171,50 @@ module.exports.createProductsImages = async function (req, res) {
 module.exports.createProductsSingleRecord = async function (req, res) {
     try {
         const { type, registrationId, title, description, budget, moq, category_id } = req.body;
+        if(!req.files['images']){
+            return res.status(405).json({error: 'Please Provide Product Images'});
+        }
+        if(!registrationId){
+            return res.status(403).json({error: 'Registration ID Not provided'});
+        }
+        if (!category_id) {
+            return res.status(402).json({ error: 'No category Provided' });
+        }
+        const regRecord = await Registration.findOne({
+            where: { id: registrationId}
+        });
+        if(!regRecord){
+            return res.status(404).json({error: 'Registration Doesnot Exist'});
+        }
         const imageFileNames = req.files['images'].map((file) => path.basename(file.path));
         const sku = generateUniqueSKU();
         const productImagesString = imageFileNames.join(',');
         // Split comma-separated category IDs into an array
         const categoryIdsArray = category_id.split(',');
+        const categories = await Category.findAll({
+            where: {
+                id: categoryIdsArray,
+            },
+        });
+        if (categories.length == 0) {
+            return res.status(401).json({ error: 'No category with this id' });
+        }
+
+        let catArray = [];
+        categories.forEach((cat) => {
+            catArray.push(cat.id)
+        });
         const product = await Product.create({
             title: title,
             description: description,
             sku: sku,
             type: type,
             registrationId,
-            category_id: categoryIdsArray.join(','),
+            category_id: catArray.join(','),
             budget: budget,
             moq: moq,
             default_image: imageFileNames[0],
             product_images: productImagesString
-        });
-        const categories = await Category.findAll({
-            where: {
-                id: categoryIdsArray,
-            },
         });
 
         // Associate the product with categories
@@ -225,9 +245,18 @@ module.exports.createProductsSingleRecord = async function (req, res) {
 module.exports.updateProducts = async function (req, res) {
     try {
         const sku = req.params.sku;
-        const { title, description, budget, moq, category_id } = req.body;
+        const { title, description, budget, moq, category_id,registrationId } = req.body;
+        if(!registrationId){
+            return res.status(404).json({error: 'Registration ID Not provided'});
+        }
         if (!category_id) {
             return res.status(401).json({ error: 'No category Provided' });
+        }
+        const regRecord = await Registration.findOne({
+            where: { id: registrationId}
+        });
+        if(!regRecord){
+            return res.status(404).json({error: 'Registration Doesnot Exist'});
         }
         // Split comma-separated category IDs into an array
         const categoryIdsArray = category_id.split(',');
@@ -253,7 +282,8 @@ module.exports.updateProducts = async function (req, res) {
             description,
             budget,
             moq,
-            category_id: catArray.join(',')
+            category_id: catArray.join(','),
+            registrationId: registrationId
         }
 
         if (req.files['images']) { // if images are uploaded then then update product_images and default_image field
