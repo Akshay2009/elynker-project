@@ -6,7 +6,7 @@ const productRoutes = require("../routes/product.routes");
 const masterRoutes = require("../routes/master.routes");
 const categoryRoutes = require('../routes/category.routes');
 const certificateRoutes = require('../routes/certificate.routes');
-
+const sociallinksRoutes = require('../routes/sociallinks.routes');
 module.exports = function initializeRoutes(app) {
   authRoutes(app);
   userRoutes(app);
@@ -15,4 +15,5 @@ module.exports = function initializeRoutes(app) {
   masterRoutes(app);
   categoryRoutes(app);
   certificateRoutes(app);
+  sociallinksRoutes(app);
 };

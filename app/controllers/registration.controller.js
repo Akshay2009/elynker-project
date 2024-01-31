@@ -44,58 +44,74 @@ module.exports.saveBusinessDetail = async function (req, res) {
       return
     }
 
-    for (let i = 0; i < arr.length; i++) {
-      let {
-        company_name,
-        document,
-        upload_date,
-        is_active,
-        document_name,
-        document_number,
-        file_location,
-        file_name,
-        id,
-      } = arr[i];
-      (registration_company_name = company_name), (id = id ? id : null);
-      const [record, created] = await BusinessDetail.findOrCreate({
-        where: { id },
-        defaults: {
-          company_name,
-          document,
-          upload_date,
-          is_active,
-          document_name,
-          document_number,
-          file_location,
-          file_name,
-          registrationId: reg_Id,
-        },
-      });
-      if (!created) {
-        await BusinessDetail.update(
-          {
-            company_name: company_name,
-            document: document,
-            upload_date: upload_date,
-            is_active: is_active,
-            document_name: document_name,
-            document_number: document_number,
-            file_location: file_location,
-            file_name: file_name,
-          },
-          {
-            where: {
-              id: id,
-            },
-          }
-        );
+    console.log("request array",arr)
+    const updatedArr = arr.map((item) => {
+      return {
+        ...item,
+        registrationId: reg_Id  // Add registrationId 
+      };
+    });
+    const result = await BusinessDetail.bulkCreate(
+      updatedArr,
+      {
+        updateOnDuplicate: ["company_name","document","is_active","document_name","document_number","file_location","file_name"],
       }
-    }
-    const [numberOfUpdatedRows, updatedRecords] = await Registration.update(
-      { company_name: registration_company_name },
-      { where: { id: reg_Id } }
     );
-    res.status(200).json({ success: "BusinessDetails Successfully inserted" });
+
+    //console.log(result)
+
+    // for (let i = 0; i < arr.length; i++) {
+    //   let {
+    //     company_name,
+    //     document,
+    //     upload_date,
+    //     is_active,
+    //     document_name,
+    //     document_number,
+    //     file_location,
+    //     file_name,
+    //     id,
+    //   } = arr[i];
+    //   (registration_company_name = company_name), (id = id ? id : null);
+    //   const [record, created] = await BusinessDetail.findOrCreate({
+    //     where: { id },
+    //     defaults: {
+    //       company_name,
+    //       document,
+    //       upload_date,
+    //       is_active,
+    //       document_name,
+    //       document_number,
+    //       file_location,
+    //       file_name,
+    //       registrationId: reg_Id,
+    //     },
+    //   });
+    //   if (!created) {
+    //     await BusinessDetail.update(
+    //       {
+    //         company_name: company_name,
+    //         document: document,
+    //         upload_date: upload_date,
+    //         is_active: is_active,
+    //         document_name: document_name,
+    //         document_number: document_number,
+    //         file_location: file_location,
+    //         file_name: file_name,
+    //       },
+    //       {
+    //         where: {
+    //           id: id,
+    //         },
+    //       }
+    //     );
+    //   }
+    // }
+    // const [numberOfUpdatedRows, updatedRecords] = await Registration.update(
+    //   { company_name: registration_company_name },
+    //   { where: { id: reg_Id } }
+    // );
+    res.status(200).json({ success: "BusinessDetails Successfully inserted","data":result });
   } catch (err) {
     console.error(err); // Log the error for debugging
     res

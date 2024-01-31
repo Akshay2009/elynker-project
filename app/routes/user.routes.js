@@ -28,4 +28,12 @@ module.exports = function(app) {
     [authJwt.verifyToken],
     controller.getUserById
   )
+   /**
+ * delete user details by user ID from the database.
+ *
+ */
+   app.delete('/api/users/:id',
+   [authJwt.verifyToken],
+   controller.delUserById
+ )
 };
