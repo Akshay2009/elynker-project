@@ -12,20 +12,39 @@ const BusinessDetail = db.businessDetail;
  * @param {Object} res - Express response object.
  */
 module.exports.updateCompanyLogo = async function (req, res) {
-    try {
-      let registration = await Registration.findByPk(req.params.id);
-      if (req.file) {
-        if (registration.image_path) {
-          fs.unlinkSync(path.join(__dirname, "..", registration.image_path));
-        }
-        registration.image_path = COMPANY_LOGO_PATH + "/" + req.file.filename;
-      }
-      await registration.save();
-      res.status(200).json({registration : registration });
-    } catch (err) {
-      res.status(500).json({ error: "error in updating company logo" });
+  try {
+    let registration = await Registration.findByPk(req.params.id);
+    const companyLogo = req.files['images'];
+
+    if (companyLogo && companyLogo.length > 0) { 
+      registration.image_path = companyLogo[0].filename;
     }
+    await registration.save();
+    res.status(200).json({success:'Company Logo Updated Successfully',registration : registration });
+  } catch (err) {
+    res.status(500).json({ error: "error in updating  Company Logo" });
+  }
 };
+
+/**
+ * Controller function to update cover Image .
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.updateCoverImage = async function(req,res){
+  try {
+    let registration = await Registration.findByPk(req.params.registrationId);
+    const coverImages = req.files['images'];
+
+    if (coverImages && coverImages.length > 0) { 
+      registration.cover_image = coverImages[0].filename;
+    }
+    await registration.save();
+    res.status(200).json({success:'Cover Image Updated Successfully',registration : registration });
+  } catch (err) {
+    res.status(500).json({ error: "error in updating  cover Image" });
+  }
+}
 
 module.exports.saveBusinessDetail = async function (req, res) {
   try {

@@ -153,6 +153,9 @@ module.exports = (sequelize, Sequelize) => {
     currency_id: {
       type: Sequelize.INTEGER
     },
+    cover_image: {
+      type: Sequelize.STRING
+    },
     created_by: {
       type: Sequelize.NUMERIC
     },
