@@ -151,7 +151,7 @@ module.exports = function (app) {
     )
 
     app.delete('/api/products/:sku',
-        //[authJwt.verifyToken],
+        [authJwt.verifyToken],
         productController.deleteProductBySku
     );
 
