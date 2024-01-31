@@ -17,6 +17,7 @@ var bcrypt = require("bcryptjs");
  */
 
 exports.signup = async (req, res) => {
+  console.log(req.body)
   try {
     const user = await User.create({
       name: req.body.name,
@@ -34,6 +35,7 @@ exports.signup = async (req, res) => {
         registration_type: req.body.registration_type || 1,
         userId: user.id
       });
+      
       if (req.body.roles) {
         const roles = await Role.findAll({
           where: {
@@ -47,7 +49,28 @@ exports.signup = async (req, res) => {
       else {
         await user.setRoles([1]);
       }
-      res.send({ message: user , registration : registration});
+
+      const token = jwt.sign({ id: user.id },
+        config.secret,
+        {
+          algorithm: 'HS256',
+          allowInsecureKeySizes: true,
+          expiresIn: 86400, // 24 hours
+        });
+
+        var authorities = [];
+        user.getRoles().then(roles => {
+          for (let i = 0; i < roles.length; i++) {
+            authorities.push("ROLE_" + roles[i].name.toUpperCase());
+          }
+          res.status(200).send({
+            user: user,
+            roles: authorities,
+            accessToken: token,
+            registration: registration
+          });
+        });
+
     } else {
       res.status(500).send({ message: 'Error in creating user' });
     }
@@ -57,7 +80,7 @@ exports.signup = async (req, res) => {
 }
 
 /**
- * Controller function for get business details and signin.
+ * Controller function for get business details and sign-in.
  * 
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
@@ -93,13 +116,10 @@ exports.signin = async (req, res) => {
           authorities.push("ROLE_" + roles[i].name.toUpperCase());
         }
         res.status(200).send({
-          id: user.id,
-          name: user.name,
-          mobile_number: user.mobile_number,
-          email: user.email,
+          user: user,
           roles: authorities,
           accessToken: token,
-          registration: [result]
+          registration: result
         });
       });
     })

@@ -29,7 +29,7 @@ module.exports = function (app) {
    * @param {Function} registrationController.updateCompanyLogo - Controller function to handle the update.
    */
   app.put(
-    "/api/update/company/:id",
+    "/api/update/companyLogo/:id",
     [authJwt.verifyToken, multer({ storage }).single("company_logo")],
     registrationController.updateCompanyLogo
   );
@@ -46,7 +46,7 @@ module.exports = function (app) {
    */
   app.get(
     "/api/business/:reg_id",
-    [authJwt.verifyToken],
+     [authJwt.verifyToken],
     registrationController.getBusinessDetail
   );
 
@@ -61,22 +61,21 @@ module.exports = function (app) {
    */
   app.post(
     "/api/business/:reg_id",
-    [authJwt.verifyToken],
+     [authJwt.verifyToken],
     registrationController.saveBusinessDetail
   );
-
+  //post registration details--
   /**
-   * Endpoint to update business details by business ID.
+   * Endpoint to update Registration Record.
    * Requires authentication.
    *
-   * @param {String} "/api/business/:id" - API endpoint path.
+   * @param {String} "/api/registration/:reg_id" - API endpoint path.
    * @param {Function[]} [authJwt.verifyToken] - Middleware functions.
-   * @param {Function} registrationController.updateBusinessDetail - Controller function to update business details.
+   * @param {Function} registrationController.putRegDetail - Controller function to save Registration Record.
    */
   app.put(
-    "/api/business/:id",
+    "/api/registration/:reg_id",
     [authJwt.verifyToken],
-    registrationController.updateBusinessDetail
+    registrationController.putRegDetail
   );
-
 };
