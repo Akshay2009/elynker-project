@@ -36,7 +36,7 @@ module.exports = function (app) {
 
   app.get(
     "/api/citymaster/",
-    [authJwt.verifyToken],
+  //  [authJwt.verifyToken],
     masterController.getAllCityMasters
   );
 
@@ -47,7 +47,7 @@ module.exports = function (app) {
 
   app.get(
     "/api/citymaster/:id",
-    [authJwt.verifyToken],
+ //   [authJwt.verifyToken],
     masterController.getCityMasters
   );
   /* End Point to UPDATE citymaster Record BYid
@@ -65,7 +65,7 @@ module.exports = function (app) {
     */
   app.get(
     "/api/currencymaster/",
-    [authJwt.verifyToken],
+  //  [authJwt.verifyToken],
     masterController.getAllcurrencyMaster
   );
 
@@ -84,7 +84,7 @@ module.exports = function (app) {
     */
   app.get(
     "/api/currencymaster/:id",
-    [authJwt.verifyToken],
+  //  [authJwt.verifyToken],
     masterController.getcurrencyMasterById
   );
 
@@ -115,7 +115,7 @@ module.exports = function (app) {
     */
   app.get(
     "/api/statemaster/",
-    [authJwt.verifyToken],
+  //  [authJwt.verifyToken],
     masterController.getAllStateMaster
   );
 
