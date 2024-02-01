@@ -12,7 +12,7 @@ module.exports = function (app) {
     sociallinksController.createSociallinks
   );
 
-  /* End Point to  create a social link Record
+  /* End Point to  create a social link Record in Bulk
         POST - /api/sociallinks/ API endpoint
         sociallinksController.createSociallinks - Controller function to Create a social links record*/
 
@@ -69,7 +69,7 @@ module.exports = function (app) {
     sociallinksController.delSociallinksById
   );
 
-  /* End Point to Delete a social link Record by ID
+  /* End Point to Delete all social link Record by registration ID
         DELETE - /api/sociallinks/:social_id API endpoint
         sociallinksController.delSociallinksById - Controller function to delete a social links record by Id*/
   app.delete(
