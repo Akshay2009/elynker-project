@@ -122,6 +122,26 @@ module.exports.getAllcurrencyMaster = async function (req, res) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+/**
+ * Controller function to Get currency Master details by ID--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.getcurrencyMasterById = async function (req, res) {
+  try {
+    const id = req.params.id;
+    const currency = await CurrencyMaster.findByPk(id);
+    if(currency){
+      res.status(200).json(currency);
+    }else{
+      res.status(404).json({error: 'No Currency Found'});
+    }
+    
+  } catch (err) {
+    console.error("Error fetching city masters:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 /**
  * Controller function to save currency Master details--

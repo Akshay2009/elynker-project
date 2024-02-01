@@ -78,6 +78,15 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     masterController.createCurrencyMaster
   );
+  /* End Point to GET Currency master Record by id
+       GET- /api/currencymaster/:id API endpoint
+         masterController.getcurrencyMasterById - Controller function to Get currencymaster record by Id
+    */
+  app.get(
+    "/api/currencymaster/:id",
+    [authJwt.verifyToken],
+    masterController.getcurrencyMasterById
+  );
 
   /* End Point to UPDATE Currency master Record By Id
        PUT- /api/currencymaster/:id API endpoint
