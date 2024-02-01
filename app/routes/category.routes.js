@@ -55,8 +55,8 @@ module.exports = function (app) {
         GET - /api/categories API endpoint
         categoryController.getAllCategory - Controller function to get All Categories
     */
-    app.get('/api/categories', 
-        [authJwt.verifyToken], 
+    app.get('/api/categories',
+        [authJwt.verifyToken],
         categoryController.getAllCategory
     );
 
@@ -65,7 +65,7 @@ module.exports = function (app) {
         categoryController.createCategory - Controller function to Create a categories record
     */
     app.post('/api/categories',
-        [authJwt.verifyToken], 
+        [authJwt.verifyToken],
         categoryController.createCategory
     );
 
@@ -73,18 +73,18 @@ module.exports = function (app) {
         POST - /api/categories/:categoryId API endpoint
         categoryController.getCategoryById - Controller function to get a categories record with categoryId
     */
-    app.get('/api/categories/:categoryId', 
-        [authJwt.verifyToken], 
+    app.get('/api/categories/:categoryId',
+        [authJwt.verifyToken],
         categoryController.getCategoryById
     );
-    
-    
+
+
     /* End Point to  update a categories Record by categoryId : id
         PUT - /api/categories/:categoryId API endpoint
         categoryController.updateCategory - Controller function to update a categories record with categoryId
     */
     app.put('/api/categories/:categoryId',
-        [authJwt.verifyToken], 
+        [authJwt.verifyToken],
         categoryController.updateCategory
     );
 
@@ -96,7 +96,8 @@ module.exports = function (app) {
             {
                 "title":"tmt bars",
                 "description":"tmt",
-                "category_type":"business"
+                "category_type":"business",
+                "id":   //if this is send then it will update this sub category
             },
             {
                 "title":"steel plates",
@@ -112,19 +113,19 @@ module.exports = function (app) {
         -------------------------------------------
        categoryController.createMultipleCategory - Controller function to get All Categories
    */
-       app.post('/api/categories/multiple/:parent_id',
-       [authJwt.verifyToken], 
-       categoryController.createMultipleCategory
-   );
+    app.post('/api/categories/multiple/:parent_id',
+        [authJwt.verifyToken],
+        categoryController.createMultipleCategory
+    );
 
 
-   /* End Point to  get  all categories Record having parent_id as parent_id passed in params
-       POST - /api/categories/subcategories/:parent_id API endpoint
-       categoryController.getSubcategories - Controller function to get a categories record with parent_id
-   */
-   app.get('/api/categories/subcategories/:parent_id',
-       [authJwt.verifyToken], 
-       categoryController.getSubcategories
-   );
-    
+    /* End Point to  get  all categories Record having parent_id as parent_id passed in params
+        POST - /api/categories/subcategories/:parent_id API endpoint
+        categoryController.getSubcategories - Controller function to get a categories record with parent_id
+    */
+    app.get('/api/categories/subcategories/:parent_id',
+        [authJwt.verifyToken],
+        categoryController.getSubcategories
+    );
+
 };

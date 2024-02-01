@@ -17,7 +17,7 @@ module.exports.getAllCategory = async function (req, res) {
             return res.status(404).json({ error: 'No Category Returned' });
         }
     } catch (err) {
-        return res.status(500).json({ error: 'Internal Server Error '+err.message });
+        return res.status(500).json({ error: 'Internal Server Error ' + err.message });
     }
 }
 
@@ -29,26 +29,26 @@ module.exports.getAllCategory = async function (req, res) {
 module.exports.createCategory = async function (req, res) {
     try {
 
-        const { title, description, parent_id,category_type} = req.body;
+        const { title, description, parent_id, category_type } = req.body;
         // const imagePaths = req.files['image_path'].map((file) => file.path);
         // const bannerImagePath = req.files['banner_image'][0].path;
         if (parent_id) {
-            const record = await Category.findOne({ where: { id : parent_id}});
-            if(record){
+            const record = await Category.findOne({ where: { id: parent_id } });
+            if (record) {
                 const category = await Category.create({
                     title,
                     description,
-                    parent_id: parent_id ,
+                    parent_id: parent_id,
                     category_type
                 });
-        
-                if(category){
-                    return res.status(202).json(category);
+
+                if (category) {
+                    return res.status(200).json(category);
                 }
-                else{
+                else {
                     return res.status(404).json({ error: 'No Category created' });
                 }
-            }else{
+            } else {
                 return res.status(404).json({ error: 'No Category found exist with this parent_id' });
             }
         }
@@ -92,7 +92,7 @@ module.exports.getCategoryById = async function (req, res) {
             return res.status(404).json({ error: 'No Category Returned' });
         }
     } catch (err) {
-        return res.status(500).json({ error: 'Internal Server Error'+err.message });
+        return res.status(500).json({ error: 'Internal Server Error' + err.message });
     }
 }
 
@@ -107,56 +107,56 @@ module.exports.getCategoryById = async function (req, res) {
 module.exports.updateCategory = async function (req, res) {
     try {
         const categoryId = req.params.categoryId;
-        const { title, description, parent_id,category_type } = req.body;
+        const { title, description, parent_id, category_type } = req.body;
         // const imagePaths = req.files['image_path'].map((file) => file.path);
         // const bannerImagePath = req.files['banner_image'][0].path;
-        if(parent_id){
-            const record = await Category.findOne({ where: { id : parent_id}});
-            if(record){
+        if (parent_id) {
+            const record = await Category.findOne({ where: { id: parent_id } });
+            if (record) {
                 const [rowCount, updatedCategory] = await Category.update({
                     title,
                     description,
-                    parent_id: parent_id ,
+                    parent_id: parent_id,
                     category_type
-                },{
+                }, {
                     where: {
                         id: categoryId
                     },
                     returning: true
                 });
-        
-                if(rowCount>0){
-                    return res.status(202).json(updatedCategory[0]);
+
+                if (rowCount > 0) {
+                    return res.status(200).json(updatedCategory[0]);
                 }
-                else{
+                else {
                     return res.status(404).json({ error: 'No Category found' });
                 }
-            }else{
+            } else {
                 return res.status(404).json({ error: 'No Category found exist with this parent_id' });
             }
         }
-        else{
+        else {
             const [rowCount, updatedCategory] = await Category.update({
                 title,
                 description,
-                parent_id: null ,
+                parent_id: null,
                 category_type
-            },{
+            }, {
                 where: {
                     id: categoryId
                 },
                 returning: true
             });
-            if(rowCount>0){
-                return res.status(202).json(updatedCategory[0]);
+            if (rowCount > 0) {
+                return res.status(200).json(updatedCategory[0]);
             }
-            else{
+            else {
                 return res.status(404).json({ error: 'No Category found' });
             }
         }
 
     } catch (err) {
-        return res.status(500).json({ error:'Internal Server Error '+ err.message });
+        return res.status(500).json({ error: 'Internal Server Error ' + err.message });
     }
 
 }
@@ -172,29 +172,34 @@ module.exports.updateCategory = async function (req, res) {
 module.exports.createMultipleCategory = async function (req, res) {
     try {
         const parent_id = req.params.parent_id;
-        const categories = req.body;
+        const arr = req.body;
+        if (!arr.length) {
+            return res.status(401).json({ success: "Please provide your category data in json array[]!" });
+        }
         if (parent_id) {
-            const record = await Category.findOne({ where: { id : parent_id}});
-            const returnArr=[];
-            if(record){
-                for(const category of categories){
-                    const { title, description,category_type} = category;
-                    const newCategory = await Category.create({
-                        title,
-                        description,
-                        parent_id: parent_id ,
-                        category_type
-                    });
-                    returnArr.push(newCategory);
+            const record = await Category.findOne({ where: { id: parent_id } });
+            const returnArr = [];
+            if (record) {
+                const updatedArr = arr.map((item) => {
+                    return {
+                        ...item,
+                        parent_id: parent_id  // Add parent_id 
+                    };
+                });
+                const result = await Category.bulkCreate(
+                    updatedArr,
+                    {
+                        updateOnDuplicate: ["title", "description", "parent_id", "category_type"],
+                    }
+                );
+                if (result) {
+                    return res.status(200).json({ message: 'Sub Categories Created', data: result });
                 }
-                if(returnArr.length>0){
-                    return res.status(202).json(returnArr);
+                else {
+                    return res.status(404).json({ error: 'No Sub Category created' });
                 }
-                else{
-                    return res.status(404).json({ error: 'No Category created' });
-                }
-            }else{
-                return res.status(404).json({ error: 'No Category found exist with this parent_id' });
+            } else {
+                return res.status(404).json({ error: 'No Parent Category exist with this parent_id' });
             }
         }
     } catch (err) {
@@ -217,12 +222,12 @@ module.exports.getSubcategories = async function (req, res) {
                 parent_id: parent_id
             }
         });
-        if (categories.length>0) {
+        if (categories.length > 0) {
             return res.status(200).json(categories);
         } else {
             return res.status(404).json({ error: 'No Sub Category Returned' });
         }
     } catch (err) {
-        return res.status(500).json({ error: 'Internal Server Error'+err.message });
+        return res.status(500).json({ error: 'Internal Server Error' + err.message });
     }
 }
