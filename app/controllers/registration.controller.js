@@ -20,9 +20,9 @@ module.exports.updateCompanyLogo = async function (req, res) {
       registration.image_path = companyLogo[0].filename;
     }
     await registration.save();
-    res.status(200).json({success:'Company Logo Updated Successfully',registration : registration });
+    return res.status(200).json({success:'Company Logo Updated Successfully',registration : registration });
   } catch (err) {
-    res.status(500).json({ error: "error in updating  Company Logo" });
+    return res.status(500).json({ error: "error in updating  Company Logo" });
   }
 };
 
@@ -40,9 +40,9 @@ module.exports.updateCoverImage = async function(req,res){
       registration.cover_image = coverImages[0].filename;
     }
     await registration.save();
-    res.status(200).json({success:'Cover Image Updated Successfully',registration : registration });
+    return res.status(200).json({success:'Cover Image Updated Successfully',registration : registration });
   } catch (err) {
-    res.status(500).json({ error: "error in updating  cover Image" });
+    return res.status(500).json({ error: "error in updating  cover Image" });
   }
 }
 
@@ -52,15 +52,14 @@ module.exports.saveBusinessDetail = async function (req, res) {
     const existingRegistration = await Registration.findByPk(reg_Id);
 
     if(!existingRegistration){
-      res.status(401).json({ success: "Provided registration Id does not exists!" });
-      return
+      return res.status(401).json({ success: "Provided registration Id does not exists!" });
     }
 
     let arr = req.body;
     let registration_company_name;
     if(!arr.length){
-      res.status(401).json({ success: "Please provide your business data in json array[]!" });
-      return
+      return res.status(401).json({ success: "Please provide your business data in json array[]!" });
+      
     }
 
     const updatedArr = arr.map((item) => {
@@ -80,10 +79,10 @@ module.exports.saveBusinessDetail = async function (req, res) {
       { company_name: arr[0].company_name },
       { where: { id: reg_Id } }
     );
-    res.status(200).json({ success: "BusinessDetails Successfully inserted","data":result });
+    return res.status(200).json({ success: "BusinessDetails Successfully inserted","data":result });
   } catch (err) {
     console.error(err); // Log the error for debugging
-    res
+    return res
       .status(500)
       .json({ error: "Internal Server Error. Error:" + err.message });
   }
@@ -102,8 +101,7 @@ module.exports.getBusinessDetail = async function (req, res) {
     const existingRegistration = await Registration.findByPk(reg_id);
 
     if(!existingRegistration){
-      res.status(401).json({ success: "Provided registration Id does not exists!" });
-      return
+      return res.status(401).json({ success: "Provided registration Id does not exists!" });
     }
 
     const businessDetails = await BusinessDetail.findAll({
@@ -112,13 +110,13 @@ module.exports.getBusinessDetail = async function (req, res) {
 
     if (businessDetails) {
       // Return the details in the response
-      res.status(200).json(businessDetails);
+      return res.status(200).json(businessDetails);
     } else {
-      res.status(404).json({ error: "details not found" });
+      return res.status(404).json({ error: "details not found" });
     }
   } catch (error) {
     console.error("Error getting by ID:", error);
-    res
+    return res
       .status(500)
       .json({ error: "Internal Server Error. Error:" + err.message });
   }
@@ -185,16 +183,16 @@ module.exports.putRegDetail = async function (req, res) {
         }
       );
       if (row > 0) {
-        res.status(200).json({
+        return res.status(200).json({
           message: "Registration record updated successfully",
           updatedRegistration: record[0],
         });
       }
     } else {
-      res.status(400).json({ error: "Internal Server Error" });
+      return res.status(400).json({ error: "Internal Server Error" });
     }
   } catch (error) {
     console.error("Error updating registration record:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };

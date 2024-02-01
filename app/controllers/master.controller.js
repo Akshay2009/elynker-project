@@ -17,10 +17,10 @@ module.exports.saveCityMaster = async function (req, res) {
     const cityRecord = await CityMaster.create({
       name: name,
     });
-    res.status(200).json({message:"City Record saved Succesfully",cityRecord});
+    return res.status(200).json({message:"City Record saved Succesfully",cityRecord});
   } catch (err) {
     console.error("Error saving city master:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -33,10 +33,10 @@ module.exports.saveCityMaster = async function (req, res) {
 module.exports.getAllCityMasters = async function (req, res) {
   try {
     const allCityRecords = await CityMaster.findAll();
-    res.status(200).json(allCityRecords);
+    return res.status(200).json(allCityRecords);
   } catch (err) {
     console.error("Error fetching city masters:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -54,7 +54,7 @@ module.exports.getCityMasters = async function (req, res) {
     }
   } catch (err) {
     console.error("Error fetching city masters:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -72,19 +72,19 @@ module.exports.updateCityMasterById = async function (req, res) {
     if (updatedRows > 0) {
       const updatedMaster = await CityMaster.findByPk(id);
       if (updatedMaster) {
-        res.json({
+        return res.status(200).json({
           message: "city updated successfully",
           Master: updatedMaster.toJSON(),
         });
       } else {
-        res.status(404).json({ error: "city not found" });
+        return res.status(404).json({ error: "city not found" });
       }
     } else {
-      res.status(404).json({ error: "city not found" });
+      return res.status(404).json({ error: "city not found" });
     }
   } catch (error) {
     console.error("Error updating user:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -100,10 +100,10 @@ module.exports.delCityMaster = async function (req, res) {
     if (delCity == 0) {
       return res.status(404).json({ error: "city not found" });
     }
-    res.json({ message: "City deleted successfully" });
+    return res.status(200).json({ message: "City deleted successfully" });
   } catch (error) {
     console.error("Error deleting city:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -116,10 +116,10 @@ module.exports.delCityMaster = async function (req, res) {
 module.exports.getAllcurrencyMaster = async function (req, res) {
   try {
     const allCurrencyRecords = await CurrencyMaster.findAll();
-    res.status(200).json(allCurrencyRecords);
+    return res.status(200).json(allCurrencyRecords);
   } catch (err) {
     console.error("Error fetching city masters:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 /**
@@ -132,14 +132,14 @@ module.exports.getcurrencyMasterById = async function (req, res) {
     const id = req.params.id;
     const currency = await CurrencyMaster.findByPk(id);
     if(currency){
-      res.status(200).json(currency);
+      return res.status(200).json(currency);
     }else{
-      res.status(404).json({error: 'No Currency Found'});
+      return res.status(404).json({error: 'No Currency Found'});
     }
     
   } catch (err) {
     console.error("Error fetching city masters:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -158,13 +158,13 @@ module.exports.createCurrencyMaster = async function (req, res) {
       prefix_sign,
       country_name,
     });
-    res.status(201).json({
+    return res.status(201).json({
       message: "Currency record created successfully",
       newCurrencyRecord,
     });
   } catch (error) {
     console.error("Error creating currency master:", error);
-    res.status(500).json({ error: "Failed to create currency record" });
+    return res.status(500).json({ error: "Failed to create currency record" });
   }
 };
 
@@ -187,13 +187,13 @@ module.exports.updateCurrencyMasterById = async function (req, res) {
       prefix_sign,
       country_name,
     });
-    res.status(200).json({
+    return res.status(200).json({
       message: "Currency record updated successfully",
       updatedCurrencyRecord: existingCurrencyRecord,
     });
   } catch (error) {
     console.error("Error updating currency details:", error);
-    res.status(500).json({ error: "Failed to update currency record" });
+    return res.status(500).json({ error: "Failed to update currency record" });
   }
 };
 
@@ -209,13 +209,13 @@ module.exports.createStateMaster = async function (req, res) {
     const newStateRecord = await StateMaster.create({
       name,
     });
-    res.status(201).json({
+    return res.status(201).json({
       message: "State record created successfully",
       newStateRecord,
     });
   } catch (error) {
     console.error("Error creating state master:", error);
-    res.status(500).json({ error: "Failed to create state record" });
+    return res.status(500).json({ error: "Failed to create state record" });
   }
 };
 
@@ -227,10 +227,10 @@ module.exports.createStateMaster = async function (req, res) {
 module.exports.getAllStateMaster = async function (req, res) {
   try {
     const getStateRecords = await StateMaster.findAll();
-    res.status(200).json(getStateRecords);
+    return res.status(200).json(getStateRecords);
   } catch (err) {
     console.error("Error fetching state masters:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 /**
@@ -250,13 +250,13 @@ module.exports.updateStateMaster = async function (req, res) {
     await existingStateRecord.update({
       name,
     });
-    res.status(200).json({
+    return res.status(200).json({
       message: "State record updated successfully",
       updated_State_Record: existingStateRecord,
     });
   } catch (error) {
     console.error("Error updating state details:", error);
-    res.status(500).json({ error: "Failed to update state record" });
+    return res.status(500).json({ error: "Failed to update state record" });
   }
 };
 
@@ -282,12 +282,12 @@ module.exports.saveRegistrationTypeMaster = async function (req, res) {
       name: "freelancer",
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Registration types records created successfully",
     });
   } catch (error) {
     console.error("Error creating registration type master:", error);
-    res
+    return res
       .status(500)
       .json({ error: "Failed to create registration type records" });
   }
@@ -306,10 +306,10 @@ module.exports.delCurrencyMaster = async function (req, res) {
     if (delCurrency == 0) {
       return res.status(404).json({ error: "currency not found" });
     }
-    res.json({ message: "Currency deleted successfully" });
+    return res.status(200).json({ message: "Currency deleted successfully" });
   } catch (error) {
     console.error("Error deleting Currency:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 /**
@@ -326,9 +326,9 @@ module.exports.delStateMaster = async function (req, res) {
     if (delState == 0) {
       return res.status(404).json({ error: "State not found" });
     }
-    res.json({ message: "State deleted successfully" });
+    return res.status(200).json({ message: "State deleted successfully" });
   } catch (error) {
     console.error("Error deleting State:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };

@@ -28,12 +28,12 @@ module.exports.updateUser = async function (req, res) {
           },
         }
       );
-      res.status(200).json(updatedRecords[0]);
+      return res.status(200).json(updatedRecords[0]);
     } else {
-      res.status(401).json({ error: "User Not Found " });
+      return res.status(401).json({ error: "User Not Found " });
     }
   } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" + err.message });
+    return res.status(500).json({ error: "Internal Server Error" + err.message });
   }
 };
 
@@ -51,12 +51,12 @@ module.exports.getUserById = async function (req, res) {
     console.log(userId);
     const user = await User.findByPk(userId);
     if (user) {
-      res.status(200).json(user);
+      return res.status(200).json(user);
     } else {
-      res.status(401).json({ error: "User Not Found" });
+      return res.status(401).json({ error: "User Not Found" });
     }
   } catch (err) {
-    res
+    return res
       .status(500)
       .json({ error: "Internal Server Error getUserById " + err.message });
   }

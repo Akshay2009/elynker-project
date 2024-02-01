@@ -63,7 +63,7 @@ exports.signup = async (req, res) => {
           for (let i = 0; i < roles.length; i++) {
             authorities.push("ROLE_" + roles[i].name.toUpperCase());
           }
-          res.status(200).send({
+          return res.status(200).send({
             user: user,
             roles: authorities,
             accessToken: token,
@@ -72,10 +72,10 @@ exports.signup = async (req, res) => {
         });
 
     } else {
-      res.status(500).send({ message: 'Error in creating user' });
+      return res.status(500).send({ message: 'Error in creating user' });
     }
   } catch (err) {
-    res.status(500).send({ message: err.message });
+    return res.status(500).send({ message: err.message });
   }
 }
 
@@ -115,7 +115,7 @@ exports.signin = async (req, res) => {
         for (let i = 0; i < roles.length; i++) {
           authorities.push("ROLE_" + roles[i].name.toUpperCase());
         }
-        res.status(200).send({
+        return res.status(200).send({
           user: user,
           roles: authorities,
           accessToken: token,
@@ -124,6 +124,6 @@ exports.signin = async (req, res) => {
       });
     })
     .catch(err => {
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };

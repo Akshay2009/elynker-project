@@ -26,13 +26,13 @@ module.exports.createCertificate = async function (req, res) {
       modified_by,
       registrationId,
     });
-    res.status(200).json({
+    return res.status(200).json({
       message: "Certificate created successfully",
       newCertificate,
     });
   } catch (error) {
     console.error("Error creating Certificate:", error);
-    res.status(500).json({ error: "Failed to create Certificate" });
+    return res.status(500).json({ error: "Failed to create Certificate" });
   }
 };
 
@@ -42,13 +42,13 @@ module.exports.getCertificate = async function (req, res) {
   try {
     const certificate = await Certificate.findAll({});
     if (certificate) {
-      res.status(200).json(certificate);
+      return res.status(200).json(certificate);
     } else {
-      res.status(404).json({ error: "No certificate Returned" });
+      return res.status(404).json({ error: "No certificate Returned" });
     }
   } catch (err) {
     console.error("Error fetching certificate", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -62,13 +62,13 @@ module.exports.getCertificateById = async function (req, res) {
     });
 
     if (CertificateDetails) {
-      res.status(200).json(CertificateDetails);
+      return res.status(200).json(CertificateDetails);
     } else {
-      res.status(404).json({ error: "Details not found" });
+      return res.status(404).json({ error: "Details not found" });
     }
   } catch (error) {
     console.error("Error getting by ID:", error);
-    res
+    return res
       .status(500)
       .json({ error: "Internal Server Error. Error:" + error.message });
   }
@@ -104,13 +104,13 @@ module.exports.updateCertificateById = async function (req, res) {
       modified_by,
       registrationId,
     });
-    res.status(200).json({
+    return res.status(200).json({
       message: "Certificate record updated successfully",
       updatedCertificateRecord: existingCertificateRecord.toJSON(),
     });
   } catch (error) {
     console.error("Error updating certificate details:", error);
-    res.status(500).json({ error: "Failed to update certificate record" });
+    return res.status(500).json({ error: "Failed to update certificate record" });
   }
 };
 
@@ -127,9 +127,9 @@ module.exports.delCertificate = async function (req, res) {
     if (delCertificate == 0) {
       return res.status(404).json({ error: "certificate not found" });
     }
-    res.status(200).json({ message: "certificate deleted successfully" });
+    return res.status(200).json({ message: "certificate deleted successfully" });
   } catch (error) {
     console.error("Error deleting certificate:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };

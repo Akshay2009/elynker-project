@@ -22,13 +22,13 @@ module.exports.getAllProducts = async function (req, res) {
     try {
         const products = await Product.findAll({});
         if (products) {
-            res.status(200).json(products);
+            return res.status(200).json(products);
         } else {
-            res.status(500).json({ error: 'No Product Found' });
+            return res.status(500).json({ error: 'No Product Found' });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error ' + error.message });
+        return res.status(500).json({ message: 'Internal server error ' + error.message });
     }
 }
 
@@ -47,13 +47,13 @@ module.exports.getProductBySKU = async function (req, res) {
             }
         });
         if (products) {
-            res.status(200).json(products);
+            return res.status(200).json(products);
         } else {
-            res.status(500).json({ error: 'No Product Found' });
+            return res.status(500).json({ error: 'No Product Found' });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error ' + error.message });
+        return res.status(500).json({ message: 'Internal server error ' + error.message });
     }
 }
 
@@ -138,13 +138,13 @@ module.exports.createProduct = async function (req, res) {
                 { where: { id: registrationId } }
             );
 
-            res.status(200).json({ message: 'Products Data inserted successfully' });
+            return res.status(200).json({ message: 'Products Data inserted successfully' });
         } else {
-            res.status(500).json({ message: 'CSV file not provided' });
+            return res.status(500).json({ message: 'CSV file not provided' });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error ' + error.message });
+        return res.status(500).json({ message: 'Internal server error ' + error.message });
     }
 };
 
@@ -155,10 +155,10 @@ module.exports.createProduct = async function (req, res) {
  */
 module.exports.createProductsImages = async function (req, res) {
     try {
-        res.status(200).json({ message: 'Images Uploaded Successfully' });
+        return res.status(200).json({ message: 'Images Uploaded Successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error ' + error.message });
+        return res.status(500).json({ message: 'Internal server error ' + error.message });
     }
 }
 
@@ -225,14 +225,14 @@ module.exports.createProductsSingleRecord = async function (req, res) {
         );
 
         if (product) {
-            res.status(200).json(product);
+            return res.status(200).json(product);
         } else {
-            res.status(400).json({ error: 'Product not inserted' });
+            return res.status(400).json({ error: 'Product not inserted' });
         }
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error ' + error.message });
+        return res.status(500).json({ message: 'Internal server error ' + error.message });
     }
 }
 
@@ -303,13 +303,13 @@ module.exports.updateProducts = async function (req, res) {
         if (rowUpdated > 0) {
             // Update associations
             await productUpdated[0].setCategories(categories);
-            res.status(200).json(productUpdated[0]);
+            return res.status(200).json(productUpdated[0]);
         } else {
-            res.status(404).json({ error: 'No Product found with this sku' });
+            return res.status(404).json({ error: 'No Product found with this sku' });
         }
 
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error ' + err.message })
+        return res.status(500).json({ error: 'Internal Server Error ' + err.message })
     }
 }
 
@@ -322,13 +322,13 @@ module.exports.getProductByRegistrationId = async function (req, res) {
             }
         });
         if (products.length > 0) {
-            res.status(200).json(products);
+            return res.status(200).json(products);
         } else {
-            res.status(500).json({ error: 'No Product Found' });
+            return res.status(500).json({ error: 'No Product Found' });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal server error ' + error.message });
+        return res.status(500).json({ message: 'Internal server error ' + error.message });
     }
 }
 
@@ -357,6 +357,6 @@ module.exports.deleteProductBySku = async function (req, res) {
         }
 
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error ' + err.message });
+        return res.status(500).json({ error: 'Internal Server Error ' + err.message });
     }
 }

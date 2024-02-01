@@ -12,12 +12,12 @@ module.exports.getAllCategory = async function (req, res) {
         const categories = await Category.findAll({
         });
         if (categories) {
-            res.status(200).json(categories);
+            return res.status(200).json(categories);
         } else {
-            res.status(404).json({ error: 'No Category Returned' });
+            return res.status(404).json({ error: 'No Category Returned' });
         }
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error '+err.message });
+        return res.status(500).json({ error: 'Internal Server Error '+err.message });
     }
 }
 
@@ -43,13 +43,13 @@ module.exports.createCategory = async function (req, res) {
                 });
         
                 if(category){
-                    res.status(202).json(category);
+                    return res.status(202).json(category);
                 }
                 else{
-                    res.status(404).json({ error: 'No Category created' });
+                    return res.status(404).json({ error: 'No Category created' });
                 }
             }else{
-                res.status(404).json({ error: 'No Category found exist with this parent_id' });
+                return res.status(404).json({ error: 'No Category found exist with this parent_id' });
             }
         }
         else {
@@ -61,13 +61,13 @@ module.exports.createCategory = async function (req, res) {
             });
 
             if (newCategory) {
-                res.status(200).json(newCategory);
+                return res.status(200).json(newCategory);
             } else {
-                res.status(404).json({ error: 'Category not created' });
+                return res.status(404).json({ error: 'Category not created' });
             }
         }
     } catch (err) {
-        res.status(500).json({ error: 'Internal ServerError ' + err.message });
+        return res.status(500).json({ error: 'Internal ServerError ' + err.message });
     }
 
 }
@@ -87,12 +87,12 @@ module.exports.getCategoryById = async function (req, res) {
             }
         });
         if (categories) {
-            res.status(200).json(categories);
+            return res.status(200).json(categories);
         } else {
-            res.status(404).json({ error: 'No Category Returned' });
+            return res.status(404).json({ error: 'No Category Returned' });
         }
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error'+err.message });
+        return res.status(500).json({ error: 'Internal Server Error'+err.message });
     }
 }
 
@@ -126,13 +126,13 @@ module.exports.updateCategory = async function (req, res) {
                 });
         
                 if(rowCount>0){
-                    res.status(202).json(updatedCategory[0]);
+                    return res.status(202).json(updatedCategory[0]);
                 }
                 else{
-                    res.status(404).json({ error: 'No Category found' });
+                    return res.status(404).json({ error: 'No Category found' });
                 }
             }else{
-                res.status(404).json({ error: 'No Category found exist with this parent_id' });
+                return res.status(404).json({ error: 'No Category found exist with this parent_id' });
             }
         }
         else{
@@ -148,15 +148,15 @@ module.exports.updateCategory = async function (req, res) {
                 returning: true
             });
             if(rowCount>0){
-                res.status(202).json(updatedCategory[0]);
+                return res.status(202).json(updatedCategory[0]);
             }
             else{
-                res.status(404).json({ error: 'No Category found' });
+                return res.status(404).json({ error: 'No Category found' });
             }
         }
 
     } catch (err) {
-        res.status(500).json({ error:'Internal Server Error '+ err.message });
+        return res.status(500).json({ error:'Internal Server Error '+ err.message });
     }
 
 }
@@ -188,17 +188,17 @@ module.exports.createMultipleCategory = async function (req, res) {
                     returnArr.push(newCategory);
                 }
                 if(returnArr.length>0){
-                    res.status(202).json(returnArr);
+                    return res.status(202).json(returnArr);
                 }
                 else{
-                    res.status(404).json({ error: 'No Category created' });
+                    return res.status(404).json({ error: 'No Category created' });
                 }
             }else{
-                res.status(404).json({ error: 'No Category found exist with this parent_id' });
+                return res.status(404).json({ error: 'No Category found exist with this parent_id' });
             }
         }
     } catch (err) {
-        res.status(500).json({ error: 'Internal ServerError ' + err.message });
+        return res.status(500).json({ error: 'Internal ServerError ' + err.message });
     }
 
 }
@@ -218,11 +218,11 @@ module.exports.getSubcategories = async function (req, res) {
             }
         });
         if (categories.length>0) {
-            res.status(200).json(categories);
+            return res.status(200).json(categories);
         } else {
-            res.status(404).json({ error: 'No Sub Category Returned' });
+            return res.status(404).json({ error: 'No Sub Category Returned' });
         }
     } catch (err) {
-        res.status(500).json({ error: 'Internal Server Error'+err.message });
+        return res.status(500).json({ error: 'Internal Server Error'+err.message });
     }
 }
