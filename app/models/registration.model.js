@@ -4,8 +4,8 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING(50),
       validate: {
         len: {
-          args: [5, 50],
-          msg: "Registration Name length must be between 5 to 50 characters",
+          args: [3, 50],
+          msg: "Registration Name length must be between 3 to 50 characters",
         },
       },
     },
