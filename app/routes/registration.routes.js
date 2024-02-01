@@ -144,4 +144,15 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     registrationController.putRegDetail
   );
+
+  /**
+   * Endpoint to update the Category ids on Registration Model.
+   * @param {String} '/api/update/coverImage/:registrationId' - API endpoint path.
+   * @param {Function[]} [authJwt.verifyToken,
+   * @param {Function} registrationController.updateCategoryIds - Controller function to handle the update.
+   */
+  app.put('/api/update/categoryIds/:registrationId',
+    [authJwt.verifyToken],
+    registrationController.updateCategoryIds
+  );
 };

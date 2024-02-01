@@ -5,6 +5,7 @@ const COMPANY_LOGO_PATH = path.join("/uploads/company/company_logo");
 
 const Registration = db.registration;
 const BusinessDetail = db.businessDetail;
+const Category = db.category;
 
 /**
  * Controller function to update company logo .
@@ -16,11 +17,11 @@ module.exports.updateCompanyLogo = async function (req, res) {
     let registration = await Registration.findByPk(req.params.id);
     const companyLogo = req.files['images'];
 
-    if (companyLogo && companyLogo.length > 0) { 
+    if (companyLogo && companyLogo.length > 0) {
       registration.image_path = companyLogo[0].filename;
     }
     await registration.save();
-    return res.status(200).json({success:'Company Logo Updated Successfully',registration : registration });
+    return res.status(200).json({ success: 'Company Logo Updated Successfully', registration: registration });
   } catch (err) {
     return res.status(500).json({ error: "error in updating  Company Logo" });
   }
@@ -31,16 +32,16 @@ module.exports.updateCompanyLogo = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.updateCoverImage = async function(req,res){
+module.exports.updateCoverImage = async function (req, res) {
   try {
     let registration = await Registration.findByPk(req.params.registrationId);
     const coverImages = req.files['images'];
 
-    if (coverImages && coverImages.length > 0) { 
+    if (coverImages && coverImages.length > 0) {
       registration.cover_image = coverImages[0].filename;
     }
     await registration.save();
-    return res.status(200).json({success:'Cover Image Updated Successfully',registration : registration });
+    return res.status(200).json({ success: 'Cover Image Updated Successfully', registration: registration });
   } catch (err) {
     return res.status(500).json({ error: "error in updating  cover Image" });
   }
@@ -51,15 +52,15 @@ module.exports.saveBusinessDetail = async function (req, res) {
     const reg_Id = req.params.reg_id;
     const existingRegistration = await Registration.findByPk(reg_Id);
 
-    if(!existingRegistration){
+    if (!existingRegistration) {
       return res.status(401).json({ success: "Provided registration Id does not exists!" });
     }
 
     let arr = req.body;
     let registration_company_name;
-    if(!arr.length){
+    if (!arr.length) {
       return res.status(401).json({ success: "Please provide your business data in json array[]!" });
-      
+
     }
 
     const updatedArr = arr.map((item) => {
@@ -71,7 +72,7 @@ module.exports.saveBusinessDetail = async function (req, res) {
     const result = await BusinessDetail.bulkCreate(
       updatedArr,
       {
-        updateOnDuplicate: ["company_name","document","is_active","document_name","document_number","file_location","file_name"],
+        updateOnDuplicate: ["company_name", "document", "is_active", "document_name", "document_number", "file_location", "file_name"],
       }
     );
 
@@ -79,7 +80,7 @@ module.exports.saveBusinessDetail = async function (req, res) {
       { company_name: arr[0].company_name },
       { where: { id: reg_Id } }
     );
-    return res.status(200).json({ success: "BusinessDetails Successfully inserted","data":result });
+    return res.status(200).json({ success: "BusinessDetails Successfully inserted", "data": result });
   } catch (err) {
     console.error(err); // Log the error for debugging
     return res
@@ -100,7 +101,7 @@ module.exports.getBusinessDetail = async function (req, res) {
     // Fetch the details by ID
     const existingRegistration = await Registration.findByPk(reg_id);
 
-    if(!existingRegistration){
+    if (!existingRegistration) {
       return res.status(401).json({ success: "Provided registration Id does not exists!" });
     }
 
@@ -196,3 +197,49 @@ module.exports.putRegDetail = async function (req, res) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+module.exports.updateCategoryIds = async function (req, res) {
+  try {
+    const registrationId = req.params.registrationId;
+    const { category_ids } = req.body;
+    if (!category_ids) {
+      return res.status(401).json({ error: 'Category Ids for Registration Not Provided' });
+    }
+    const existingRegistration = await Registration.findByPk(registrationId);
+
+    if (!existingRegistration) {
+      return res.status(404).json({ error: "Registration record not found" });
+    }
+
+    // Split comma-separated category IDs into an array
+    const categoryIdsArray = category_ids.split(',');
+    const categories = await Category.findAll({
+      where: {
+        id: categoryIdsArray,
+      },
+    });
+    if (categories.length == 0) {
+      return res.status(401).json({ error: 'No category with provided Category Ids Present' });
+    }
+    let catArray = [];
+    categories.forEach((cat) => {
+      catArray.push(cat.id)
+    });
+
+    const [rowUpdated, registrationUpdated] = await Registration.update({
+      category_ids: catArray.join(',')
+    }, {
+      where: {
+        id: registrationId
+      },
+      returning: true
+    });
+    if (rowUpdated > 0) {
+      return res.status(200).json(registrationUpdated[0]);
+    } else {
+      return res.status(404).json({ error: 'Registration record not updated' });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}

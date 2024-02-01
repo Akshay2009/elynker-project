@@ -64,20 +64,20 @@ module.exports = (sequelize, Sequelize) => {
       },
     },    
     address1: {
-      type: Sequelize.STRING(100),
+      type: Sequelize.STRING(200),
       validate: {
         len: {
-          args: [0, 100],
-          msg: "Address1 length must be less than equal to 100 characters",
+          args: [0, 200],
+          msg: "Address1 length must be less than equal to 200 characters",
         },
       },
     },
     address2: {
-      type: Sequelize.STRING(100),
+      type: Sequelize.STRING(200),
       validate: {
         len: {
-          args: [0, 100],
-          msg: "Address2 length must be less than equal to 100 characters",
+          args: [0, 200],
+          msg: "Address2 length must be less than equal to 200 characters",
         },
       },
     },
@@ -155,6 +155,9 @@ module.exports = (sequelize, Sequelize) => {
     },
     cover_image: {
       type: Sequelize.STRING
+    },
+    category_ids:{
+      type: Sequelize.STRING,
     },
     created_by: {
       type: Sequelize.NUMERIC
