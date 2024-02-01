@@ -52,8 +52,6 @@ module.exports.getCityMasters = async function (req, res) {
       }
       return res.status(200).json(cityRecord);
     }
-    const allCityRecords = await CityMaster.findAll();
-    res.status(200).json(allCityRecords);
   } catch (err) {
     console.error("Error fetching city masters:", err);
     res.status(500).json({ error: "Internal Server Error" });
