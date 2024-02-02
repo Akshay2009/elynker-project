@@ -37,7 +37,7 @@ module.exports.bulkCreateSociallinks = async function (req, res) {
     if (result) {
       return res.status(201).json({
         message: "Sociallinks created successfully",
-        newSociallinks,
+        result,
       });
     } else {
       return res.status(401).json({
