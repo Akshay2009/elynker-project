@@ -6,7 +6,7 @@ const COVER_IMAGE_PATH = path.join("/uploads/cover/cover_images");
 // Multer storage configuration for handling company logo uploads
 let storageCompanyLogo = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '..', COMPANY_LOGO_PATH));
+    cb(null, path.join(__dirname, '../..', COMPANY_LOGO_PATH));
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
@@ -15,7 +15,7 @@ let storageCompanyLogo = multer.diskStorage({
 
 let storageCoverImage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '..', COVER_IMAGE_PATH));
+    cb(null, path.join(__dirname, '../..', COVER_IMAGE_PATH));
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
