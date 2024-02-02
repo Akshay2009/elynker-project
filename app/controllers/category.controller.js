@@ -231,3 +231,26 @@ module.exports.getSubcategories = async function (req, res) {
         return res.status(500).json({ error: 'Internal Server Error' + err.message });
     }
 }
+/**
+ * Controller function to Delete categories of a category .
+ * parent_id is passed in params
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.delcategories = async function (req, res) {
+    try {
+        const category_id = req.params.category_id;
+        const categories = await Category.destroy({
+            where: {
+                id: category_id
+            }
+        });
+        if (!categories) {
+            return res.status(404).json({ error: "category not found" });
+        } else {
+            return res.status(200).json({ message: "category deleted successfully" });
+        }
+    } catch (err) {
+        return res.status(500).json({ error: 'Internal Server Error' + err.message });
+    }
+}
