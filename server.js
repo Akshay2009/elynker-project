@@ -18,16 +18,7 @@ app.use(
 );
 
 app.use('/uploads', express.static('app/uploads'));
-
 app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-    origin: "*",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: false,
-    optionsSuccessStatus: 204,
-}));
-// parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
 //Initialized app to models
