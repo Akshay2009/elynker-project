@@ -1,5 +1,4 @@
 const db = require("../models");
-const { Op, DataTypes, Sequelize } = require("sequelize");
 const CityMaster = db.cityMaster;
 const CurrencyMaster = db.currencyMaster;
 const StateMaster = db.stateMaster;

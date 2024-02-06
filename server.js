@@ -17,6 +17,17 @@ app.use(
   })
 );
 
+/**
+   * Middleware to handle CORS headers for allowing specific headers in the request.
+    */
+app.use(function(req, res, next) {
+  res.header(
+    "Access-Control-Allow-Headers",
+    "x-access-token, Origin, Content-Type, Accept"
+  );
+  next();
+});
+
 app.use('/uploads', express.static(__dirname+'/uploads'));
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));

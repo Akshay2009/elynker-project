@@ -3,12 +3,13 @@ const config = require("../config/auth.config");
 const User = db.user;
 const Role = db.role;
 const Registration = db.registration;
+const { logErrorToFile } = require('../logger'); 
 
 const Op = db.Sequelize.Op;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
-
+  
 /**
  * Controller function to signup and save user details.
  * 
@@ -75,6 +76,7 @@ exports.signup = async (req, res) => {
       return res.status(500).send({ message: 'Error in creating user' });
     }
   } catch (err) {
+    logErrorToFile(err, 'auth.controller', 'signup');
     return res.status(500).send({ message: err.message });
   }
 }
