@@ -1,5 +1,4 @@
 const db = require("../models");
-const { Op, DataTypes, Sequelize } = require("sequelize");
 const Certificate = db.certificate;
 //creating certificate---
 

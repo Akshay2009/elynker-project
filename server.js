@@ -17,17 +17,19 @@ app.use(
   })
 );
 
-app.use('/uploads', express.static('app/uploads'));
+/**
+   * Middleware to handle CORS headers for allowing specific headers in the request.
+    */
+app.use(function(req, res, next) {
+  res.header(
+    "Access-Control-Allow-Headers",
+    "x-access-token, Origin, Content-Type, Accept"
+  );
+  next();
+});
 
+app.use('/uploads', express.static(__dirname+'/uploads'));
 app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-    origin: "*",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: false,
-    optionsSuccessStatus: 204,
-}));
-// parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
 //Initialized app to models
