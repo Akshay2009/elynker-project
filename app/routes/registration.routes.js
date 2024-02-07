@@ -2,72 +2,109 @@ const multer = require("multer");
 const path = require("path");
 const COMPANY_LOGO_PATH = path.join("/uploads/company/company_logo");
 const COVER_IMAGE_PATH = path.join("/uploads/cover/cover_images");
+const FREELANCER_RESUME_PATH = path.join("/uploads/freelancer/resumes");
 
 // Multer storage configuration for handling company logo uploads
 let storageCompanyLogo = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../..', COMPANY_LOGO_PATH));
+    cb(null, path.join(__dirname, "../..", COMPANY_LOGO_PATH));
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
-  }
+  },
 });
 
 let storageCoverImage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../..', COVER_IMAGE_PATH));
+    cb(null, path.join(__dirname, "../..", COVER_IMAGE_PATH));
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
-  }
+  },
 });
 const fileFilterImage = function (req, file, cb) {
   try {
     const allowedFileTypes = /jpeg|jpg|png/;
     const mimetype = allowedFileTypes.test(file.mimetype);
-    const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
+    const extname = allowedFileTypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
 
     if (mimetype && extname) {
       return cb(null, true);
     }
 
-    const error = new Error('Only JPEG, JPG, and PNG files are allowed!');
+    const error = new Error("Only JPEG, JPG, and PNG files are allowed!");
     error.status = 400; // Set the status code for the error
 
     cb(error);
   } catch (err) {
-    console.log('error in fileFilter function', err.message);
+    console.log("error in fileFilter function", err.message);
   }
 };
 const uploadCoverImages = multer({
   storage: storageCoverImage,
   fileFilter: fileFilterImage,
   limits: {
-    fileSize: 1024 * 1024 //1MB
-  }
+    fileSize: 1024 * 1024, //1MB
+  },
 });
 const uploadCompanyLogo = multer({
   storage: storageCompanyLogo,
   fileFilter: fileFilterImage,
   limits: {
-    fileSize: 1024 * 1024 //1MB
-  }
+    fileSize: 1024 * 1024, //1MB
+  },
 });
 const handleMulterError = function (err, req, res, next) {
   if (err) {
-    console.error('Multer error:', err.message);
+    console.error("Multer error:", err.message);
     res.status(err.status || 500).json({ error: err.message });
   } else {
     next();
   }
 };
+//freelance resume upload multer-
+const fileFilterResume = function (req, file, cb) {
+  try {
+    const allowedFileTypes = /pdf|docx|doc|word/;
+    const mimetype = allowedFileTypes.test(file.mimetype);
+    const extname = allowedFileTypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    }
+
+    const error = new Error("Only PDF,DOC,DOCX And WORD files are allowed!");
+    error.status = 400; // Set the status code for the error
+
+    cb(error);
+  } catch (err) {
+    console.log("error in fileFilter function", err.message);
+  }
+};
+let freelancerResume = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../..", FREELANCER_RESUME_PATH));
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+const uploadfreelanceResume = multer({
+  storage: freelancerResume,
+  fileFilter: fileFilterResume,
+  limits: {
+    fileSize: 1024 * 1024, //3MB
+  },
+});
 
 const { authJwt } = require("../middleware");
 const registrationController = require("../controllers/registration.controller");
 
-
 module.exports = function (app) {
-
   /**
    * Endpoint to update the company logo.
    * Requires authentication and uses multer for handling file uploads.
@@ -79,10 +116,9 @@ module.exports = function (app) {
   app.put(
     "/api/update/companyLogo/:id",
     [authJwt.verifyToken],
-    uploadCompanyLogo.fields([
-      { name: 'images' },
-    ]),
-    handleMulterError,registrationController.updateCompanyLogo
+    uploadCompanyLogo.fields([{ name: "images" }]),
+    handleMulterError,
+    registrationController.updateCompanyLogo
   );
   /**
    * Endpoint to update the cover Image.
@@ -92,15 +128,13 @@ module.exports = function (app) {
    * @param {Function[]} [authJwt.verifyToken, multer({ storage }).single("company_logo")] - Middleware functions.
    * @param {Function} registrationController.updateCoverImage - Controller function to handle the update.
    */
-  app.put('/api/update/coverImage/:registrationId',
+  app.put(
+    "/api/update/coverImage/:registrationId",
     [authJwt.verifyToken],
-    uploadCoverImages.fields([
-      { name: 'images' },
-    ]),
-    handleMulterError, registrationController.updateCoverImage
+    uploadCoverImages.fields([{ name: "images" }]),
+    handleMulterError,
+    registrationController.updateCoverImage
   );
-
-
 
   /**
    * Endpoint to get business details by registration ID.
@@ -112,10 +146,9 @@ module.exports = function (app) {
    */
   app.get(
     "/api/business/:reg_id",
-     [authJwt.verifyToken],
+    [authJwt.verifyToken],
     registrationController.getBusinessDetail
   );
-
 
   /**
    * Endpoint to save business details by registration ID.
@@ -127,7 +160,7 @@ module.exports = function (app) {
    */
   app.post(
     "/api/business/:reg_id",
-     [authJwt.verifyToken],
+    [authJwt.verifyToken],
     registrationController.saveBusinessDetail
   );
   //post registration details--
@@ -151,8 +184,23 @@ module.exports = function (app) {
    * @param {Function[]} [authJwt.verifyToken,
    * @param {Function} registrationController.updateCategoryIds - Controller function to handle the update.
    */
-  app.put('/api/update/categoryIds/:registrationId',
+  app.put(
+    "/api/update/categoryIds/:registrationId",
     [authJwt.verifyToken],
     registrationController.updateCategoryIds
+  );
+
+  /**
+   * Endpoint to upload file for registration on Registration Model.
+   * @param {String} '/api/update/coverImage/:registrationId' - API endpoint path.
+   * @param {Function[]} [authJwt.verifyToken,
+   * @param {Function} registrationController.updateCategoryIds - Controller function to handle the update.
+   */
+  app.post(
+    "/api/user/resume/:registrationId",
+    [authJwt.verifyToken],
+    uploadfreelanceResume.fields([{ name: "resume" }]),
+    handleMulterError,
+    registrationController.uploadFreelancerResume
   );
 };

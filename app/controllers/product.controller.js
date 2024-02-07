@@ -360,3 +360,41 @@ module.exports.deleteProductBySku = async function (req, res) {
         return res.status(500).json({ error: 'Internal Server Error ' + err.message });
     }
 }
+
+//controller for deleting images as per passed in parameter along with product id-
+
+module.exports.delProductImages=async function(req,res){
+    try{
+        const {product_id}=req.params;
+        const {image_name}=req.body;
+        const product = await Product.findByPk(product_id);
+        if(!product){
+            return res.status(404).json({error:"product id not found kindly check!"})
+        }
+        let productArray=product.product_images.split(',');
+        console.log(productArray);
+        const productArrayUpdated = productArray.filter(product => product!== image_name);
+        
+        if(productArray.length === productArrayUpdated.length){
+            return res.status(400).json({error:"Image name provided not present on this Product"});
+        }
+        const [rowUpdated, productUpdated] = await Product.update({
+            default_image : productArrayUpdated[0] || "",
+            product_images : productArrayUpdated.join(',') || ""
+        }, {
+            where: {
+                id : product_id
+            },
+            returning: true
+        });
+        if(rowUpdated>0){
+            return res.status(200).json({message:"Product updated",product:productUpdated[0]});
+        }else{
+            return res.status(400).json({error:"Error in deleting Product Images"});
+        }
+       
+
+    }catch (err) {
+        return res.status(500).json({ error: 'Internal Server Error ' + err.message });
+    }
+}
