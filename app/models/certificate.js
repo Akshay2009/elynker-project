@@ -6,6 +6,9 @@ module.exports = (sequelize, Sequelize) => {
     name: {
       type: Sequelize.STRING(50),
     },
+    issue_date: {
+      type: Sequelize.DATEONLY,
+    },
     mobile_no: {
       type: Sequelize.NUMERIC(10),
     },

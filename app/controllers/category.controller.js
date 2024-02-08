@@ -1,6 +1,9 @@
 const db = require("../models");
 const { Op, DataTypes, Sequelize } = require('sequelize');
 const Category = db.category;
+const path = require("path");
+require('dotenv').config();
+const CATEGORY_LOGO_PATH = path.join(process.env.CATEGORY_LOGO_PATH);
 
 /**
  * Controller function to get all the Category record .

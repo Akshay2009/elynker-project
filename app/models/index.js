@@ -34,6 +34,7 @@ db.businessDetail= require('../models/business_detail.model.js')(sequelize, Sequ
 db.category = require('../models/category.model.js')(sequelize,Sequelize);
 db.certificate=require('../models/certificate.js')(sequelize,Sequelize);
 db.sociallinks=require('../models/sociallinks.model.js')(sequelize,Sequelize);
+db.usersBanners = require('../models/usersBanners.model.js')(sequelize,Sequelize);
 db.role.belongsToMany(db.user, {
   through: "user_roles",
   onDelete: 'CASCADE'
@@ -53,15 +54,15 @@ db.registration.hasMany(db.businessDetail,{ onDelete: 'CASCADE'});
 db.businessDetail.belongsTo(db.registration);
 
 //associate registration and product as 1:1 with foreign key on product model
-db.registration.hasOne(db.product,{ onDelete: 'CASCADE'});
+db.registration.hasMany(db.product,{ onDelete: 'CASCADE'});
 db.product.belongsTo(db.registration);
 
 //associate certificate with registration as 1:1 foreign key on certificate
-db.registration.hasOne(db.certificate,{ onDelete: 'CASCADE'});
+db.registration.hasMany(db.certificate,{ onDelete: 'CASCADE'});
 db.certificate.belongsTo(db.registration);
 
 //associate sociallinks associated with registration as 1:1 foreign key on sociallink
-db.registration.hasOne(db.sociallinks,{ onDelete: 'CASCADE'});
+db.registration.hasMany(db.sociallinks,{ onDelete: 'CASCADE'});
 db.sociallinks.belongsTo(db.registration);
 
 //associate Product and Category as m:m
@@ -74,5 +75,12 @@ db.category.belongsToMany(db.product, {
   onDelete: 'CASCADE',
 });
 
+// Set up self-referencing foreign key
+db.category.hasMany(db.category, { foreignKey: 'parent_id', onDelete: 'CASCADE', as: 'children' });
+
+
+//associate Registration and UsersBanners as 1 to m
+db.registration.hasMany(db.usersBanners, { onDelete: 'CASCADE' });
+db.usersBanners.belongsTo(db.registration);
 
 module.exports = db;

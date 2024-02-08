@@ -1,16 +1,29 @@
 const { authJwt } = require("../middleware");
 const multer = require('multer');
 const path = require('path');
-const PRODUCT_IMAGE_PATH = path.join('/uploads/products/products_images');
+require('dotenv').config();
+const PRODUCT_IMAGE_PATH = path.join(process.env.PRODUCT_IMAGE_PATH);
+const PRODUCT_CSV_PATH = path.join(process.env.PRODUCT_CSV_PATH);
 
-let storage = multer.diskStorage({
+let storageImage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, path.join(__dirname, '../..', PRODUCT_IMAGE_PATH));
     },
     filename: function (req, file, cb) {
-        cb(null, file.originalname);
+        const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
+        cb(null, uniqueFilename);
     }
 });
+let storageCsv = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, '../..', PRODUCT_CSV_PATH));
+    },
+    filename: function (req, file, cb) {
+        const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
+        cb(null, uniqueFilename);
+    }
+});
+
 const fileFilter2 = function (req, file, cb) {
     try {
         const allowedFileTypes = /jpeg|jpg|png/;
@@ -50,14 +63,14 @@ const fileFilter = function (req, file, cb) {
 };
 
 const uploadCsv = multer({
-    storage: storage,
+    storage: storageCsv,
     fileFilter : fileFilter,
     limits: {
         fileSize: 1024 * 1024 //1MB
     }
 });
 const uploadImages = multer({
-    storage: storage,
+    storage: storageImage,
     fileFilter: fileFilter2,
     limits: {
         fileSize: 1024 * 1024 //1MB
@@ -153,6 +166,12 @@ module.exports = function (app) {
     app.delete('/api/products/:sku',
         [authJwt.verifyToken],
         productController.deleteProductBySku
+    );
+
+    app.delete(
+        "/api/products/images/:product_id",
+        [authJwt.verifyToken],
+        productController.delProductImages
     );
 
 };

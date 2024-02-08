@@ -1,7 +1,9 @@
 const db = require("../models");
 const fs = require("fs");
 const path = require("path");
-const COMPANY_LOGO_PATH = path.join("/uploads/company/company_logo");
+require('dotenv').config();
+const COMPANY_LOGO_PATH = path.join(process.env.COMPANY_LOGO_PATH);
+const COVER_IMAGE_PATH = path.join(process.env.COVER_IMAGE_PATH);
 
 const Registration = db.registration;
 const BusinessDetail = db.businessDetail;
@@ -18,6 +20,9 @@ module.exports.updateCompanyLogo = async function (req, res) {
     const companyLogo = req.files['images'];
 
     if (companyLogo && companyLogo.length > 0) {
+      if(registration.image_path){
+        fs.unlinkSync(path.join(__dirname, '../..', COMPANY_LOGO_PATH,'/',registration.image_path));
+      }
       registration.image_path = companyLogo[0].filename;
     }
     await registration.save();
@@ -38,6 +43,9 @@ module.exports.updateCoverImage = async function (req, res) {
     const coverImages = req.files['images'];
 
     if (coverImages && coverImages.length > 0) {
+      if(registration.cover_image){
+        fs.unlinkSync(path.join(__dirname, '../..', COVER_IMAGE_PATH,'/',registration.cover_image));
+      }
       registration.cover_image = coverImages[0].filename;
     }
     await registration.save();

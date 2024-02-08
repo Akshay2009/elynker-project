@@ -1,7 +1,9 @@
 const multer = require("multer");
 const path = require("path");
-const COMPANY_LOGO_PATH = path.join("/uploads/company/company_logo");
-const COVER_IMAGE_PATH = path.join("/uploads/cover/cover_images");
+const { v4: uuidv4 } = require('uuid');
+require('dotenv').config();
+const COMPANY_LOGO_PATH = path.join(process.env.COMPANY_LOGO_PATH);
+const COVER_IMAGE_PATH = path.join(process.env.COVER_IMAGE_PATH);
 
 // Multer storage configuration for handling company logo uploads
 let storageCompanyLogo = multer.diskStorage({
@@ -9,7 +11,8 @@ let storageCompanyLogo = multer.diskStorage({
     cb(null, path.join(__dirname, '../..', COMPANY_LOGO_PATH));
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
+    cb(null, uniqueFilename);
   }
 });
 
@@ -18,7 +21,8 @@ let storageCoverImage = multer.diskStorage({
     cb(null, path.join(__dirname, '../..', COVER_IMAGE_PATH));
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
+    cb(null, uniqueFilename);
   }
 });
 const fileFilterImage = function (req, file, cb) {
