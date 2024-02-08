@@ -34,7 +34,7 @@ db.businessDetail= require('../models/business_detail.model.js')(sequelize, Sequ
 db.category = require('../models/category.model.js')(sequelize,Sequelize);
 db.certificate=require('../models/certificate.js')(sequelize,Sequelize);
 db.sociallinks=require('../models/sociallinks.model.js')(sequelize,Sequelize);
-db.usersBanners = require('../models/usersBanners.model.js')(sequelize,Sequelize);
+//db.usersBanners = require('../models/usersBanners.model.js')(sequelize,Sequelize);
 db.role.belongsToMany(db.user, {
   through: "user_roles",
   onDelete: 'CASCADE'
@@ -80,7 +80,7 @@ db.category.hasMany(db.category, { foreignKey: 'parent_id', onDelete: 'CASCADE',
 
 
 //associate Registration and UsersBanners as 1 to m
-db.registration.hasMany(db.usersBanners, { onDelete: 'CASCADE' });
-db.usersBanners.belongsTo(db.registration);
+//db.registration.hasMany(db.usersBanners, { onDelete: 'CASCADE' });
+//db.usersBanners.belongsTo(db.registration);
 
 module.exports = db;
