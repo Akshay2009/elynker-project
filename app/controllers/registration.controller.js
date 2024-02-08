@@ -1,8 +1,10 @@
 const db = require("../models");
 const fs = require("fs");
 const path = require("path");
-const COMPANY_LOGO_PATH = path.join("/uploads/company/company_logo");
-const multer = require("multer");
+require('dotenv').config();
+const COMPANY_LOGO_PATH = path.join(process.env.COMPANY_LOGO_PATH);
+const COVER_IMAGE_PATH = path.join(process.env.COVER_IMAGE_PATH);
+const FREELANCER_RESUME_PATH = path.join(process.env.FREELANCER_RESUME_PATH);
 
 const Registration = db.registration;
 const BusinessDetail = db.businessDetail;
@@ -19,6 +21,9 @@ module.exports.updateCompanyLogo = async function (req, res) {
     const companyLogo = req.files["images"];
 
     if (companyLogo && companyLogo.length > 0) {
+      if(registration.image_path){
+        fs.unlinkSync(path.join(__dirname, '../..', COMPANY_LOGO_PATH,'/',registration.image_path));
+      }
       registration.image_path = companyLogo[0].filename;
     }
     await registration.save();
@@ -44,6 +49,9 @@ module.exports.updateCoverImage = async function (req, res) {
     const coverImages = req.files["images"];
 
     if (coverImages && coverImages.length > 0) {
+      if(registration.cover_image){
+        fs.unlinkSync(path.join(__dirname, '../..', COVER_IMAGE_PATH,'/',registration.cover_image));
+      }
       registration.cover_image = coverImages[0].filename;
     }
     await registration.save();
@@ -290,26 +298,23 @@ module.exports.uploadFreelancerResume = async (req, res) => {
     }
     const { registrationId } = req.params;
     const resume = req.files["resume"];
+    const existingRegistration =  await Registration.findByPk(registrationId);
+    if(!existingRegistration){
+      return res.status(404).json({ error: "Registration not found with this id" });
+    }
+    if(existingRegistration.registration_type!==3){
+      return res.status(404).json({ error: "Registration is not of freelancer type" });
+    }
 
     // Assume you have a 'resumes' field in your Registration model to store file details
     if (resume && resume.length > 0) {
-      const [rowUpdated,registrationUdated] = await Registration.update(
-        {
-          freelancer_resume : resume[0].filename
-        },{
-          where : {
-            id: registrationId
-          },
-          returning: true
-        }
-      );
-      if(rowUpdated>0){
-        return res.status(200).json({message:'Resume Uploaded '})
+      if(existingRegistration.freelancer_resume){
+        fs.unlinkSync(path.join(__dirname, '../..', FREELANCER_RESUME_PATH,'/',existingRegistration.freelancer_resume));
       }
-      
-    } else {
-      return res.status(404).json({ error: "resume not uploaded" });
+      existingRegistration.freelancer_resume = resume[0].filename;
     }
+    await existingRegistration.save();
+    return res.status(200).json({ message: "Resume updated successfully", data: existingRegistration });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

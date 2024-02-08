@@ -200,4 +200,72 @@
  *           description: Registration record not found
  *         '500':
  *           description: Internal Server Error
+ *
+ * /api/user/resume/{registrationId}:
+ *   post:
+ *     summary: Upload Freelancer Resume
+ *     tags: [Registration]
+ *     parameters:
+ *       - name: registrationId
+ *         in: path
+ *         description: ID of the registration
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - api_key: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               resume:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       '200':
+ *         description: Resume updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Resume updated successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Registration'
+ *       '400':
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Invalid file format
+ *       '404':
+ *         description: Registration not found or not of freelancer type
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Registration not found with this id or Registration is not of freelancer type
+ *       '500':
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
  */
+

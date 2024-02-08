@@ -1,8 +1,11 @@
 const multer = require("multer");
 const path = require("path");
-const COMPANY_LOGO_PATH = path.join("/uploads/company/company_logo");
-const COVER_IMAGE_PATH = path.join("/uploads/cover/cover_images");
-const FREELANCER_RESUME_PATH = path.join("/uploads/freelancer/resumes");
+const { v4: uuidv4 } = require('uuid');
+const fs=require('fs');
+require('dotenv').config();
+const COMPANY_LOGO_PATH = path.join(process.env.COMPANY_LOGO_PATH);
+const COVER_IMAGE_PATH = path.join(process.env.COVER_IMAGE_PATH);
+const FREELANCER_RESUME_PATH = path.join(process.env.FREELANCER_RESUME_PATH);
 
 // Multer storage configuration for handling company logo uploads
 let storageCompanyLogo = multer.diskStorage({
@@ -10,8 +13,9 @@ let storageCompanyLogo = multer.diskStorage({
     cb(null, path.join(__dirname, "../..", COMPANY_LOGO_PATH));
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
+    const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
+    cb(null, uniqueFilename);
+  }
 });
 
 let storageCoverImage = multer.diskStorage({
@@ -19,8 +23,9 @@ let storageCoverImage = multer.diskStorage({
     cb(null, path.join(__dirname, "../..", COVER_IMAGE_PATH));
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
+    const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
+    cb(null, uniqueFilename);
+  }
 });
 const fileFilterImage = function (req, file, cb) {
   try {
@@ -87,10 +92,27 @@ const fileFilterResume = function (req, file, cb) {
 };
 let freelancerResume = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../..", FREELANCER_RESUME_PATH));
-  },
+    const destinationPath = path.join(__dirname, '../..', FREELANCER_RESUME_PATH);
+    // Check if the destination directory exists
+    fs.access(destinationPath, fs.constants.F_OK, (err) => {
+        if (err) {
+            // If directory doesn't exist, create it
+            fs.mkdir(destinationPath, { recursive: true }, (err) => {
+                if (err) {
+                    console.error('Error creating directory:', err);
+                    cb(err, null);
+                } else {
+                    cb(null, destinationPath);
+                }
+            });
+        } else {
+            cb(null, destinationPath);
+        }
+    });
+},
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    const uniqueFilename = `${Date.now()}${file.originalname}`;
+    cb(null, uniqueFilename);
   },
 });
 const uploadfreelanceResume = multer({
