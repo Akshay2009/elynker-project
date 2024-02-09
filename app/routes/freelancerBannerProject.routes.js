@@ -35,7 +35,7 @@ let storageBannerImage = multer.diskStorage({
 });
 const fileFilterImage = function (req, file, cb) {
     try {
-        const allowedFileTypes = /jpeg|jpg|png/;
+        const allowedFileTypes = /jpeg|jpg|png|gif/;
         const mimetype = allowedFileTypes.test(file.mimetype);
         const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
 
@@ -43,7 +43,7 @@ const fileFilterImage = function (req, file, cb) {
             return cb(null, true);
         }
 
-        const error = new Error('Only JPEG, JPG, and PNG files are allowed!');
+        const error = new Error('Only JPEG, JPG, Gif, and PNG files are allowed!');
         error.status = 400; // Set the status code for the error
 
         cb(error);
@@ -95,29 +95,29 @@ module.exports = function (app) {
     );
     
     /* End Point to  get UsersBanner record based on userBannerId
-        GET - /api/user/banners/:userBannerId
+        GET - /api/user/banner/:userBannerId
         usersBannersController.getUsersBannerById - Controller function to get UsersBanner record based on userBannerId
     */
-    app.get('/api/user/banners/:userBannerId',
+    app.get('/api/user/banner/:userBannerId',
         [authJwt.verifyToken],
         freelancerBannerProjectController.getUsersBannerById
     );
     
 
     /* End Point to  get UsersBanner record based on registrationId
-        GET - /api/user/banners/registration/:registrationId
+        GET - /api/user/banners/:registrationId
         usersBannersController.getUsersBannerByRegistrationId - Controller function to get all UsersBanner record based on registrationId
     */
-    app.get('/api/user/banners/registration/:registrationId',
+    app.get('/api/user/banners/:registrationId',
         [authJwt.verifyToken],
         freelancerBannerProjectController.getUsersBannerByRegistrationId
     );
 
     /* End Point to  delete a UsersBanners Record
-        DELETE  - /api/user/banners/:userBannerId
+        DELETE  - /api/user/banner/:userBannerId
         usersBannersController.deleteUsersBanner - Controller function to delete UsersBanner Record based on userBannerId
     */
-    app.delete('/api/user/banners/:userBannerId',
+    app.delete('/api/user/banner/:userBannerId',
         [authJwt.verifyToken],
         freelancerBannerProjectController.deleteUsersBanner
     );
