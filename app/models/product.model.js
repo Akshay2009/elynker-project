@@ -39,6 +39,7 @@ module.exports = (sequelize, Sequelize) => {
       },
       unit:{
         type: Sequelize.STRING(50),
+        
       },
       created_by: {
         type: Sequelize.NUMERIC

@@ -358,7 +358,7 @@ module.exports.updateProducts = async function (req, res) {
         });
 
         if (rowUpdated > 0) {
-            // Update associations
+            // Update associations 
             await productUpdated[0].setCategories(categories);
             return res.status(200).json(productUpdated[0]);
         } else {

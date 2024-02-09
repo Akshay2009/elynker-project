@@ -194,6 +194,7 @@ module.exports.putRegDetail = async function (req, res) {
       const [row, record] = await Registration.update(
         { name,
           ip_address,
+          business_type,
           registration_type,
           dob,
           latitude,

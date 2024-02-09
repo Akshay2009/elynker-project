@@ -14,6 +14,7 @@ let storageImage = multer.diskStorage({
         cb(null, uniqueFilename);
     }
 });
+
 let storageCsv = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, path.join(__dirname, '../..', PRODUCT_CSV_PATH));
