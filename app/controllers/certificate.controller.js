@@ -7,7 +7,6 @@ module.exports.createCertificate = async function (req, res) {
     const {
       email,
       name,
-      issue_date,
       mobile_no,
       otp,
       created_by,
@@ -20,7 +19,6 @@ module.exports.createCertificate = async function (req, res) {
     const newCertificate = await Certificate.create({
       email,
       name,
-      issue_date,
       mobile_no,
       otp,
       created_by,
@@ -81,7 +79,6 @@ module.exports.updateCertificateById = async function (req, res) {
     const {
       email,
       name,
-      issue_date,
       mobile_no,
       otp,
       created_by,
@@ -100,7 +97,6 @@ module.exports.updateCertificateById = async function (req, res) {
     await existingCertificateRecord.update({
       email,
       name,
-      issue_date,
       mobile_no,
       otp,
       created_by,

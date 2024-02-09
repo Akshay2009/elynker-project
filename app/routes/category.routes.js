@@ -2,15 +2,16 @@ const { authJwt } = require("../middleware");
 const multer = require("multer");
 const path = require("path");
 const categoryController = require("../controllers/category.controller");
-require('dotenv').config();
-const CATEGORY_LOGO_PATH = path.join(process.env.CATEGORY_LOGO_PATH);
+
+const CATEGORY_LOGO_PATH = path.join("/uploads/category/category_logo");
 
 let storage = multer.diskStorage({
   destination: function (req, res, cb) {
-    cb(null, path.join(__dirname, '../..', CATEGORY_LOGO_PATH));
+    cb(null, path.join(__dirname, "..", CATEGORY_LOGO_PATH));
   },
   filename: function (req, res, cb) {
-    cb(null, file.originalname);
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 100);
+    cb(null, "logo" + "-" + uniqueSuffix);
   },
 });
 const fileFilter = function (req, file, cb) {

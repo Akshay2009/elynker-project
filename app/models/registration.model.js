@@ -159,6 +159,18 @@ module.exports = (sequelize, Sequelize) => {
     category_ids:{
       type: Sequelize.STRING,
     },
+    freelancer_resume: {
+      type: Sequelize.STRING(300)
+    },
+    freelancer_role: {
+      type: Sequelize.STRING(300)
+    },
+    freelancer_bio: {
+      type: Sequelize.TEXT
+    },
+    language: {
+      type: Sequelize.STRING(300)
+    },
     created_by: {
       type: Sequelize.NUMERIC
     },
@@ -167,5 +179,6 @@ module.exports = (sequelize, Sequelize) => {
     }
   });
 
+  
   return Registration;
 };
