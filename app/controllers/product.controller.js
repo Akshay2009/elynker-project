@@ -4,12 +4,35 @@ const Product = db.product;
 const Registration = db.registration;
 const Category = db.category;
 const parseCSV = require('./csvParser');
+const fs = require('fs');
+const axios = require('axios');
+require('dotenv').config();
+const PRODUCT_IMAGE_PATH = path.join(process.env.PRODUCT_IMAGE_PATH);
+
 
 /**
  method to generate unique SKU in form SKU_****
  */
  function generateUniqueSKU() {
     return 'SKU_' + Date.now().toString() + Math.floor(Math.random() * 1000);
+}
+
+// method to download image from csv file
+async function downloadImage(imageUrl, imageName) {
+    try {
+      // Fetch the image using axios
+      const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+  
+      // Specify the path where the image will be stored
+      const imagePath = path.join(__dirname, '../..', PRODUCT_IMAGE_PATH,'/', imageName);
+  
+      // Write the image to the file system
+      fs.writeFileSync(imagePath, Buffer.from(response.data));
+  
+      console.log(`Image downloaded and stored at: ${imagePath}`);
+    } catch (error) {
+      console.error('Error downloading the image:', error.message);
+    }
 }
 
 
@@ -66,31 +89,44 @@ module.exports.getProductBySKU = async function (req, res) {
  */
 module.exports.createProduct = async function (req, res) {
     try {
-        const { type, registrationId, category_id } = req.body;
-        // Split comma-separated category IDs into an array
-        const categoryIdsArray = category_id.split(',');
+        const { type, registrationId } = req.body;
+        if(!req.files['csvFilePath']){
+            return res.status(400).json({error: 'Please Provide CSV'});
+        }
+        if(!registrationId){
+            return res.status(400).json({error: 'Registration ID Not provided'});
+        }
+        if(!type){
+            return res.status(400).json({error: 'Type not Provided - Product/Service'});
+        }
+
         let categoryIds;
-        //const imageFileNames = req.files['images'].map((file) => path.basename(file.path));
 
         if (req.files && req.files['csvFilePath'][0].path) {
             const csvData = await parseCSV(req.files['csvFilePath'][0].path);
 
             for (const row of csvData) {
                 const productImages = row.product_images ? row.product_images.split(',') : [];
-                const productImagesString = productImages.join(',');
+                let productArray = [];
+                for(let j=0;j<productImages.length;j++){
+                    const imageUrl = productImages[j]; 
+                    // let imageName = registrationId+row.title+'image'+j; // Replace with the desired image name
+                    // imageName = imageName+imageUrl.substring(imageUrl.lastIndexOf("."));
+                    let imageName = imageUrl.substring(imageUrl.lastIndexOf("/")+1);
+                    productArray.push(imageName);
+                    downloadImage(imageUrl, imageName);
+                }
+
+
                 let catIdArray;
                 // Split comma-separated category IDs into an array
                 const rowCategoryIdsArray = row.category_id ? row.category_id.split(',') : [];
                 if (rowCategoryIdsArray.length > 0) {
                     catIdArray = rowCategoryIdsArray;
                     categoryIds = rowCategoryIdsArray.join(',');
-                } else {
-                    catIdArray = categoryIdsArray;
-                    categoryIds = categoryIdsArray.join(',');
-                }
+                } 
 
                 if (row.sku) {
-                    console.log('*****', row.sku, '**catIdArray*', catIdArray);
                     const [product, created] = await Product.findOrCreate({
                         where: { sku: row.sku },
                         defaults: {
@@ -101,9 +137,8 @@ module.exports.createProduct = async function (req, res) {
                             budget: row.budget,
                             moq: row.moq,
                             category_id: categoryIds,
-                            //images: imageFileNames,
-                            default_image: row.default_image,
-                            product_images: productImagesString
+                            default_image: productArray[0],
+                            product_images: productArray.join(',')
                         }
                     });
 
@@ -117,9 +152,8 @@ module.exports.createProduct = async function (req, res) {
                             budget: row.budget,
                             moq: row.moq,
                             category_id: categoryIds,
-                            //images: imageFileNames,
-                            default_image: row.default_image,
-                            product_images: productImagesString
+                            default_image: productArray[0],
+                            product_images: productArray.join(',')
                         });
                     }
                     // Find categories by IDs
@@ -138,7 +172,7 @@ module.exports.createProduct = async function (req, res) {
                 { where: { id: registrationId } }
             );
 
-            return res.status(200).json({ message: 'Products Data inserted successfully' });
+            return res.status(200).json({ message: 'Products Data inserted successfully using CSV' });
         } else {
             return res.status(500).json({ message: 'CSV file not provided' });
         }
@@ -170,7 +204,7 @@ module.exports.createProductsImages = async function (req, res) {
  */
 module.exports.createProductsSingleRecord = async function (req, res) {
     try {
-        const { type, registrationId, title, description, budget, moq, category_id } = req.body;
+        const { type, registrationId, title, description, budget, moq, category_id,unit } = req.body;
         if(!req.files['images']){
             return res.status(405).json({error: 'Please Provide Product Images'});
         }
@@ -179,6 +213,9 @@ module.exports.createProductsSingleRecord = async function (req, res) {
         }
         if (!category_id) {
             return res.status(402).json({ error: 'No category Provided' });
+        }
+        if(!type){
+            return res.status(400).json({error: 'Type not Provided - Product/Service'});
         }
         const regRecord = await Registration.findOne({
             where: { id: registrationId}
@@ -213,18 +250,13 @@ module.exports.createProductsSingleRecord = async function (req, res) {
             category_id: catArray.join(','),
             budget: budget,
             moq: moq,
+            unit: unit,
             default_image: imageFileNames[0],
             product_images: productImagesString
         });
-
-        // Associate the product with categories
-        await product.addCategories(categories);
-        // update the business_type on Registration
-        await Registration.update({ business_type: type },
-            { where: { id: registrationId } }
-        );
-
         if (product) {
+            // Associate the product with categories
+            await product.addCategories(categories);
             return res.status(200).json(product);
         } else {
             return res.status(400).json({ error: 'Product not inserted' });
@@ -245,7 +277,7 @@ module.exports.createProductsSingleRecord = async function (req, res) {
 module.exports.updateProducts = async function (req, res) {
     try {
         const sku = req.params.sku;
-        const { title, description, budget, moq, category_id,registrationId } = req.body;
+        const { title, description, budget, moq, category_id,registrationId,unit } = req.body;
         if(!registrationId){
             return res.status(404).json({error: 'Registration ID Not provided'});
         }
@@ -256,7 +288,7 @@ module.exports.updateProducts = async function (req, res) {
             where: { id: registrationId}
         });
         if(!regRecord){
-            return res.status(404).json({error: 'Registration Doesnot Exist'});
+            return res.status(404).json({error: 'Registration Does not Exist'});
         }
         // Split comma-separated category IDs into an array
         const categoryIdsArray = category_id.split(',');
@@ -282,15 +314,40 @@ module.exports.updateProducts = async function (req, res) {
             description,
             budget,
             moq,
+            unit:unit,
             category_id: catArray.join(','),
             registrationId: registrationId
         }
+        const existingProduct = await Product.findOne({ where: { sku : sku }});
+        if(!existingProduct){
+            return res.status(404).json({ error: 'No Product found with this sku' });
+        }
+        let existingProductImages = existingProduct.product_images.split(',');
+        let existingProductImagesString;
+        if(existingProductImages.join(',').length ==0){
+            existingProductImagesString = "";
+        }else{
+            existingProductImagesString = existingProductImages.join(',');
+        }
+        
 
-        if (req.files['images']) { // if images are uploaded then then update product_images and default_image field
+        if (req.files['images'] ) { // if images are uploaded then then update product_images and default_image field
             imageFileNames = req.files['images'].map((file) => path.basename(file.path));
             productImagesString = imageFileNames.join(',');
-            product_details.default_image = imageFileNames[0];
-            product_details.product_images = productImagesString
+            if(existingProductImages.join(',').length===0){
+                product_details.default_image = imageFileNames[0];
+                product_details.product_images = productImagesString
+            }else{
+                product_details.default_image = existingProductImages[0];
+                product_details.product_images = existingProductImagesString+','+productImagesString
+            }
+        }else{
+            product_details.default_image = "";
+            product_details.product_images = "";
+            const existingProductImages = existingProduct.product_images.split(',');
+            for( let i=0;i<existingProductImages.length;i++){
+                fs.unlinkSync(path.join(__dirname, '../..', PRODUCT_IMAGE_PATH,'/',existingProductImages[i]));
+            }
         }
 
         const [rowUpdated, productUpdated] = await Product.update(product_details, {
@@ -343,6 +400,12 @@ module.exports.deleteProductBySku = async function (req, res) {
         if (!productToDelete) {
             return res.status(404).json({ error: 'No Product found' });
         }
+        if(productToDelete){
+            const existingProductImages = productToDelete.product_images.split(',');
+            for( let i=0;i<existingProductImages.length;i++){
+                fs.unlinkSync(path.join(__dirname, '../..', PRODUCT_IMAGE_PATH,'/',existingProductImages[i]));
+            }
+        }
         const deletedProduct = await Product.destroy({
             where: {
                 sku: sku
@@ -361,8 +424,6 @@ module.exports.deleteProductBySku = async function (req, res) {
     }
 }
 
-//controller for deleting images as per passed in parameter along with product id-
-
 module.exports.delProductImages=async function(req,res){
     try{
         const {product_id}=req.params;
@@ -372,7 +433,6 @@ module.exports.delProductImages=async function(req,res){
             return res.status(404).json({error:"product id not found kindly check!"})
         }
         let productArray=product.product_images.split(',');
-        console.log(productArray);
         const productArrayUpdated = productArray.filter(product => product!== image_name);
         
         if(productArray.length === productArrayUpdated.length){
@@ -388,6 +448,7 @@ module.exports.delProductImages=async function(req,res){
             returning: true
         });
         if(rowUpdated>0){
+            fs.unlinkSync(path.join(__dirname, '../..', PRODUCT_IMAGE_PATH,'/',image_name));
             return res.status(200).json({message:"Product updated",product:productUpdated[0]});
         }else{
             return res.status(400).json({error:"Error in deleting Product Images"});
@@ -397,4 +458,4 @@ module.exports.delProductImages=async function(req,res){
     }catch (err) {
         return res.status(500).json({ error: 'Internal Server Error ' + err.message });
     }
-}
+} 

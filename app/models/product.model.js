@@ -37,6 +37,9 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
         unique:  true
       },
+      unit:{
+        type: Sequelize.STRING(50),
+      },
       created_by: {
         type: Sequelize.NUMERIC
       },

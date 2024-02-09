@@ -160,6 +160,7 @@ module.exports.getBusinessDetail = async function (req, res) {
 module.exports.putRegDetail = async function (req, res) {
   try {
     const {name,
+      business_type,
       ip_address,
       registration_type,
       dob,
