@@ -28,7 +28,7 @@ module.exports.saveCityMaster = async function (req, res) {
 
 module.exports.getAllCityMasters = async function (req, res) {
   const allCityRecords = await CityMaster.findAll();
-  return res.status(200).json(allCityRecords+test);
+  return res.status(200).json(allCityRecords);
 }
 
 //city master controller getting data by ID from database---
