@@ -2,16 +2,33 @@ const { authJwt } = require("../middleware");
 const multer = require("multer");
 const path = require("path");
 const categoryController = require("../controllers/category.controller");
-
-const CATEGORY_LOGO_PATH = path.join("/uploads/category/category_logo");
+const fs = require("fs");
+require('dotenv').config();
+const CATEGORY_LOGO_PATH = path.join(process.env.CATEGORY_LOGO_PATH);
 
 let storage = multer.diskStorage({
-  destination: function (req, res, cb) {
-    cb(null, path.join(__dirname, "..", CATEGORY_LOGO_PATH));
+  destination: function (req, file, cb) {
+    const destinationPath = path.join(__dirname, '../..', CATEGORY_LOGO_PATH);
+    // Check if the destination directory exists
+    fs.access(destinationPath, fs.constants.F_OK, (err) => {
+      if (err) {
+        // If directory doesn't exist, create it
+        fs.mkdir(destinationPath, { recursive: true }, (err) => {
+          if (err) {
+            console.error('Error creating directory:', err);
+            cb(err, null);
+          } else {
+            cb(null, destinationPath);
+          }
+        });
+      } else {
+        cb(null, destinationPath);
+      }
+    });
   },
-  filename: function (req, res, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 100);
-    cb(null, "logo" + "-" + uniqueSuffix);
+  filename: function (req, file, cb) {
+    const uniqueFilename = `${Date.now()}${Math.random().toString().slice(15)}${path.extname(file.originalname)}`;
+    cb(null, uniqueFilename);
   },
 });
 const fileFilter = function (req, file, cb) {
@@ -38,7 +55,7 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 1024 * 1024, //1MB
+    fileSize: 2* 1024 * 1024, //2MB
   },
 });
 
@@ -69,6 +86,8 @@ module.exports = function (app) {
   app.post(
     "/api/categories",
     [authJwt.verifyToken],
+    upload.fields([{ name: "image_path",maxCount: 1 },{name: "banner_image",maxCount: 1}]),
+    handleMulterError,
     categoryController.createCategory
   );
 
@@ -89,6 +108,8 @@ module.exports = function (app) {
   app.put(
     "/api/categories/:categoryId",
     [authJwt.verifyToken],
+    upload.fields([{ name: "image_path",maxCount: 1},{name: "banner_image",maxCount: 1}]),
+    handleMulterError,
     categoryController.updateCategory
   );
 

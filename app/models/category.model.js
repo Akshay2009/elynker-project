@@ -28,7 +28,7 @@ module.exports = (sequelize, Sequelize) => {
         },
       },
       image_path: {
-        type: Sequelize.ARRAY(Sequelize.STRING),
+        type: Sequelize.STRING(200),
         allowNull: true
       },
       banner_image: {
