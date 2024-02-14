@@ -1,11 +1,9 @@
 const db = require("../models");
 const fs = require("fs");
 const path = require("path");
-require('dotenv').config();
+require("dotenv").config();
 const COMPANY_LOGO_PATH = path.join(process.env.COMPANY_LOGO_PATH);
 const COVER_IMAGE_PATH = path.join(process.env.COVER_IMAGE_PATH);
-const FREELANCER_RESUME_PATH = path.join(process.env.FREELANCER_RESUME_PATH);
-
 const Registration = db.registration;
 const BusinessDetail = db.businessDetail;
 const Category = db.category;
@@ -21,18 +19,24 @@ module.exports.updateCompanyLogo = async function (req, res) {
     const companyLogo = req.files["images"];
 
     if (companyLogo && companyLogo.length > 0) {
-      if(registration.image_path){
-        fs.unlinkSync(path.join(__dirname, '../..', COMPANY_LOGO_PATH,'/',registration.image_path));
+      if (registration.image_path) {
+        fs.unlinkSync(
+          path.join(
+            __dirname,
+            "../..",
+            COMPANY_LOGO_PATH,
+            "/",
+            registration.image_path
+          )
+        );
       }
       registration.image_path = companyLogo[0].filename;
     }
     await registration.save();
-    return res
-      .status(200)
-      .json({
-        success: "Company Logo Updated Successfully",
-        registration: registration,
-      });
+    return res.status(200).json({
+      success: "Company Logo Updated Successfully",
+      registration: registration,
+    });
   } catch (err) {
     return res.status(500).json({ error: "error in updating  Company Logo" });
   }
@@ -49,18 +53,24 @@ module.exports.updateCoverImage = async function (req, res) {
     const coverImages = req.files["images"];
 
     if (coverImages && coverImages.length > 0) {
-      if(registration.cover_image){
-        fs.unlinkSync(path.join(__dirname, '../..', COVER_IMAGE_PATH,'/',registration.cover_image));
+      if (registration.cover_image) {
+        fs.unlinkSync(
+          path.join(
+            __dirname,
+            "../..",
+            COVER_IMAGE_PATH,
+            "/",
+            registration.cover_image
+          )
+        );
       }
       registration.cover_image = coverImages[0].filename;
     }
     await registration.save();
-    return res
-      .status(200)
-      .json({
-        success: "Cover Image Updated Successfully",
-        registration: registration,
-      });
+    return res.status(200).json({
+      success: "Cover Image Updated Successfully",
+      registration: registration,
+    });
   } catch (err) {
     return res.status(500).json({ error: "error in updating  cover Image" });
   }
@@ -80,11 +90,9 @@ module.exports.saveBusinessDetail = async function (req, res) {
     let arr = req.body;
     let registration_company_name;
     if (!arr.length) {
-      return res
-        .status(401)
-        .json({
-          success: "Please provide your business data in json array[]!",
-        });
+      return res.status(401).json({
+        success: "Please provide your business data in json array[]!",
+      });
     }
 
     const updatedArr = arr.map((item) => {
@@ -159,7 +167,8 @@ module.exports.getBusinessDetail = async function (req, res) {
 
 module.exports.putRegDetail = async function (req, res) {
   try {
-    const {name,
+    const {
+      name,
       business_type,
       ip_address,
       registration_type,
@@ -192,7 +201,8 @@ module.exports.putRegDetail = async function (req, res) {
       return res.status(404).json({ error: "Registration record not found" });
     } else if (existingRegistration) {
       const [row, record] = await Registration.update(
-        { name,
+        {
+          name,
           ip_address,
           business_type,
           registration_type,
@@ -291,32 +301,24 @@ module.exports.updateCategoryIds = async function (req, res) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-//free lancer resume upload controller--
 
-module.exports.uploadFreelancerResume = async (req, res) => {
+//API TO GET REGISTRATION DETAILS BY USER ID:
+module.exports.getRegById = async function (req, res) {
   try {
-    if (req.fileValidationError) {
-      return res.status(400).json({ error: req.fileValidationError });
+    const { user_id } = req.params;
+    if (user_id == 0 || user_id === "null") {
+      return res
+        .status(404)
+        .json({ error: "Unable to find User Id kindly provide Valid User Id" });
     }
-    const { registrationId } = req.params;
-    const resume = req.files["resume"];
-    const existingRegistration =  await Registration.findByPk(registrationId);
-    if(!existingRegistration){
-      return res.status(404).json({ error: "Registration not found with this id" });
+    const getRegById = await Registration.findByPk(user_id);
+    if (getRegById) {
+      return res
+        .status(200)
+        .json({ message: "details successfully fetched", data: getRegById });
+    } else {
+      return res.status(401).json({ error: "User Not Found" });
     }
-    if(existingRegistration.registration_type!==3){
-      return res.status(404).json({ error: "Registration is not of freelancer type" });
-    }
-
-    // Assume you have a 'resumes' field in your Registration model to store file details
-    if (resume && resume.length > 0) {
-      if(existingRegistration.freelancer_resume){
-        fs.unlinkSync(path.join(__dirname, '../..', FREELANCER_RESUME_PATH,'/',existingRegistration.freelancer_resume));
-      }
-      existingRegistration.freelancer_resume = resume[0].filename;
-    }
-    await existingRegistration.save();
-    return res.status(200).json({ message: "Resume updated successfully", data: existingRegistration });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

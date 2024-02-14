@@ -159,9 +159,6 @@ module.exports = (sequelize, Sequelize) => {
     category_ids:{
       type: Sequelize.STRING,
     },
-    freelancer_resume: {
-      type: Sequelize.STRING(300)
-    },
     freelancer_role: {
       type: Sequelize.STRING(300)
     },

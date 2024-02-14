@@ -69,59 +69,7 @@ const handleMulterError = function (err, req, res, next) {
     next();
   }
 };
-//freelance resume upload multer-
-const fileFilterResume = function (req, file, cb) {
-  try {
-    const allowedFileTypes = /pdf|docx|doc|word/;
-    const mimetype = allowedFileTypes.test(file.mimetype);
-    const extname = allowedFileTypes.test(
-      path.extname(file.originalname).toLowerCase()
-    );
 
-    if (mimetype && extname) {
-      return cb(null, true);
-    }
-
-    const error = new Error("Only PDF,DOC,DOCX And WORD files are allowed!");
-    error.status = 400; // Set the status code for the error
-
-    cb(error);
-  } catch (err) {
-    console.log("error in fileFilter function", err.message);
-  }
-};
-let freelancerResume = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const destinationPath = path.join(__dirname, '../..', FREELANCER_RESUME_PATH);
-    // Check if the destination directory exists
-    fs.access(destinationPath, fs.constants.F_OK, (err) => {
-        if (err) {
-            // If directory doesn't exist, create it
-            fs.mkdir(destinationPath, { recursive: true }, (err) => {
-                if (err) {
-                    console.error('Error creating directory:', err);
-                    cb(err, null);
-                } else {
-                    cb(null, destinationPath);
-                }
-            });
-        } else {
-            cb(null, destinationPath);
-        }
-    });
-},
-  filename: function (req, file, cb) {
-    const uniqueFilename = `${Date.now()}${file.originalname}`;
-    cb(null, uniqueFilename);
-  },
-});
-const uploadfreelanceResume = multer({
-  storage: freelancerResume,
-  fileFilter: fileFilterResume,
-  limits: {
-    fileSize: 1024 * 1024, //3MB
-  },
-});
 
 const { authJwt } = require("../middleware");
 const registrationController = require("../controllers/registration.controller");
@@ -212,17 +160,15 @@ module.exports = function (app) {
     registrationController.updateCategoryIds
   );
 
-  /**
-   * Endpoint to upload file for registration on Registration Model.
-   * @param {String} '/api/update/coverImage/:registrationId' - API endpoint path.
+
+ /**
+   * Endpoint to Get registration details as per user id passed in params:
+   * @param {String} '/api/registration/:user_id' - API endpoint path.
    * @param {Function[]} [authJwt.verifyToken,
-   * @param {Function} registrationController.updateCategoryIds - Controller function to handle the update.
+   * @param {Function} registrationController.getRegById -getRegById Controller function to handle get request.
    */
-  app.post(
-    "/api/user/resume/:registrationId",
+    app.get('/api/registration/:user_id',
     [authJwt.verifyToken],
-    uploadfreelanceResume.fields([{ name: "resume" }]),
-    handleMulterError,
-    registrationController.uploadFreelancerResume
-  );
+    registrationController.getRegById
+  )
 };
