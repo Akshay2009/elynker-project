@@ -171,17 +171,4 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     registrationController.getRegById
   )
-
-
-  /**
-   * Endpoint to Get registration details as per user id passed in params:
-   * @param {String} '/api/registration/:user_id' - API endpoint path.
-   * @param {Function[]} [authJwt.verifyToken,
-   * @param {Function} registrationController.getRegById -getRegById Controller function to handle get request.
-   */
-  app.get('/api/registration/:user_id',
-    [authJwt.verifyToken],
-    registrationController.getRegById
-  )
-
 };

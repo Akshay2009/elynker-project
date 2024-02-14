@@ -43,35 +43,11 @@ module.exports.updateCoverImage = async function (req, res) {
   let registration = await Registration.findByPk(req.params.registrationId);
   const coverImages = req.files["images"];
 
-<<<<<<< HEAD
-    if (coverImages && coverImages.length > 0) {
-      if (registration.cover_image) {
-        fs.unlinkSync(
-          path.join(
-            __dirname,
-            "../..",
-            COVER_IMAGE_PATH,
-            "/",
-            registration.cover_image
-          )
-        );
-      }
-      registration.cover_image = coverImages[0].filename;
-    }
-    await registration.save();
-    return res.status(200).json({
-      success: "Cover Image Updated Successfully",
-      registration: registration,
-    });
-  } catch (err) {
-    return res.status(500).json({ error: "error in updating  cover Image" });
-=======
   if (coverImages && coverImages.length > 0) {
     if (registration.cover_image) {
       fs.unlinkSync(path.join(__dirname, '../..', COVER_IMAGE_PATH, '/', registration.cover_image));
     }
     registration.cover_image = coverImages[0].filename;
->>>>>>> 290299abbfd824ec5d35d4893b1624310490a6fb
   }
   await registration.save();
   return res
@@ -86,46 +62,7 @@ module.exports.saveBusinessDetail = async function (req, res) {
   const reg_Id = req.params.reg_id;
   const existingRegistration = await Registration.findByPk(reg_Id);
 
-<<<<<<< HEAD
-    if (!existingRegistration) {
-      return res
-        .status(401)
-        .json({ success: "Provided registration Id does not exists!" });
-    }
-
-    let arr = req.body;
-    let registration_company_name;
-    if (!arr.length) {
-      return res.status(401).json({
-        success: "Please provide your business data in json array[]!",
-      });
-    }
-
-    const updatedArr = arr.map((item) => {
-      return {
-        ...item,
-        registrationId: reg_Id, // Add registrationId
-      };
-    });
-    const result = await BusinessDetail.bulkCreate(updatedArr, {
-      updateOnDuplicate: [
-        "company_name",
-        "document",
-        "is_active",
-        "document_name",
-        "document_number",
-        "file_location",
-        "file_name",
-      ],
-    });
-
-    const [numberOfUpdatedRows, updatedRecords] = await Registration.update(
-      { company_name: arr[0].company_name },
-      { where: { id: reg_Id } }
-    );
-=======
   if (!existingRegistration) {
->>>>>>> 290299abbfd824ec5d35d4893b1624310490a6fb
     return res
       .status(401)
       .json({ success: "Provided registration Id does not exists!" });
