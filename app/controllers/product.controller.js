@@ -168,10 +168,6 @@ module.exports.createProduct = async function (req, res) {
                 }
             }
 
-            await Registration.update({ business_type: type },
-                { where: { id: registrationId } }
-            );
-
             return res.status(200).json({ message: 'Products Data inserted successfully using CSV' });
         } else {
             return res.status(500).json({ message: 'CSV file not provided' });
@@ -204,7 +200,8 @@ module.exports.createProductsImages = async function (req, res) {
  */
 module.exports.createProductsSingleRecord = async function (req, res) {
     try {
-        const { type, registrationId, title, description, budget, moq, category_id,unit } = req.body;
+        const { type, registrationId, title, description, budget, moq, category_id,unit,year_of_exp,
+            portfolio_link} = req.body;
         if(!req.files['images']){
             return res.status(405).json({error: 'Please Provide Product Images'});
         }
@@ -247,6 +244,8 @@ module.exports.createProductsSingleRecord = async function (req, res) {
             sku: sku,
             type: type,
             registrationId,
+            year_of_exp,
+            portfolio_link,
             category_id: catArray.join(','),
             budget: budget,
             moq: moq,
@@ -277,7 +276,7 @@ module.exports.createProductsSingleRecord = async function (req, res) {
 module.exports.updateProducts = async function (req, res) {
     try {
         const sku = req.params.sku;
-        const { title, description, budget, moq, category_id,registrationId,unit } = req.body;
+        const { title, description, budget, moq, category_id,registrationId,unit,year_of_exp,portfolio_link } = req.body;
         if(!registrationId){
             return res.status(404).json({error: 'Registration ID Not provided'});
         }
@@ -314,6 +313,8 @@ module.exports.updateProducts = async function (req, res) {
             description,
             budget,
             moq,
+            year_of_exp,
+            portfolio_link,
             unit:unit,
             category_id: catArray.join(','),
             registrationId: registrationId
@@ -453,8 +454,6 @@ module.exports.delProductImages=async function(req,res){
         }else{
             return res.status(400).json({error:"Error in deleting Product Images"});
         }
-       
-
     }catch (err) {
         return res.status(500).json({ error: 'Internal Server Error ' + err.message });
     }

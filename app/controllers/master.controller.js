@@ -3,7 +3,7 @@ const CityMaster = db.cityMaster;
 const CurrencyMaster = db.currencyMaster;
 const StateMaster = db.stateMaster;
 const RegistrationTypesMaster = db.registrationTypesMaster;
-
+const UnitMaster = db.unitMaster;
 /**
  * Controller function to save City Master details---
  * @param {Object} req - Express request object.
@@ -16,7 +16,9 @@ module.exports.saveCityMaster = async function (req, res) {
     const cityRecord = await CityMaster.create({
       name: name,
     });
-    return res.status(200).json({message:"City Record saved Succesfully",cityRecord});
+    return res
+      .status(200)
+      .json({ message: "City Record saved Succesfully", cityRecord });
   } catch (err) {
     console.error("Error saving city master:", err);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -130,12 +132,11 @@ module.exports.getcurrencyMasterById = async function (req, res) {
   try {
     const id = req.params.id;
     const currency = await CurrencyMaster.findByPk(id);
-    if(currency){
+    if (currency) {
       return res.status(200).json(currency);
-    }else{
-      return res.status(404).json({error: 'No Currency Found'});
+    } else {
+      return res.status(404).json({ error: "No Currency Found" });
     }
-    
   } catch (err) {
     console.error("Error fetching city masters:", err);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -232,6 +233,7 @@ module.exports.getAllStateMaster = async function (req, res) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 /**
  * Controller function to update State Master by Id--
  * @param {Object} req - Express request object.
@@ -291,6 +293,7 @@ module.exports.saveRegistrationTypeMaster = async function (req, res) {
       .json({ error: "Failed to create registration type records" });
   }
 };
+
 /**
  * Controller function to Delete City Master details by Id--
  * @param {Object} req - Express request object.
@@ -311,6 +314,7 @@ module.exports.delCurrencyMaster = async function (req, res) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 /**
  * Controller function to Delete STATE Master details by Id--
  * @param {Object} req - Express request object.
@@ -329,5 +333,141 @@ module.exports.delStateMaster = async function (req, res) {
   } catch (error) {
     console.error("Error deleting State:", error);
     return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+/**
+ * Controller function to Create Unit Master ---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.saveUnitMaster = async function (req, res) {
+  try {
+    const { name, description } = req.body;
+    const saveUnit = await UnitMaster.create({ name, description });
+    return res
+      .status(200)
+      .json({ success: "unit saved sucessfully", saveUnit });
+  } catch (error) {
+    console.error("Error creating Unit Master:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+/**
+ * Controller function to Update Unit Master Details ---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.updateUnitMaster = async function (req, res) {
+  try {
+    const { unit_id } = req.params;
+    const { name, description } = req.body;
+
+    const existingUnitRecord = await UnitMaster.findByPk(unit_id);
+    if (
+      !unit_id ||
+      unit_id == 0 ||
+      unit_id === "null" ||
+      unit_id === "undefined"
+    ) {
+      return res
+        .status(404)
+        .json({ error: "Please provide valid UnitMaster Id to Update" });
+    }
+    if (!existingUnitRecord) {
+      return res.status(404).json({ error: "UnitMaster not found" });
+    }
+
+    await existingUnitRecord.update({
+      name,
+      description,
+    });
+    return res.status(200).json({
+      message: "UnitMaster record updated successfully",
+      updated_Unit_Record: existingUnitRecord,
+    });
+  } catch (error) {
+    console.error("Error updating Unit Master:", error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
+/**
+ * Controller function to Get all Unit Master Details ---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.getUnitMaster = async function (req, res) {
+  try {
+    const getUnitmaster = await UnitMaster.findAll();
+    return res.status(200).json(getUnitmaster);
+  } catch (error) {
+    console.error("Error Getting Unit Master:", error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
+/**
+ * Controller function to Get Unit Master Details by ID---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.getUnitmasterById = async function (req, res) {
+  try {
+    const { unit_id } = req.params;
+    if (
+      !unit_id ||
+      unit_id == 0 ||
+      unit_id === "null" ||
+      unit_id === "undefined"
+    ) {
+      return res
+        .status(404)
+        .json({ error: "Please provide valid Unit Master Id to get" });
+    }
+    const getUnitbyId = await UnitMaster.findByPk(unit_id);
+    if (getUnitbyId) {
+      return res.status(200).json(getUnitbyId);
+    } else {
+      return res.status(404).json({ error: "Unit Master details not found" });
+    }
+  } catch (error) {
+    console.error("Error Getting Unit Master:", error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
+/**
+ * Controller function to Delete Unit Master Details by ID---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.delunitMasterByid = async function (req, res) {
+  try {
+    const { unit_id } = req.params;
+    if (
+      !unit_id ||
+      unit_id == 0 ||
+      unit_id === "null" ||
+      unit_id === "undefined"
+    ) {
+      return res
+        .status(404)
+        .json({ error: "Please provide valid Unit Master Id to Delete" });
+    }
+    const delUnit = await db.unitMaster.destroy({ where: { id: unit_id } });
+    if (delUnit) {
+      return res
+        .status(200)
+        .json({ success: "Unit Master deleted successfully" });
+    } else {
+      return res.status(404).json({ error: "Unit Master details not found" });
+    }
+  } catch (error) {
+    console.error("Error deleting Unit Master:", error);
+    return res.status(500).json({ message: "internal server error" });
   }
 };
