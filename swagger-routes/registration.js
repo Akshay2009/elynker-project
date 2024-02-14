@@ -201,71 +201,57 @@
  *         '500':
  *           description: Internal Server Error
  *
- * /api/user/resume/{registrationId}:
- *   post:
- *     summary: Upload Freelancer Resume
- *     tags: [Registration]
- *     parameters:
- *       - name: registrationId
- *         in: path
- *         description: ID of the registration
- *         required: true
- *         schema:
- *           type: string
- *     security:
- *       - api_key: []
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
+ *   /api/registration/{user_id}:
+ *     get:
+ *       summary: Update Registration Record
+ *       tags: [Registration]
+ *       parameters:
+ *         - name: reg_id
+ *           in: path
+ *           required: true
+ *           description: Registration ID
  *           schema:
- *             type: object
- *             properties:
- *               resume:
- *                 type: string
- *                 format: binary
- *     responses:
- *       '200':
- *         description: Resume updated successfully
+ *             type: string
+ *       security:
+ *         - api_key: []
+ *       requestBody:
+ *         required: true
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Resume updated successfully
- *                 data:
- *                   $ref: '#/components/schemas/Registration'
- *       '400':
- *         description: Bad request
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Invalid file format
- *       '404':
- *         description: Registration not found or not of freelancer type
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Registration not found with this id or Registration is not of freelancer type
- *       '500':
- *         description: Internal Server Error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: Internal Server Error
+ *               $ref: '#/components/schemas/RegistrationInput'
+ *       responses:
+ *         '200':
+ *           description: Registration record updated successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Registration record updated successfully
+ *                 updatedRegistration:
+ *                   id: '123'
+ *                   ip_address: '127.0.0.1'
+ *                   registration_type: 'user'
+ *                   dob: '1990-01-01'
+ *                   latitude: 40.7128
+ *                   longitude: -74.0060
+ *                   steps_completed: 3
+ *                   active_steps: 2
+ *                   address1: '123 Main St'
+ *                   address2: 'Apt 4'
+ *                   city: 'City'
+ *                   state: 'State'
+ *                   country: 'Country'
+ *                   education: 'Graduate'
+ *                   available_hrs_per_week: 40
+ *                   hourly_rate: 25.5
+ *                   service_fee: 5.0
+ *                   currency_id: 1
+ *                   created_by: 'user123'
+ *                   updated_by: 'user456'
+ *         '404':
+ *           description: Registration record not found
+ *         '500':
+ *           description: Internal Server Error
+ *
  */
 

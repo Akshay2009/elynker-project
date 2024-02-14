@@ -43,9 +43,6 @@ module.exports = (sequelize, Sequelize) => {
       },
       portfolio_link:{
         type: Sequelize.STRING(200),
-        validate: {
-          isUrl: true
-        }
       },
       year_of_exp:{
         type: Sequelize.STRING(20),

@@ -6,6 +6,7 @@ const swaggerOptions = require("./swagger-routes/swagger");  // Adjust the path 
 const initializeRoutes = require("./app/routes/routeInitializer")
 const bodyParser = require('body-parser')
 require('dotenv').config();
+require('express-async-errors');
 
 const app = express();
 app.use(
@@ -42,6 +43,26 @@ app.get("/", (req, res) => {
 //Swagger options
 const specs = swaggerJsdoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+
+
+//Error handling
+app.use((err, req, res, next) => {
+
+    // Extracting controller and function names from the error stack
+    const stack = err.stack.split('\n').slice(1);
+    console.log("stack",stack)
+  if (err.message === 'access denied') {
+    res.status(403);
+    res.json({ error: err.message });
+  }else if (err.message!="") {
+    res.status(500);
+    res.json({ error: err.message });
+  }
+
+
+  next(err);
+});
+
 
 // set port, listen for requests
 const PORT = process.env.PORT;

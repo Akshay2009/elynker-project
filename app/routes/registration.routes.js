@@ -1,7 +1,7 @@
 const multer = require("multer");
 const path = require("path");
 const { v4: uuidv4 } = require('uuid');
-const fs=require('fs');
+const fs = require('fs');
 require('dotenv').config();
 const COMPANY_LOGO_PATH = path.join(process.env.COMPANY_LOGO_PATH);
 const COVER_IMAGE_PATH = path.join(process.env.COVER_IMAGE_PATH);
@@ -171,4 +171,17 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     registrationController.getRegById
   )
+
+
+  /**
+   * Endpoint to Get registration details as per user id passed in params:
+   * @param {String} '/api/registration/:user_id' - API endpoint path.
+   * @param {Function[]} [authJwt.verifyToken,
+   * @param {Function} registrationController.getRegById -getRegById Controller function to handle get request.
+   */
+  app.get('/api/registration/:user_id',
+    [authJwt.verifyToken],
+    registrationController.getRegById
+  )
+
 };

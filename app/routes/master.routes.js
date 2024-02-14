@@ -191,11 +191,11 @@ module.exports = function (app) {
 
   // /* End Point to DELETE Unit master Record by ID
   //     DELETE- "/api/unitmaster/:unit_id", API endpoint
-  //       masterController.delunitMasterByid - Controller function to DELETE Unit master Record by ID
+  //       masterController.delUnitmasterByid - Controller function to DELETE Unit master Record by ID
   //   */
   app.delete(
     "/api/unitmaster/:unit_id",
     [authJwt.verifyToken],
-    masterController.delunitMasterByid
+    masterController.delUnitmasterByid
   );
 };
