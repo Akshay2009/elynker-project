@@ -20,19 +20,7 @@ module.exports.updateCompanyLogo = async function (req, res) {
 
     if (companyLogo && companyLogo.length > 0) {
       if (registration.image_path) {
-<<<<<<< HEAD
-        fs.unlinkSync(
-          path.join(
-            __dirname,
-            "../..",
-            COMPANY_LOGO_PATH,
-            "/",
-            registration.image_path
-          )
-        );
-=======
         fs.unlinkSync(path.join(__dirname, '../..', COMPANY_LOGO_PATH, '/', registration.image_path));
->>>>>>> 290299abbfd824ec5d35d4893b1624310490a6fb
       }
       registration.image_path = companyLogo[0].filename;
     }
