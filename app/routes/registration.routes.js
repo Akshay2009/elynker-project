@@ -1,7 +1,7 @@
 const multer = require("multer");
 const path = require("path");
 const { v4: uuidv4 } = require('uuid');
-const fs=require('fs');
+const fs = require('fs');
 require('dotenv').config();
 const COMPANY_LOGO_PATH = path.join(process.env.COMPANY_LOGO_PATH);
 const COVER_IMAGE_PATH = path.join(process.env.COVER_IMAGE_PATH);
@@ -95,21 +95,21 @@ let freelancerResume = multer.diskStorage({
     const destinationPath = path.join(__dirname, '../..', FREELANCER_RESUME_PATH);
     // Check if the destination directory exists
     fs.access(destinationPath, fs.constants.F_OK, (err) => {
-        if (err) {
-            // If directory doesn't exist, create it
-            fs.mkdir(destinationPath, { recursive: true }, (err) => {
-                if (err) {
-                    console.error('Error creating directory:', err);
-                    cb(err, null);
-                } else {
-                    cb(null, destinationPath);
-                }
-            });
-        } else {
+      if (err) {
+        // If directory doesn't exist, create it
+        fs.mkdir(destinationPath, { recursive: true }, (err) => {
+          if (err) {
+            console.error('Error creating directory:', err);
+            cb(err, null);
+          } else {
             cb(null, destinationPath);
-        }
+          }
+        });
+      } else {
+        cb(null, destinationPath);
+      }
     });
-},
+  },
   filename: function (req, file, cb) {
     const uniqueFilename = `${Date.now()}${file.originalname}`;
     cb(null, uniqueFilename);
@@ -225,4 +225,16 @@ module.exports = function (app) {
     handleMulterError,
     registrationController.uploadFreelancerResume
   );
+
+  /**
+   * Endpoint to Get registration details as per user id passed in params:
+   * @param {String} '/api/registration/:user_id' - API endpoint path.
+   * @param {Function[]} [authJwt.verifyToken,
+   * @param {Function} registrationController.getRegById -getRegById Controller function to handle get request.
+   */
+  app.get('/api/registration/:user_id',
+    [authJwt.verifyToken],
+    registrationController.getRegById
+  )
+
 };

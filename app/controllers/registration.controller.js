@@ -291,3 +291,26 @@ module.exports.uploadFreelancerResume = async (req, res) => {
   await existingRegistration.save();
   return res.status(200).json({ message: "Resume updated successfully", data: existingRegistration });
 };
+
+//API TO GET REGISTRATION DETAILS BY USER ID:
+module.exports.getRegById = async function (req, res) {
+  try {
+    const { user_id } = req.params;
+    if (user_id == 0 || user_id === "null") {
+      return res
+        .status(404)
+        .json({ error: "Unable to find User Id kindly provide Valid User Id" });
+    }
+    const getRegById = await Registration.findByPk(user_id);
+    if (getRegById) {
+      return res
+        .status(200)
+        .json({ message: "details successfully fetched", data: getRegById });
+    } else {
+      return res.status(401).json({ error: "User Not Found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

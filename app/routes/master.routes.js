@@ -2,7 +2,6 @@ const { authJwt } = require("../middleware");
 const masterController = require("../controllers/master.controller");
 
 module.exports = function (app) {
-  
   /* End Point to  create a citymaster Record
         POST - /api/citymaster/ API endpoint
         masterController.saveCityMaster - Controller function to Create a citymasters record
@@ -29,7 +28,7 @@ module.exports = function (app) {
 
   app.get(
     "/api/citymaster/",
-  //  [authJwt.verifyToken],
+    //  [authJwt.verifyToken],
     masterController.getAllCityMasters
   );
 
@@ -40,7 +39,7 @@ module.exports = function (app) {
 
   app.get(
     "/api/citymaster/:id",
- //   [authJwt.verifyToken],
+    //   [authJwt.verifyToken],
     masterController.getCityMasters
   );
   /* End Point to UPDATE citymaster Record BYid
@@ -58,7 +57,7 @@ module.exports = function (app) {
     */
   app.get(
     "/api/currencymaster/",
-  //  [authJwt.verifyToken],
+    //  [authJwt.verifyToken],
     masterController.getAllcurrencyMaster
   );
 
@@ -77,7 +76,7 @@ module.exports = function (app) {
     */
   app.get(
     "/api/currencymaster/:id",
-  //  [authJwt.verifyToken],
+    //  [authJwt.verifyToken],
     masterController.getcurrencyMasterById
   );
 
@@ -108,7 +107,7 @@ module.exports = function (app) {
     */
   app.get(
     "/api/statemaster/",
-  //  [authJwt.verifyToken],
+    //  [authJwt.verifyToken],
     masterController.getAllStateMaster
   );
 
@@ -148,5 +147,55 @@ module.exports = function (app) {
     "/api/statemaster/:state_id",
     [authJwt.verifyToken],
     masterController.delStateMaster
+  );
+
+  /* End Point to Create Unit master Record 
+      POST- "/api/unitmaster", API endpoint
+         masterController.saveUnitMaster - Controller function to Create Unit master Record 
+    */
+  app.post(
+    "/api/unitmaster/",
+    [authJwt.verifyToken],
+    masterController.saveUnitMaster
+  );
+
+  /* End Point to update Unit master Record by Id
+      PUT- "/api/unitmaster/:id", API endpoint
+         masterController.UpdateUnitMaster - Controller function to Update Unit master Record by ID
+    */
+  app.put(
+    "/api/unitmaster/:unit_id",
+    [authJwt.verifyToken],
+    masterController.updateUnitMaster
+  );
+
+  // /* End Point to Get all Unit master Record
+  //     GET- "/api/unitmaster/", API endpoint
+  //       masterController.getUnitMaster - Controller function to get Unit master Record
+  //   */
+  app.get(
+    "/api/unitmaster/",
+    [authJwt.verifyToken],
+    masterController.getUnitMaster
+  );
+
+  // /* End Point to Get all Unit master Record by ID
+  //     GET- "/api/unitmaster/:unit_id", API endpoint
+  //       masterController.getUnitMaster - Controller function to get Unit master Record by ID
+  //   */
+  app.get(
+    "/api/unitmaster/:unit_id",
+    [authJwt.verifyToken],
+    masterController.getUnitmasterById
+  );
+
+  // /* End Point to DELETE Unit master Record by ID
+  //     DELETE- "/api/unitmaster/:unit_id", API endpoint
+  //       masterController.delUnitmasterByid - Controller function to DELETE Unit master Record by ID
+  //   */
+  app.delete(
+    "/api/unitmaster/:unit_id",
+    [authJwt.verifyToken],
+    masterController.delUnitmasterByid
   );
 };

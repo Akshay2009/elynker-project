@@ -41,6 +41,13 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING(50),
         
       },
+      portfolio_link:{
+        type: Sequelize.STRING(200),
+      },
+      year_of_exp:{
+        type: Sequelize.STRING(20),
+        
+      },
       created_by: {
         type: Sequelize.NUMERIC
       },
