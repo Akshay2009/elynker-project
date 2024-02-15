@@ -62,7 +62,7 @@ module.exports.uploadfreelanceResume = multer({
   storage: freelancerResume,
   fileFilter: fileFilterResume,
   limits: {
-    fileSize: 1024 * 1024, //1MB
+    fileSize: 1024 * 1024 * 2, //2MB
   },
 });
 
