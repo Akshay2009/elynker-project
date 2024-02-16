@@ -25,6 +25,14 @@ module.exports = (sequelize, Sequelize) => {
     file_location: {
       type: Sequelize.STRING(200),
     },
+    is_provided: {
+      type: Sequelize.BOOLEAN,
+      allowNull : false
+    },
+    no_document_reason: {
+      type: Sequelize.STRING(500),
+      allowNull: true
+    },
   });
 
   return BusinessDetail;

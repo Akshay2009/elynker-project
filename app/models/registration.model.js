@@ -168,6 +168,10 @@ module.exports = (sequelize, Sequelize) => {
     language: {
       type: Sequelize.STRING(300)
     },
+    about_company: {
+      type: Sequelize.STRING(500),
+      allowNull: true
+    },
     created_by: {
       type: Sequelize.NUMERIC
     },
