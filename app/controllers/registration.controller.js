@@ -73,7 +73,7 @@ module.exports.updateCoverImage = async function (req, res) {
 };
 
 module.exports.saveBusinessDetail = async function (req, res) {
-  try {
+  
     const reg_Id = req.params.reg_id;
     const existingRegistration = await Registration.findByPk(reg_Id);
 
@@ -136,9 +136,7 @@ module.exports.saveBusinessDetail = async function (req, res) {
         data: result,
       });
     }
-  } catch (err) {
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
+  
 };
 
 /**
