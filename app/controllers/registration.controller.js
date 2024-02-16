@@ -73,70 +73,72 @@ module.exports.updateCoverImage = async function (req, res) {
 };
 
 module.exports.saveBusinessDetail = async function (req, res) {
-  
-    const reg_Id = req.params.reg_id;
-    const existingRegistration = await Registration.findByPk(reg_Id);
 
-    if (!existingRegistration) {
-      return res
-        .status(401)
-        .json({ success: "Provided registration Id does not exists!" });
-    }
+  const reg_Id = req.params.reg_id;
+  const existingRegistration = await Registration.findByPk(reg_Id);
 
-    let arr = req.body;
-    let registration_company_name;
-    if (!arr.length) {
-      return res.status(401).json({
-        success: "Please provide your business data in json array[]!",
-      });
-    }
+  if (!existingRegistration) {
+    return res
+      .status(401)
+      .json({ success: "Provided registration Id does not exists!" });
+  }
 
-    const updatedArr = arr.map((item) => {
-      return {
-        ...item,
-        registrationId: reg_Id, // Add registrationId
-      };
+  let arr = req.body;
+  let registration_company_name;
+  if (!arr.length) {
+    return res.status(401).json({
+      success: "Please provide your business data in json array[]!",
     });
-    let validationFlag = true;
-    for (let i = 0; i < updatedArr.length; i++) {
-      const item = updatedArr[i];
-      if (!item.is_provided && !item.no_document_reason) {
+  }
+
+  const updatedArr = arr.map((item) => {
+    return {
+      ...item,
+      registrationId: reg_Id, // Add registrationId
+    };
+  });
+  let validationFlag = true;
+  for (let i = 0; i < updatedArr.length; i++) {
+    const item = updatedArr[i];
+    if (item.is_provided===false) {
+      if (!item.no_document_reason) {
         validationFlag = false;
         break;
       }
     }
-    if (validationFlag === false) {
-      return res
-        .status(400)
-        .json({ error: "Please provide a reason when is_provided is false or not provided" });
-    }
-    const result = await BusinessDetail.bulkCreate(updatedArr, {
-      updateOnDuplicate: [
-        "company_name",
-        "document",
-        "is_active",
-        "document_name",
-        "document_number",
-        "file_location",
-        "file_name",
-        "is_provided",
-        "no_document_reason",
-      ],
-    });
+  }
+  if (validationFlag === false) {
+    return res
+      .status(400)
+      .json({ error: "Please provide a reason when is_provided is false or not provided" });
+  }
+  const result = await BusinessDetail.bulkCreate(updatedArr, {
+    updateOnDuplicate: [
+      "company_name",
+      "document",
+      "is_active",
+      "document_name",
+      "document_number",
+      "file_location",
+      "file_name",
+      "is_provided",
+      "no_document_reason",
+    ],
+  });
 
-    // const { company_name,document,is_active,document_name,document_number,is_provided,no_document_reason } = req.body;
-    // const result = await BusinessDetail.create({company_name,document,is_active,document_name,document_number,is_provided,no_document_reason,registrationId:reg_Id});
-    const [numberOfUpdatedRows, updatedRecords] = await Registration.update(
-      { company_name: arr[0].company_name },
-      { where: { id: reg_Id } }
-    );
-    if (result) {
-      return res.status(200).json({
-        success: "BusinessDetails Successfully inserted",
-        data: result,
-      });
-    }
-  
+  // const { company_name,document,is_active,document_name,document_number,is_provided,no_document_reason } = req.body;
+  // const result = await BusinessDetail.create({company_name,document,is_active,document_name,document_number,is_provided,no_document_reason,registrationId:reg_Id});
+  const [numberOfUpdatedRows, updatedRecords] = await Registration.update(
+    { company_name: arr[0].company_name },
+    { where: { id: reg_Id } }
+  );
+  if (result) {
+    return res.status(200).json({
+      success: "BusinessDetails Successfully inserted",
+      data: result,
+    });
+  }
+
 };
 
 /**
@@ -308,7 +310,7 @@ module.exports.getRegById = async function (req, res) {
         .status(404)
         .json({ error: "Unable to find User Id kindly provide Valid User Id" });
     }
-    const getRegById = await Registration.findOne({ where : { userId: user_id}});
+    const getRegById = await Registration.findOne({ where: { userId: user_id } });
     if (getRegById) {
       return res
         .status(200)

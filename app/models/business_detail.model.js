@@ -27,7 +27,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     is_provided: {
       type: Sequelize.BOOLEAN,
-      allowNull : false
+      allowNull : true
     },
     no_document_reason: {
       type: Sequelize.STRING(500),
