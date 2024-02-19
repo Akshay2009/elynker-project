@@ -1,73 +1,16 @@
 const { authJwt } = require("../middleware");
-const multer = require('multer');
-const path = require('path');
-const fs = require("fs");
-require('dotenv').config();
-const USERS_BANNER_PATH = path.join(process.env.USERS_BANNER_PATH);
+
+const {
+    uploadBannerImage,
+    handleMulterError,
+  } = require("../uploadUtils");
+
+
 const freelancerBannerProjectController = require("../controllers/freelancerBannerProjects.controller");
 
 
-// Multer storage configuration for handling banner images uploads
-let storageBannerImage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const destinationPath = path.join(__dirname, '../..', USERS_BANNER_PATH);
-        // Check if the destination directory exists
-        fs.access(destinationPath, fs.constants.F_OK, (err) => {
-            if (err) {
-                // If directory doesn't exist, create it
-                fs.mkdir(destinationPath, { recursive: true }, (err) => {
-                    if (err) {
-                        console.error('Error creating directory:', err);
-                        cb(err, null);
-                    } else {
-                        cb(null, destinationPath);
-                    }
-                });
-            } else {
-                cb(null, destinationPath);
-            }
-        });
-    },
-    filename: function (req, file, cb) {
-        const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
-        cb(null, uniqueFilename);
-    }
-});
-const fileFilterImage = function (req, file, cb) {
-    try {
-        const allowedFileTypes = /jpeg|jpg|png|gif/;
-        const mimetype = allowedFileTypes.test(file.mimetype);
-        const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
 
-        if (mimetype && extname) {
-            return cb(null, true);
-        }
 
-        const error = new Error('Only JPEG, JPG, Gif, and PNG files are allowed!');
-        error.status = 400; // Set the status code for the error
-
-        cb(error);
-    } catch (err) {
-        console.log('error in fileFilter function', err.message);
-    }
-};
-
-const uploadBannerImage= multer({
-    storage: storageBannerImage,
-    fileFilter: fileFilterImage,
-    limits: {
-      fileSize: 2 * 1024 * 1024, // 2MB
-      files : 1
-    }
-});
-const handleMulterError = function (err, req, res, next) {
-    if (err) {
-        console.error('Multer error:', err.message);
-        res.status(err.status || 500).json({ error: err.message });
-    } else {
-        next();
-    }
-};
 module.exports = function (app) {
 
     /* End Point to  create a UserBanner Record

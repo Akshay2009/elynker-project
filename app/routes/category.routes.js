@@ -1,72 +1,13 @@
 const { authJwt } = require("../middleware");
-const multer = require("multer");
-const path = require("path");
+const {
+  upload,
+  handleMulterError,
+} = require("../uploadUtils");
 const categoryController = require("../controllers/category.controller");
-const fs = require("fs");
-require('dotenv').config();
-const CATEGORY_LOGO_PATH = path.join(process.env.CATEGORY_LOGO_PATH);
 
-let storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const destinationPath = path.join(__dirname, '../..', CATEGORY_LOGO_PATH);
-    // Check if the destination directory exists
-    fs.access(destinationPath, fs.constants.F_OK, (err) => {
-      if (err) {
-        // If directory doesn't exist, create it
-        fs.mkdir(destinationPath, { recursive: true }, (err) => {
-          if (err) {
-            console.error('Error creating directory:', err);
-            cb(err, null);
-          } else {
-            cb(null, destinationPath);
-          }
-        });
-      } else {
-        cb(null, destinationPath);
-      }
-    });
-  },
-  filename: function (req, file, cb) {
-    const uniqueFilename = `${Date.now()}${Math.random().toString().slice(15)}${path.extname(file.originalname)}`;
-    cb(null, uniqueFilename);
-  },
-});
-const fileFilter = function (req, file, cb) {
-  try {
-    const allowedFileTypes = /jpeg|jpg|png/;
-    const mimetype = allowedFileTypes.test(file.mimetype);
-    const extname = allowedFileTypes.test(
-      path.extname(file.originalname).toLowerCase()
-    );
 
-    if (mimetype && extname) {
-      return cb(null, true);
-    }
 
-    const error = new Error("Only JPEG, JPG, and PNG files are allowed!");
-    error.status = 400; // Set the status code for the error
 
-    cb(error);
-  } catch (err) {
-    console.log("error in fileFilter function", err.message);
-  }
-};
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 2* 1024 * 1024, //2MB
-  },
-});
-
-const handleMulterError = function (err, req, res, next) {
-  if (err) {
-    console.error("Multer error:", err.message);
-    res.status(err.status || 500).json({ error: err.message });
-  } else {
-    next();
-  }
-};
 
 module.exports = function (app) {
   /* End Point to  get all the categories Record
@@ -86,7 +27,7 @@ module.exports = function (app) {
   app.post(
     "/api/categories",
     [authJwt.verifyToken],
-    upload.fields([{ name: "image_path",maxCount: 1 },{name: "banner_image",maxCount: 1}]),
+    upload.fields([{ name: "image_path", maxCount: 1 }, { name: "banner_image", maxCount: 1 }]),
     handleMulterError,
     categoryController.createCategory
   );
@@ -108,7 +49,7 @@ module.exports = function (app) {
   app.put(
     "/api/categories/:categoryId",
     [authJwt.verifyToken],
-    upload.fields([{ name: "image_path",maxCount: 1},{name: "banner_image",maxCount: 1}]),
+    upload.fields([{ name: "image_path", maxCount: 1 }, { name: "banner_image", maxCount: 1 }]),
     handleMulterError,
     categoryController.updateCategory
   );

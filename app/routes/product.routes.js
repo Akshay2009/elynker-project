@@ -1,91 +1,9 @@
 const { authJwt } = require("../middleware");
-const multer = require('multer');
-const path = require('path');
-require('dotenv').config();
-const PRODUCT_IMAGE_PATH = path.join(process.env.PRODUCT_IMAGE_PATH);
-const PRODUCT_CSV_PATH = path.join(process.env.PRODUCT_CSV_PATH);
-
-let storageImage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../..', PRODUCT_IMAGE_PATH));
-    },
-    filename: function (req, file, cb) {
-        const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
-        cb(null, uniqueFilename);
-    }
-});
-
-let storageCsv = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../..', PRODUCT_CSV_PATH));
-    },
-    filename: function (req, file, cb) {
-        const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
-        cb(null, uniqueFilename);
-    }
-});
-
-const fileFilter2 = function (req, file, cb) {
-    try {
-        const allowedFileTypes = /jpeg|jpg|png/;
-        const mimetype = allowedFileTypes.test(file.mimetype);
-        const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
-
-        if (mimetype && extname) {
-            return cb(null, true);
-        }
-
-        const error = new Error('Only JPEG, JPG, and PNG files are allowed!');
-        error.status = 400; // Set the status code for the error
-
-        cb(error);
-    } catch (err) {
-        console.log('error in fileFilter function', err.message);
-    }
-};
-
-const fileFilter = function (req, file, cb) {
-    try {
-        const allowedFileTypes = /csv/;
-        const mimetype = allowedFileTypes.test(file.mimetype);
-        const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
-
-        if (mimetype && extname) {
-            return cb(null, true);
-        }
-
-        const error = new Error('Only CSV files are allowed!');
-        error.status = 400; // Set the status code for the error
-
-        cb(error);
-    } catch (err) {
-        console.log('error in fileFilter function', err.message);
-    }
-};
-
-const uploadCsv = multer({
-    storage: storageCsv,
-    fileFilter : fileFilter,
-    limits: {
-        fileSize: 1024 * 1024 //1MB
-    }
-});
-const uploadImages = multer({
-    storage: storageImage,
-    fileFilter: fileFilter2,
-    limits: {
-        fileSize: 1024 * 1024 //1MB
-    }
-});
-
-const handleMulterError = function (err, req, res, next) {
-    if (err) {
-        console.error('Multer error:', err.message);
-        res.status(err.status || 500).json({ error: err.message });
-    } else {
-        next();
-    }
-};
+const {
+    uploadImages,
+    uploadCsv,
+    handleMulterError,
+  } = require("../uploadUtils");
 const productController = require("../controllers/product.controller");
 
 module.exports = function (app) {
