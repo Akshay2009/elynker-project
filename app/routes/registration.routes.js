@@ -1,75 +1,8 @@
-const multer = require("multer");
-const path = require("path");
-const { v4: uuidv4 } = require('uuid');
-const fs = require('fs');
-require('dotenv').config();
-const COMPANY_LOGO_PATH = path.join(process.env.COMPANY_LOGO_PATH);
-const COVER_IMAGE_PATH = path.join(process.env.COVER_IMAGE_PATH);
-const FREELANCER_RESUME_PATH = path.join(process.env.FREELANCER_RESUME_PATH);
-
-// Multer storage configuration for handling company logo uploads
-let storageCompanyLogo = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../..", COMPANY_LOGO_PATH));
-  },
-  filename: function (req, file, cb) {
-    const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
-    cb(null, uniqueFilename);
-  }
-});
-
-let storageCoverImage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../..", COVER_IMAGE_PATH));
-  },
-  filename: function (req, file, cb) {
-    const uniqueFilename = `${Date.now()}${path.extname(file.originalname)}`;
-    cb(null, uniqueFilename);
-  }
-});
-const fileFilterImage = function (req, file, cb) {
-  try {
-    const allowedFileTypes = /jpeg|jpg|png/;
-    const mimetype = allowedFileTypes.test(file.mimetype);
-    const extname = allowedFileTypes.test(
-      path.extname(file.originalname).toLowerCase()
-    );
-
-    if (mimetype && extname) {
-      return cb(null, true);
-    }
-
-    const error = new Error("Only JPEG, JPG, and PNG files are allowed!");
-    error.status = 400; // Set the status code for the error
-
-    cb(error);
-  } catch (err) {
-    console.log("error in fileFilter function", err.message);
-  }
-};
-const uploadCoverImages = multer({
-  storage: storageCoverImage,
-  fileFilter: fileFilterImage,
-  limits: {
-    fileSize: 1024 * 1024, //1MB
-  },
-});
-const uploadCompanyLogo = multer({
-  storage: storageCompanyLogo,
-  fileFilter: fileFilterImage,
-  limits: {
-    fileSize: 1024 * 1024, //1MB
-  },
-});
-const handleMulterError = function (err, req, res, next) {
-  if (err) {
-    console.error("Multer error:", err.message);
-    res.status(err.status || 500).json({ error: err.message });
-  } else {
-    next();
-  }
-};
-
+const {
+  uploadCoverImages,
+  uploadCompanyLogo,
+  handleMulterError,
+} = require("../uploadUtils");
 
 const { authJwt } = require("../middleware");
 const registrationController = require("../controllers/registration.controller");
