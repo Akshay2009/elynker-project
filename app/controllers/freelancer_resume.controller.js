@@ -3,7 +3,7 @@ const Freelancer_Resume = db.freelancer_resume;
 const Registration = db.registration;
 require("dotenv").config();
 const path = require("path");
-const fs = require('fs');
+const fs = require("fs");
 const { log } = require("console");
 const FREELANCER_RESUME_PATH = path.join(process.env.FREELANCER_RESUME_PATH);
 /**
@@ -21,34 +21,56 @@ module.exports.uploadFreelancerResume = async (req, res) => {
     const resume = req.files["resume"];
     const existingRegistration = await Registration.findByPk(registrationId);
     if (!existingRegistration) {
-        fs.unlinkSync(
-            path.join(
-              __dirname,
-              "../..",
-              FREELANCER_RESUME_PATH,
-              "/",
-              req.files["resume"][0].filename
-            )
-          );
+      fs.unlinkSync(
+        path.join(
+          __dirname,
+          "../..",
+          FREELANCER_RESUME_PATH,
+          "/",
+          req.files["resume"][0].filename
+        )
+      );
       return res
         .status(404)
         .json({ error: "Registration not found with this id" });
     }
     if (existingRegistration.registration_type !== 3) {
-        fs.unlinkSync(
-            path.join(
-              __dirname,
-              "../..",
-              FREELANCER_RESUME_PATH,
-              "/",
-              req.files["resume"][0].filename
-            )
-          );
+      fs.unlinkSync(
+        path.join(
+          __dirname,
+          "../..",
+          FREELANCER_RESUME_PATH,
+          "/",
+          req.files["resume"][0].filename
+        )
+      );
       return res
         .status(404)
         .json({ error: "Registration is not of freelancer type" });
     }
     if (resume && resume.length > 0) {
+      const existingResume = await Freelancer_Resume.findAll({
+        where: { registrationId: registrationId },
+      });
+      if (existingResume) {
+        for (let i = 0; i < existingResume.length; i++) {
+          fs.unlinkSync(
+            path.join(
+              __dirname,
+              "../..",
+              FREELANCER_RESUME_PATH,
+              "/",
+              existingResume[i].freelancer_resume
+            )
+          );
+        }
+      }
+      if (existingResume) {
+        await Freelancer_Resume.destroy({
+          where: { registrationId: registrationId },
+        });
+      }
+
       const uploadResume = await Freelancer_Resume.create({
         freelancer_resume: resume[0].filename,
         registrationId: registrationId,
@@ -60,15 +82,15 @@ module.exports.uploadFreelancerResume = async (req, res) => {
         });
       }
     } else {
-        fs.unlinkSync(
-            path.join(
-              __dirname,
-              "../..",
-              FREELANCER_RESUME_PATH,
-              "/",
-              resume[0].filename
-            )
-          );
+      fs.unlinkSync(
+        path.join(
+          __dirname,
+          "../..",
+          FREELANCER_RESUME_PATH,
+          "/",
+          resume[0].filename
+        )
+      );
       return res.status(404).json({ error: "resume not uploaded" });
     }
   } catch (error) {
@@ -90,12 +112,10 @@ module.exports.getFreelancerResumes = async function (req, res) {
       where: { registrationId: registrationId },
     });
     if (freelancer_resume.length > 0) {
-      return res
-        .status(200)
-        .json({
-          success: "resume details fetched successfully",
-          freelancer_resume,
-        });
+      return res.status(200).json({
+        success: "resume details fetched successfully",
+        freelancer_resume,
+      });
     } else {
       return res
         .status(404)
@@ -116,14 +136,13 @@ module.exports.getFreelancerResumes = async function (req, res) {
 module.exports.delFreelancerResumeById = async function (req, res) {
   try {
     const resume_id = req.params.resume_id;
-    const recordToDelete = await Freelancer_Resume.findOne({ where : { id: resume_id}});
+    const recordToDelete = await Freelancer_Resume.findOne({
+      where: { id: resume_id },
+    });
     if (!recordToDelete) {
-      return res
-        .status(404)
-        .json({
-          error:
-            "Requested Resume Id not found kindly provide valid resume id !",
-        });
+      return res.status(404).json({
+        error: "Requested Resume Id not found kindly provide valid resume id !",
+      });
     }
     if (recordToDelete) {
       if (recordToDelete.freelancer_resume) {
@@ -141,8 +160,13 @@ module.exports.delFreelancerResumeById = async function (req, res) {
     const deletedResume = await Freelancer_Resume.destroy({
       where: { id: resume_id },
     });
-    if (deletedResume>0) {
-      return res.status(200).json({ success: "Resume deleted successfully!", data : recordToDelete });
+    if (deletedResume > 0) {
+      return res
+        .status(200)
+        .json({
+          success: "Resume deleted successfully!",
+          data: recordToDelete,
+        });
     } else {
       return res.status(404).json({ error: "Resume not found" });
     }
