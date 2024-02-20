@@ -344,14 +344,15 @@ module.exports.updateProducts = async function (req, res) {
                 product_details.default_image = existingProductImages[0];
                 product_details.product_images = existingProductImagesString+','+productImagesString
             }
-        }else{
-            product_details.default_image = "";
-            product_details.product_images = "";
-            const existingProductImages = existingProduct.product_images.split(',');
-            for( let i=0;i<existingProductImages.length;i++){
-                fs.unlinkSync(path.join(__dirname, '../..', PRODUCT_IMAGE_PATH,'/',existingProductImages[i]));
-            }
         }
+        // else{
+        //     product_details.default_image = "";
+        //     product_details.product_images = "";
+        //     const existingProductImages = existingProduct.product_images.split(',');
+        //     for( let i=0;i<existingProductImages.length;i++){
+        //         fs.unlinkSync(path.join(__dirname, '../..', PRODUCT_IMAGE_PATH,'/',existingProductImages[i]));
+        //     }
+        // }
 
         const [rowUpdated, productUpdated] = await Product.update(product_details, {
             where: {
