@@ -93,4 +93,9 @@ module.exports = function (app) {
         productController.delProductImages
     );
 
+    app.get('/api/products/parentCategory/:registrationId',
+        [authJwt.verifyToken],
+        productController.getParentCategory
+    );
+
 };

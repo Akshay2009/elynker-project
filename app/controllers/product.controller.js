@@ -6,6 +6,8 @@ const Category = db.category;
 const parseCSV = require('./csvParser');
 const fs = require('fs');
 const axios = require('axios');
+const { log } = require("console");
+const { Op } = require('sequelize');
 require('dotenv').config();
 const PRODUCT_IMAGE_PATH = path.join(process.env.PRODUCT_IMAGE_PATH);
 
@@ -458,3 +460,60 @@ module.exports.delProductImages=async function(req,res){
         return res.status(500).json({ error: 'Internal Server Error ' + err.message });
     }
 } 
+
+module.exports.getParentCategory = async function(req,res){
+    try{
+        let thirdLevel=[];
+        let secondLevel=[];
+        let firstLevel=[];
+        const registrationId = req.params.registrationId;
+        console.log('///',registrationId);
+        const products = await Product.findAll({
+            where: {
+                registrationId: registrationId
+            }
+        });
+        
+        if (products.length > 0) {
+            products.forEach((item)=>{
+                console.log(item.category_id);
+                thirdLevel.push(parseInt(item.category_id));
+            });
+            
+            const thirdLevelCat = await Category.findAll({
+                where : {
+                    id :{
+                        [Op.in] : thirdLevel
+                    }
+                }
+            });
+            thirdLevelCat.forEach((item)=>{
+                secondLevel.push(item.parent_id);
+            });
+            
+            const secondLevelCat = await Category.findAll({
+                where : {
+                    id :{
+                        [Op.in] : secondLevel
+                    }
+                }
+            });
+            secondLevelCat.forEach((item)=>{
+                firstLevel.push(item.parent_id);
+            });
+            
+            const firstLevelCat = await Category.findAll({
+                where : {
+                    id :{
+                        [Op.in] : firstLevel
+                    }
+                }
+            });
+            return res.status(200).json({ message:"Parent Categories",data: firstLevelCat});
+        } else {
+            return res.status(500).json({ error: 'No Product Found' });
+        }
+    }catch(err){
+        return res.status(500).json({error: 'Internal Server Error'})
+    }
+}
