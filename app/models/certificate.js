@@ -1,16 +1,13 @@
 module.exports = (sequelize, Sequelize) => {
   const Certificate = sequelize.define("certificate", {
-    email: {
-      type: Sequelize.STRING(100),
-    },
     name: {
       type: Sequelize.STRING(50),
     },
-    mobile_no: {
-      type: Sequelize.NUMERIC(10),
+    description: {
+      type: Sequelize.STRING(500),
     },
-    otp: {
-      type: Sequelize.NUMERIC(6),
+    issued_on: {
+      type: Sequelize.DATEONLY,
     },
     created_by: {
       type: Sequelize.NUMERIC,
