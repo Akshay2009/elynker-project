@@ -4,6 +4,15 @@ const CurrencyMaster = db.currencyMaster;
 const StateMaster = db.stateMaster;
 const RegistrationTypesMaster = db.registrationTypesMaster;
 const UnitMaster = db.unitMaster;
+const SocialMedia_Master = db.socialmedia_master;
+require("dotenv").config();
+const path = require("path");
+const fs = require("fs");
+const SOCIAL_MEDIA_MASTER_PATH = path.join(
+  process.env.SOCIAL_MEDIA_MASTER_PATH
+);
+const { Sequelize } = require('sequelize');
+
 /**
  * Controller function to save City Master details---
  * @param {Object} req - Express request object.
@@ -11,13 +20,13 @@ const UnitMaster = db.unitMaster;
  */
 
 module.exports.saveCityMaster = async function (req, res) {
-    const { name } = req.body;
-    const cityRecord = await CityMaster.create({
-      name: name,
-    });
-    return res
-      .status(200)
-      .json({ message: "City Record saved Succesfully", cityRecord });
+  const { name } = req.body;
+  const cityRecord = await CityMaster.create({
+    name: name,
+  });
+  return res
+    .status(200)
+    .json({ message: "City Record saved Succesfully", cityRecord });
 };
 
 /**
@@ -29,7 +38,7 @@ module.exports.saveCityMaster = async function (req, res) {
 module.exports.getAllCityMasters = async function (req, res) {
   const allCityRecords = await CityMaster.findAll();
   return res.status(200).json(allCityRecords);
-}
+};
 
 //city master controller getting data by ID from database---
 
@@ -99,13 +108,13 @@ module.exports.getAllcurrencyMaster = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 module.exports.getcurrencyMasterById = async function (req, res) {
-    const id = req.params.id;
-    const currency = await CurrencyMaster.findByPk(id);
-    if (currency) {
-      return res.status(200).json(currency);
-    } else {
-      return res.status(404).json({ error: "No Currency Found" });
-    }
+  const id = req.params.id;
+  const currency = await CurrencyMaster.findByPk(id);
+  if (currency) {
+    return res.status(200).json(currency);
+  } else {
+    return res.status(404).json({ error: "No Currency Found" });
+  }
 };
 
 /**
@@ -394,3 +403,237 @@ module.exports.delUnitmasterByid = async function (req, res) {
     return res.status(500).json({ message: "internal server error" });
   }
 };
+
+/**
+ * Controller function to Save new Record of Social Media Master---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.saveSocialMedia = async function (req, res) {
+  try {
+    const image = req.files["image"];
+    const { media_name, is_active } = req.body;
+
+    if (image && image.length > 0) {
+      if (!media_name || !is_active) {
+        fs.unlinkSync(
+          path.join(
+            __dirname,
+            "../..",
+            SOCIAL_MEDIA_MASTER_PATH,
+            "/",
+            image[0].filename
+          )
+        );
+        return res
+          .status(400)
+          .json({ message: "Kindly Provide media_name and is_active" });
+      }
+      const socialmedia = await SocialMedia_Master.create({
+        media_image_path: image[0].filename,
+        media_name: media_name,
+        is_active: is_active,
+      });
+      if (socialmedia) {
+        return res
+          .status(201)
+          .json({ message: "Social Media Master Saved", data: socialmedia });
+      } else {
+        fs.unlinkSync(
+          path.join(
+            __dirname,
+            "../..",
+            SOCIAL_MEDIA_MASTER_PATH,
+            "/",
+            image[0].filename
+          )
+        );
+        return res
+          .status(400)
+          .json({ error: "Error in creating Social Media Master" });
+      }
+    } else {
+      return res
+        .status(400)
+        .json({ error: "Please Upload Social Media Image" });
+    }
+  } catch (err) {
+    if (err instanceof Sequelize.ValidationError) {
+      fs.unlinkSync(
+        path.join(
+          __dirname,
+          "../..",
+          SOCIAL_MEDIA_MASTER_PATH,
+          "/",
+          req.files["image"][0].filename
+        )
+      );
+      return res.status(400).json({ error: err.message })
+    }
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+/**
+ * Controller function to Update Record of Social Media Master by ID---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.updateSocialMedia = async function (req, res) {
+  try {
+    const socialMediaMasterId = req.params.socialMediaMasterId;
+    const image = req.files["image"];
+    const { media_name, is_active } = req.body;
+
+    if (image && image.length > 0) {
+      const socialMediaMasterRecord = await SocialMedia_Master.findByPk(
+        socialMediaMasterId
+      );
+      if (!media_name || !is_active || !socialMediaMasterRecord) {
+        fs.unlinkSync(
+          path.join(
+            __dirname,
+            "../..",
+            SOCIAL_MEDIA_MASTER_PATH,
+            "/",
+            image[0].filename
+          )
+        );
+        return res
+          .status(400)
+          .json({
+            message:
+              "Kindly Provide media_name and is_active or Social Media Master Record not exist for the provided id",
+          });
+      }
+      const dummypath = socialMediaMasterRecord.media_image_path;
+
+      const [rowUpdated, socialmedia] = await SocialMedia_Master.update(
+        {
+          media_image_path: image[0].filename,
+          media_name: media_name,
+          is_active: is_active,
+        },
+        {
+          where: {
+            id: socialMediaMasterId,
+          },
+          returning: true,
+        }
+      );
+      if (rowUpdated > 0) {
+        fs.unlinkSync(
+          path.join(
+            __dirname,
+            "../..",
+            SOCIAL_MEDIA_MASTER_PATH,
+            "/",
+            dummypath
+          )
+        );
+        return res
+          .status(201)
+          .json({
+            message: "Social Media Master Updated",
+            data: socialmedia[0],
+          });
+      } else {
+        fs.unlinkSync(
+          path.join(
+            __dirname,
+            "../..",
+            SOCIAL_MEDIA_MASTER_PATH,
+            "/",
+            image[0].filename
+          )
+        );
+        return res
+          .status(400)
+          .json({ error: "Error in Updating Social Media Master" });
+      }
+    } else {
+      return res
+        .status(400)
+        .json({ error: "Please Upload Social Media Image" });
+    }
+  } catch (err) {
+    if (err instanceof Sequelize.ValidationError) {
+      if (err instanceof Sequelize.ValidationError) {
+        fs.unlinkSync(
+          path.join(
+            __dirname,
+            "../..",
+            SOCIAL_MEDIA_MASTER_PATH,
+            "/",
+            req.files["image"][0].filename
+          )
+        );
+        return res.status(400).json({ error: err.message })
+      }
+      return res.status(400).json({ error: err.message })
+    }
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+/**
+ * Controller function to Get Record of Social Media Master by ID--
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.getSocialMediaById = async function (req, res) {
+  try {
+    const { socialMediaMasterId } = req.params;
+    const Records = await SocialMedia_Master.findByPk(socialMediaMasterId);
+    if (Records) {
+      return res
+        .status(200)
+        .json({ message: "details fetched successfully", data: Records });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "details not found with this Social Media Id" });
+    }
+  } catch (err) {
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+/**
+ * Controller function to Delete Record of Social Media Master by ID---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.delSocialMediaMaster = async function (req, res) {
+  try {
+    const socialMediaMasterId = req.params.socialMediaMasterId;
+    const delrecord = await SocialMedia_Master.findByPk(socialMediaMasterId)
+    if (!delrecord) {
+      return res.status(404).json({ message: "Record not found with this Id." })
+    }
+    if (delrecord) {
+      if (delrecord.media_image_path) {
+        fs.unlinkSync(
+          path.join(
+            __dirname,
+            "../..",
+            SOCIAL_MEDIA_MASTER_PATH,
+            "/",
+            delrecord.media_image_path
+          )
+        );
+      }
+    }
+    const recordtodel = await SocialMedia_Master.destroy({ where: { id: socialMediaMasterId } })
+    if (recordtodel > 0) {
+      return res.status(200).json({ message: "Social Media Master Record Deleted Successfully", data: delrecord })
+    } else {
+      return res.status(404).json({ message: "Record not found with this Id." })
+    }
+  } catch (err) {
+    return res.status(500).json({ error: 'Internal Server Error' })
+  }
+}

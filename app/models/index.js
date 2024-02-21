@@ -37,6 +37,7 @@ db.sociallinks=require('../models/sociallinks.model.js')(sequelize,Sequelize);
 db.freelancerBannerProject = require('../models/freelancerBannerProject.js')(sequelize,Sequelize);
 db.unitMaster = require('../models/unitMaster.model.js')(sequelize,Sequelize);
 db.freelancer_resume=require('../models/freelancer_resume.model.js')(sequelize,Sequelize);
+db.socialmedia_master=require('./socialMediaMaster.model.js')(sequelize,Sequelize);
 
 db.role.belongsToMany(db.user, {
   through: "user_roles",

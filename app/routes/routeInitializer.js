@@ -9,6 +9,7 @@ const certificateRoutes = require("../routes/certificate.routes");
 const sociallinksRoutes = require("../routes/sociallinks.routes");
 const freelancerBannerProjectRoutes = require("../routes/freelancerBannerProject.routes");
 const freelancer_resumeRoutes = require("../routes/freelancer_resume.routes");
+const socialmedia_master=require("../routes/socialmediaMaster.routes");
 module.exports = function initializeRoutes(app) {
   authRoutes(app);
   userRoutes(app);
@@ -20,4 +21,5 @@ module.exports = function initializeRoutes(app) {
   sociallinksRoutes(app);
   freelancerBannerProjectRoutes(app);
   freelancer_resumeRoutes(app);
+  socialmedia_master(app);
 };
