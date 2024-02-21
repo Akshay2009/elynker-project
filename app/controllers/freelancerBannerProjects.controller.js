@@ -16,11 +16,13 @@ const USERS_BANNER_PATH = path.join(process.env.USERS_BANNER_PATH);
 module.exports.createUsersBanner = async function (req, res) {
     let registrationId = req.params.registrationId;
     const registrationRecord = await Registration.findByPk(registrationId);
-    if (registrationRecord.registration_type !== 3) {
-        return res.status(404).json({ error: 'Registration is not freelancer type' });
+    if (!registrationRecord || registrationRecord.registration_type !== 3) {
+        fs.unlinkSync(path.join(__dirname, '../..', USERS_BANNER_PATH, '/', req.files['images'][0].filename));
+        return res.status(404).json({ error: 'Registration not exist or Registration is not freelancer type' });
     }
     const { banner_name } = req.body;
     if (!banner_name) {
+        fs.unlinkSync(path.join(__dirname, '../..', USERS_BANNER_PATH, '/', req.files['images'][0].filename));
         return res.status(400).json({ error: 'Please Provide Banner Name' });
     }
     const bannerImages = req.files['images'];
@@ -51,6 +53,7 @@ module.exports.updateUsersBanner = async function (req, res) {
     let userBanner = await FreelancerBannerProject.findByPk(userBannerId);
     const { banner_name } = req.body;
     if (!banner_name) {
+        fs.unlinkSync(path.join(__dirname, '../..', USERS_BANNER_PATH, '/', req.files['images'][0].filename));
         return res.status(400).json({ error: 'Please Provide Banner Name' });
     }
     const bannerImages = req.files['images'];
@@ -59,9 +62,14 @@ module.exports.updateUsersBanner = async function (req, res) {
             fs.unlinkSync(path.join(__dirname, '../..', USERS_BANNER_PATH, '/', userBanner.banner_image));
         }
         userBanner.banner_image = bannerImages[0].filename;
+        userBanner.banner_name = banner_name
+        await userBanner.save();
+        return res.status(200).json({ message: "UserBanner Updated Successfully", data: userBanner });
     }
-    await userBanner.save();
-    return res.status(200).json({ message: "UserBanner Updated Successfully", data: userBanner });
+    else{
+        return res.status(400).json({ error : 'Banner File not provided'})
+    }
+    
 }
 
 /**

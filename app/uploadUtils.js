@@ -111,7 +111,7 @@ let storageBannerImage = multer.diskStorage({
 });
 const fileFilterImage = function (req, file, cb) {
   try {
-      const allowedFileTypes = /jpeg|jpg|png|gif/;
+      const allowedFileTypes = /jpeg|jpg|png|gif|pdf|docx|doc|word/;
       const mimetype = allowedFileTypes.test(file.mimetype);
       const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
 

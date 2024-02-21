@@ -1,32 +1,28 @@
 const db = require("../models");
 const Certificate = db.certificate;
+const Registration = db.registration;
 
 //creating certificate---
 module.exports.createCertificate = async function (req, res) {
   const {
-    email,
     name,
-    mobile_no,
-    otp,
-    created_by,
-    modified_by,
+    description,
+    issued_on,
     registrationId,
   } = req.body;
-  if (!registrationId) {
-    return res.status(404).json({ ërror: "Registration id not found kindly provide correct registration id" })
+  const regRecord = await Registration.findByPk(registrationId);
+  if (!regRecord) {
+    return res.status(404).json({ error: "Registration not found with this id" });
   }
   const newCertificate = await Certificate.create({
-    email,
     name,
-    mobile_no,
-    otp,
-    created_by,
-    modified_by,
+    description,
+    issued_on,
     registrationId,
   });
   return res.status(200).json({
     message: "Certificate created successfully",
-    newCertificate,
+    data: newCertificate,
   });
 };
 
@@ -35,7 +31,7 @@ module.exports.createCertificate = async function (req, res) {
 module.exports.getCertificate = async function (req, res) {
   const certificate = await Certificate.findAll({});
   if (certificate) {
-    return res.status(200).json(certificate);
+    return res.status(200).json({ message:'Existing Certificate Records', data : certificate});
   } else {
     return res.status(404).json({ error: "No certificate Returned" });
   }
@@ -50,45 +46,45 @@ module.exports.getCertificateById = async function (req, res) {
   });
 
   if (CertificateDetails) {
-    return res.status(200).json(CertificateDetails);
+    return res.status(200).json({ message:'Existing Certificate Records', data : CertificateDetails});
   } else {
     return res.status(404).json({ error: "Details not found" });
   }
 };
 //putting data as per id--
 module.exports.updateCertificateById = async function (req, res) {
-  const { certificate_id } = req.params;
+  const  certificate_id  = req.params.certificate_id;
   const {
-    email,
     name,
-    mobile_no,
-    otp,
-    created_by,
-    modified_by,
+    description,
+    issued_on,
     registrationId,
   } = req.body;
-  if (!registrationId) {
-    return res.status(404).json({ error: "Registration id not found kindly provide correct registration id" })
+  const regRecord = await Registration.findByPk(registrationId);
+  if (!regRecord) {
+    return res.status(404).json({ ërror: "Registration not found with this id" });
   }
-  const existingCertificateRecord = await Certificate.findByPk(
-    certificate_id
-  );
-  if (!existingCertificateRecord) {
-    return res.status(404).json({ error: "Certificate not found" });
-  }
-  await existingCertificateRecord.update({
-    email,
+  
+  const [row,updatedRecord]=await Certificate.update({
     name,
-    mobile_no,
-    otp,
-    created_by,
-    modified_by,
+    description,
+    issued_on,
     registrationId,
+  },{
+    where: {
+      id:certificate_id
+    },
+    returning: true
   });
-  return res.status(200).json({
-    message: "Certificate record updated successfully",
-    updatedCertificateRecord: existingCertificateRecord.toJSON(),
-  });
+  if(row>0){
+    return res.status(200).json({
+      message: "Certificate record updated successfully",
+      data: updatedRecord[0]
+    });
+  }else{
+    return res.status(404).json({ error: "Certificate not found with this id" });
+  }
+  
 };
 
 
@@ -99,9 +95,16 @@ module.exports.updateCertificateById = async function (req, res) {
  */
 module.exports.delCertificate = async function (req, res) {
   const { certificate_id } = req.params;
-  const delCertificate = await Certificate.destroy({ where: { id: certificate_id } });
-  if (delCertificate == 0) {
+  const certificateToDelete = await Certificate.findByPk(certificate_id);
+  const delCertificate = await Certificate.destroy({
+    where: { id: certificate_id },
+    returning: true,
+    raw: true, 
+  });
+  if (delCertificate > 0) {
+    return res.status(200).json({ message: "certificate deleted successfully" , data: certificateToDelete});
+  }else{
     return res.status(404).json({ error: "certificate not found" });
   }
-  return res.status(200).json({ message: "certificate deleted successfully" });
+  
 };
