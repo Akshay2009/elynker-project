@@ -42,7 +42,7 @@ app.get("/", (req, res) => {
 
 //Swagger options
 const specs = swaggerJsdoc(swaggerOptions);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+app.use("/api/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 
 //Error handling
