@@ -584,8 +584,7 @@ module.exports.updateSocialMedia = async function (req, res) {
 
 module.exports.getSocialMediaById = async function (req, res) {
   try {
-    const { socialMediaMasterId } = req.params;
-    const Records = await SocialMedia_Master.findByPk(socialMediaMasterId);
+    const Records = await SocialMedia_Master.findAll();
     if (Records) {
       return res
         .status(200)

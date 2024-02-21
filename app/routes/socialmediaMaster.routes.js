@@ -24,8 +24,8 @@ module.exports = function (app) {
     );
 
     app.get(
-        "/api/socialmediamaster/:socialMediaMasterId",
-        [authJwt.verifyToken],
+        "/api/socialmediamaster/",
+       // [authJwt.verifyToken],
         socialmedia_masterController.getSocialMediaById
     );
 
