@@ -9,6 +9,7 @@ const COVER_IMAGE_PATH = path.join(process.env.COVER_IMAGE_PATH);
 const PRODUCT_IMAGE_PATH = path.join(process.env.PRODUCT_IMAGE_PATH);
 const PRODUCT_CSV_PATH = path.join(process.env.PRODUCT_CSV_PATH);
 const CATEGORY_LOGO_PATH = path.join(process.env.CATEGORY_LOGO_PATH);
+const SOCIAL_MEDIA_MASTER_PATH = path.join(process.env.SOCIAL_MEDIA_MASTER_PATH);
 
 ////////////////################FREE LANCER RESUME################////////////////////////
 let freelancerResume = multer.diskStorage({
@@ -75,7 +76,7 @@ module.exports.uploadfreelanceResume = multer({
 module.exports.handleMulterError = function (err, req, res, next) {
   if (err) {
     console.error("Multer error:", err.message);
-    res.status(err.status || 500).json({ error: err.message });
+    res.status(err.status || 400).json({ error: err.message });
   } else {
     next();
   }
@@ -386,3 +387,57 @@ module.exports.upload = multer({
 });
 
 //////##################### Category logo and Banner Image End ##############/////////
+
+//############ multer for social media master #################////
+let storageSocialImage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      const destinationPath = path.join(__dirname, '..', SOCIAL_MEDIA_MASTER_PATH);
+      // Check if the destination directory exists
+      fs.access(destinationPath, fs.constants.F_OK, (err) => {
+          if (err) {
+              // If directory doesn't exist, create it
+              fs.mkdir(destinationPath, { recursive: true }, (err) => {
+                  if (err) {
+                      console.error('Error creating directory:', err);
+                      cb(err, null);
+                  } else {
+                      cb(null, destinationPath);
+                  }
+              });
+          } else {
+              cb(null, destinationPath);
+          }
+      });
+  },
+  filename: function (req, file, cb) {
+      const uniqueFilename = `${Date.now()}${Math.random().toString().slice(15)}${path.extname(file.originalname)}`;
+      cb(null, uniqueFilename);
+  }
+});
+const fileFilterImageSocial = function (req, file, cb) {
+  try {
+      const allowedFileTypes = /jpeg|jpg|png|gif/;
+      const mimetype = allowedFileTypes.test(file.mimetype);
+      const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
+
+      if (mimetype && extname) {
+          return cb(null, true);
+      }
+
+      const error = new Error('Only JPEG, JPG, and PNG files are allowed!');
+      error.status = 400; // Set the status code for the error
+
+      cb(error);
+  } catch (err) {
+      console.log('error in fileFilter function', err.message);
+  }
+};
+
+module.exports.uploadSocialImage= multer({
+  storage: storageSocialImage,
+  fileFilter: fileFilterImageSocial,
+  limits: {
+    fileSize: 2 * 1024 * 1024, // 2MB
+    files : 1
+  }
+});

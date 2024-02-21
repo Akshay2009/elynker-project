@@ -6,6 +6,9 @@ module.exports = (sequelize, Sequelize) => {
     social_url: {
       type: Sequelize.STRING(100),
     },
+    socialmedia_id :{
+      type: Sequelize.INTEGER
+    },
     created_by: {
       type: Sequelize.NUMERIC,
     },
