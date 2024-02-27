@@ -81,12 +81,12 @@ module.exports = function (app) {
         [authJwt.verifyToken], 
         productController.getProductByRegistrationId
     )
-
+    /*Delete Product by Sku */
     app.delete('/api/products/:sku',
         [authJwt.verifyToken],
         productController.deleteProductBySku
     );
-
+    /*Delete Product  Images */
     app.delete(
         "/api/products/images/:product_id",
         [authJwt.verifyToken],
@@ -97,5 +97,14 @@ module.exports = function (app) {
         [authJwt.verifyToken],
         productController.getParentCategory
     );
+
+
+    /**
+   * Search user banner details by fieldName and  fieldValue from the database.
+  */
+    app.get('/api/products/product/search/:fieldName/:fieldValue',
+        [authJwt.verifyToken],
+        productController.search
+    )
 
 };

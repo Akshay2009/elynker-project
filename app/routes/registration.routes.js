@@ -104,4 +104,22 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     registrationController.getRegById
   )
+
+
+  /**
+   * Search Registration details by fieldName and  fieldValue from the database.
+  */
+  app.get('/api/registration/search/:fieldName/:fieldValue',
+    [authJwt.verifyToken],
+    registrationController.search
+  )
+
+  /**
+   * Get all Registration details from the database.
+   *
+   */
+  app.get('/api/registration',
+    [authJwt.verifyToken],
+    registrationController.getAll
+  )
 };

@@ -52,4 +52,12 @@ module.exports = function (app) {
     certificateController.delCertificate
   );
 
+  /**
+   * Search user details by fieldName and  fieldValue from the database.
+  */
+  app.get('/api/certificate/search/:fieldName/:fieldValue',
+    [authJwt.verifyToken],
+    certificateController.search
+  )
+
 }

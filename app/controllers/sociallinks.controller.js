@@ -12,15 +12,15 @@ module.exports.bulkCreateSociallinks = async function (req, res) {
     return res.status(400).json({ error: 'Please provide data in array' });
   }
   if (!registrationId || registrationId === "") {
-    return res.status(404).json({
-      message:
+    return res.status(400).json({
+      error:
         "registration id not found,kindly provide correct registration id",
     });
   }
   const regRecord = await Registration.findByPk(registrationId);
   if (!regRecord) {
     return res.status(404).json({
-      message: "Registration Id not found",
+      error: "Registration Record not found",
     });
   }
   const  social_media_id_array =  [...new Set(socialLinkArray.map(obj => obj.socialmedia_id))];
@@ -34,7 +34,7 @@ module.exports.bulkCreateSociallinks = async function (req, res) {
   });
   
   if(socialMediaMasterRecord.length!=social_media_id_array.length){
-    return res.status(400).json({message:'Record not exist for provided socialmedia_id in json Array'})
+    return res.status(400).json({error:'Record not exist for provided socialmedia_id in json Array'})
   }
 
 
@@ -51,11 +51,11 @@ module.exports.bulkCreateSociallinks = async function (req, res) {
   if (result) {
     return res.status(201).json({
       message: "Sociallinks created successfully",
-      result,
+      data :result,
     });
   } else {
-    return res.status(401).json({
-      message: "Error updating socialLinks..",
+    return res.status(400).json({
+      error: "Error updating socialLinks..",
     });
   }
 };
@@ -66,20 +66,20 @@ module.exports.createSociallinks = async function (req, res) {
   const socialMediaMaster = await SocialMedia_Master.findByPk(socialmedia_id);
   if(!socialMediaMaster){
     return res.status(404).json({
-      message:
+      error:
         "No Social Media Master Found with provided socialmedia_id",
     });
   }
   if (!registrationId || registrationId === "") {
     return res.status(404).json({
-      message:
+      error:
         "registration id not found,kindly provide correct registration id",
     });
   }
   const regRecord = await Registration.findByPk(registrationId);
   if (!regRecord) {
     return res.status(404).json({
-      message: "This Registration  Doesnot exist with this registrationId",
+      error: "This Registration  Doesnot exist with this registrationId",
     });
   }
 
@@ -94,11 +94,11 @@ module.exports.createSociallinks = async function (req, res) {
   if (newSociallinks) {
     return res.status(201).json({
       message: "Sociallinks created successfully",
-      newSociallinks,
+      data: newSociallinks,
     });
   } else {
-    return res.status(500).json({
-      message: "Sociallinks not created"
+    return res.status(400).json({
+      error: "Sociallinks not created"
     });
   }
 };
@@ -106,7 +106,7 @@ module.exports.createSociallinks = async function (req, res) {
 ///getting all sociallinks --
 module.exports.getSociallinks = async function (req, res) {
   const sociallinks = await Sociallinks.findAll({});
-  if (sociallinks) {
+  if (sociallinks.length>0) {
     return res.status(200).json(sociallinks);
   } else {
     return res.status(404).json({ error: "No social links Returned" });
@@ -119,7 +119,7 @@ module.exports.getSociallinksByRegistrationId = async function (req, res) {
     where: { registrationId: registrationId }
   });
   if (sociallinks.length > 0) {
-    return res.status(200).json(sociallinks);
+    return res.status(200).json({message:"Social Links",data: sociallinks});
   } else {
     return res.status(404).json({ error: "No social links with this Registration ID" });
   }
@@ -133,7 +133,7 @@ module.exports.getSociallinksById = async function (req, res) {
   });
 
   if (SociallinksDetails) {
-    return res.status(200).json(SociallinksDetails);
+    return res.status(200).json({message:"Social Links",data: SociallinksDetails});
   } else {
     return res.status(404).json({ error: "Social Links Details not found" });
   }
@@ -148,7 +148,7 @@ module.exports.updateSociallinksById = async function (req, res) {
   const socialMediaMaster = await SocialMedia_Master.findByPk(socialmedia_id);
   if(!socialMediaMaster){
     return res.status(404).json({
-      message:
+      error:
         "No Social Media Master Found with provided socialmedia_id",
     });
   }
@@ -158,7 +158,7 @@ module.exports.updateSociallinksById = async function (req, res) {
   const regRecord = await Registration.findByPk(registrationId);
   if (!regRecord) {
     return res.status(404).json({
-      message: "This Registration  Doesnot exist with this registrationId",
+      error: "This Registration  Doesnot exist with this registrationId",
     });
   }
   const existingSociallinks = await Sociallinks.findByPk(social_id);
@@ -175,7 +175,7 @@ module.exports.updateSociallinksById = async function (req, res) {
   });
   return res.status(200).json({
     message: "Social links record updated successfully",
-    updatedSociallinksRecord: existingSociallinks.toJSON(),
+    data: existingSociallinks.toJSON(),
   });
 };
 
@@ -212,3 +212,37 @@ module.exports.delSociallinksByRegId = async function (req, res) {
   }
   return res.status(200).json({ message: " Social link deleted successfully with Provided Registration Id" });
 };
+
+
+/**
+ * Search SocialLinks details by fieldName and  fieldValue from the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
+
+module.exports.search = async function (req, res) {
+  try {
+    const { fieldName, fieldValue } = req.params
+    if (!Sociallinks.rawAttributes[fieldName]) {
+      return res.status(400).json({ error: 'Invalid field name' });
+    }
+    const records = await Sociallinks.findAll({
+      where: {
+        [fieldName]: fieldValue,
+      },
+    });
+    if (records.length > 0) {
+      return res.status(200).json({ message: 'Fetched Records', data: records })
+    } else {
+      return res.status(404).json({ error: 'No record found' })
+    }
+
+  } catch (err) {
+    if (err instanceof Sequelize.Error) {
+      return res.status(400).json({ error: err.message })
+    }
+    return res.status(500).json({ error: 'Internal Server Error' })
+  }
+}

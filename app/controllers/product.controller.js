@@ -46,10 +46,10 @@ async function downloadImage(imageUrl, imageName) {
 module.exports.getAllProducts = async function (req, res) {
     try {
         const products = await Product.findAll({});
-        if (products) {
+        if (products.length>0) {
             return res.status(200).json(products);
         } else {
-            return res.status(500).json({ error: 'No Product Found' });
+            return res.status(400).json({ error: 'No Product Found' });
         }
     } catch (error) {
         console.error(error);
@@ -74,7 +74,7 @@ module.exports.getProductBySKU = async function (req, res) {
         if (products) {
             return res.status(200).json(products);
         } else {
-            return res.status(500).json({ error: 'No Product Found' });
+            return res.status(400).json({ error: 'No Product Found' });
         }
     } catch (error) {
         console.error(error);
@@ -205,13 +205,13 @@ module.exports.createProductsSingleRecord = async function (req, res) {
         const { type, registrationId, title, description, budget, moq, category_id,unit,year_of_exp,
             portfolio_link} = req.body;
         if(!req.files['images']){
-            return res.status(405).json({error: 'Please Provide Product Images'});
+            return res.status(400).json({error: 'Please Provide Product Images'});
         }
         if(!registrationId){
-            return res.status(403).json({error: 'Registration ID Not provided'});
+            return res.status(400).json({error: 'Registration ID Not provided'});
         }
         if (!category_id) {
-            return res.status(402).json({ error: 'No category Provided' });
+            return res.status(400).json({ error: 'No category Provided' });
         }
         if(!type){
             return res.status(400).json({error: 'Type not Provided - Product/Service'});
@@ -233,7 +233,7 @@ module.exports.createProductsSingleRecord = async function (req, res) {
             },
         });
         if (categories.length == 0) {
-            return res.status(401).json({ error: 'No category with this id' });
+            return res.status(400).json({ error: 'No category with this id' });
         }
 
         let catArray = [];
@@ -258,7 +258,7 @@ module.exports.createProductsSingleRecord = async function (req, res) {
         if (product) {
             // Associate the product with categories
             await product.addCategories(categories);
-            return res.status(200).json(product);
+            return res.status(201).json(product);
         } else {
             return res.status(400).json({ error: 'Product not inserted' });
         }
@@ -278,12 +278,15 @@ module.exports.createProductsSingleRecord = async function (req, res) {
 module.exports.updateProducts = async function (req, res) {
     try {
         const sku = req.params.sku;
-        const { title, description, budget, moq, category_id,registrationId,unit,year_of_exp,portfolio_link } = req.body;
+        const { title,type, description, budget, moq, category_id,registrationId,unit,year_of_exp,portfolio_link } = req.body;
         if(!registrationId){
-            return res.status(404).json({error: 'Registration ID Not provided'});
+            return res.status(400).json({error: 'Registration ID Not provided'});
         }
         if (!category_id) {
-            return res.status(401).json({ error: 'No category Provided' });
+            return res.status(400).json({ error: 'No category Provided' });
+        }
+        if (type !=1 && type != 2) {
+            return res.status(400).json({ error: 'Type must be either 1 or 2' });
         }
         const regRecord = await Registration.findOne({
             where: { id: registrationId}
@@ -299,7 +302,7 @@ module.exports.updateProducts = async function (req, res) {
             },
         });
         if (categories.length == 0) {
-            return res.status(401).json({ error: 'No category with this id' });
+            return res.status(400).json({ error: 'No category with this id' });
         }
 
         let catArray = [];
@@ -315,6 +318,7 @@ module.exports.updateProducts = async function (req, res) {
             description,
             budget,
             moq,
+            type,
             year_of_exp,
             portfolio_link,
             unit:unit,
@@ -385,7 +389,7 @@ module.exports.getProductByRegistrationId = async function (req, res) {
         if (products.length > 0) {
             return res.status(200).json(products);
         } else {
-            return res.status(500).json({ error: 'No Product Found' });
+            return res.status(404).json({ error: 'No Product Found' });
         }
     } catch (error) {
         console.error(error);
@@ -420,7 +424,7 @@ module.exports.deleteProductBySku = async function (req, res) {
         if (deletedProduct) {
             return res.status(200).json({ message: 'Product Deleted Successfully', product: productToDelete });
         } else {
-            return res.status(401).json({ error: 'No Product Deleted' });
+            return res.status(400).json({ error: 'No Product Deleted' });
         }
 
     } catch (err) {
@@ -512,9 +516,43 @@ module.exports.getParentCategory = async function(req,res){
             });
             return res.status(200).json({ message:"Parent Categories",data: firstLevelCat});
         } else {
-            return res.status(500).json({ error: 'No Product Found' });
+            return res.status(404).json({ error: 'No Product Found' });
         }
     }catch(err){
         return res.status(500).json({error: 'Internal Server Error'})
+    }
+}
+
+
+/**
+ * Search User Banner details by fieldName and  fieldValue from the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
+
+module.exports.search = async function (req, res) {
+    try {
+        const { fieldName, fieldValue } = req.params
+        if (!Product.rawAttributes[fieldName]) {
+            return res.status(400).json({ error: 'Invalid field name' });
+        }
+        const records = await Product.findAll({
+            where: {
+                [fieldName]: fieldValue,
+            },
+        });
+        if (records.length > 0) {
+            return res.status(200).json({ message: 'Fetched Records', data: records })
+        } else {
+            return res.status(404).json({ error: 'No record found' })
+        }
+
+    } catch (err) {
+        if (err instanceof Sequelize.Error) {
+            return res.status(400).json({ error: err.message })
+        }
+        return res.status(500).json({ error: 'Internal Server Error' })
     }
 }

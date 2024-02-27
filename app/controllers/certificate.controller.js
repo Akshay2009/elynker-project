@@ -20,17 +20,21 @@ module.exports.createCertificate = async function (req, res) {
     issued_on,
     registrationId,
   });
-  return res.status(200).json({
-    message: "Certificate created successfully",
-    data: newCertificate,
-  });
+  if (newCertificate) {
+    return res.status(200).json({
+      message: "Certificate created successfully",
+      data: newCertificate,
+    });
+  }else{
+    return res.status(400).json({ error : 'No Record created'})
+  }
 };
 
 ///getting certificate data--
 
 module.exports.getCertificate = async function (req, res) {
   const certificate = await Certificate.findAll({});
-  if (certificate) {
+  if (certificate.length>0) {
     return res.status(200).json({ message:'Existing Certificate Records', data : certificate});
   } else {
     return res.status(404).json({ error: "No certificate Returned" });
@@ -108,3 +112,36 @@ module.exports.delCertificate = async function (req, res) {
   }
   
 };
+
+/**
+ * Search Cerificate details by fieldName and  fieldValue from the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
+
+module.exports.search = async function(req,res){
+  try{
+    const {fieldName,fieldValue}= req.params
+    if (!Certificate.rawAttributes[fieldName]) {
+      return res.status(400).json({ error: 'Invalid field name' });
+    }
+    const records = await Certificate.findAll({
+      where: {
+        [fieldName]: fieldValue,
+      },
+    });
+    if(records.length>0){
+      return res.status(200).json({ message:'Fetched Records',data:records})
+    }else{
+      return res.status(404).json({ error:'No record found'})
+    }
+
+  }catch(err){
+    if(err instanceof Sequelize.Error){
+      return res.status(400).json({ error : err.message})
+    }
+    return res.status(500).json({error : 'Internal Server Error'})
+  }
+}

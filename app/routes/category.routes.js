@@ -104,4 +104,13 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     categoryController.delcategories
   );
+
+
+  /**
+   * Search Category details by fieldName and  fieldValue from the database.
+  */
+  app.get('/api/categories/search/:fieldName/:fieldValue',
+    [authJwt.verifyToken],
+    categoryController.search
+  )
 };

@@ -16,10 +16,10 @@ module.exports.getAllCategory = async function (req, res) {
     try {
         const categories = await Category.findAll({
         });
-        if (categories) {
+        if (categories.length>0) {
             return res.status(200).json(categories);
         } else {
-            return res.status(404).json({ error: 'No Category Returned' });
+            return res.status(404).json({ error: 'No Category Found' });
         }
     } catch (err) {
         return res.status(500).json({ error: 'Internal Server Error ' + err.message });
@@ -83,7 +83,7 @@ module.exports.createCategory = async function (req, res) {
             });
 
             if (newCategory) {
-                return res.status(200).json(newCategory);
+                return res.status(201).json(newCategory);
             } else {
                 return res.status(404).json({ error: 'Category not created' });
             }
@@ -244,7 +244,6 @@ module.exports.updateCategory = async function (req, res) {
             const [rowCount, updatedCategory] = await Category.update({
                 title,
                 description,
-                parent_id: null,
                 category_type,
                 image_path:imagePath,
                 banner_image:bannerImage
@@ -281,7 +280,7 @@ module.exports.createMultipleCategory = async function (req, res) {
         const parent_id = req.params.parent_id;
         const arr = req.body;
         if (!arr.length) {
-            return res.status(401).json({ success: "Please provide your category data in json array[]!" });
+            return res.status(400).json({ error: "Please provide your category data in json array[]!" });
         }
         if (parent_id) {
             const record = await Category.findOne({ where: { id: parent_id } });
@@ -303,7 +302,7 @@ module.exports.createMultipleCategory = async function (req, res) {
                     return res.status(200).json({ message: 'Sub Categories Created', data: result });
                 }
                 else {
-                    return res.status(404).json({ error: 'No Sub Category created' });
+                    return res.status(400).json({ error: 'No Sub Category created' });
                 }
             } else {
                 return res.status(404).json({ error: 'No Parent Category exist with this parent_id' });
@@ -378,5 +377,39 @@ module.exports.delcategories = async function (req, res) {
         }
     } catch (err) {
         return res.status(500).json({ error: 'Internal Server Error' + err.message });
+    }
+}
+
+/**
+ * Search Category details by fieldName and  fieldValue from the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
+
+module.exports.search = async function (req, res) {
+    try {
+        
+        const {fieldName,fieldValue} = req.params;
+        if (!Category.rawAttributes[fieldName]) {
+            return res.status(400).json({ error: 'Invalid field name' });
+        }
+        const categories = await Category.findAll({
+            where: {
+                [fieldName]: fieldValue,
+            },
+        });
+        if (categories.length > 0) {
+            return res.status(200).json({ message: 'Fetched Records', data: categories })
+        } else {
+            return res.status(404).json({ error: 'No record found' })
+        }
+
+    } catch (err) {
+        if (err instanceof Sequelize.Error) {
+            return res.status(400).json({ error: err.message })
+        }
+        return res.status(500).json({ error: 'Internal Server Error' })
     }
 }

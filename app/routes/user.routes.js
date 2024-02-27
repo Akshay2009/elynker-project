@@ -28,4 +28,21 @@ module.exports = function(app) {
    [authJwt.verifyToken],
    controller.delUserById
  )
+
+  /**
+   * Search user details by fieldName and  fieldValue from the database.
+  */
+  app.get('/api/users/search/:fieldName/:fieldValue',
+    [authJwt.verifyToken],
+    controller.search
+  )
+
+  /**
+ * Get all user details from the database.
+ *
+ */
+  app.get('/api/users/',
+    [authJwt.verifyToken],
+    controller.getAllUser
+  )
 };

@@ -77,4 +77,12 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     sociallinksController.delSociallinksByRegId
   );
+
+  /**
+  * Search SocialLinks details by fieldName and  fieldValue from the database.
+ */
+  app.get('/api/sociallinks/search/:fieldName/:fieldValue',
+    [authJwt.verifyToken],
+    sociallinksController.search
+  )
 };

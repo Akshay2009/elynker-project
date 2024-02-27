@@ -64,5 +64,22 @@ module.exports = function (app) {
         [authJwt.verifyToken],
         freelancerBannerProjectController.deleteUsersBanner
     );
+
+    /**
+   * Search user banner details by fieldName and  fieldValue from the database.
+  */
+    app.get('/api/user/banners/search/:fieldName/:fieldValue',
+        [authJwt.verifyToken],
+        freelancerBannerProjectController.search
+    )
+
+    /**
+    * Get all user banner details from the database.
+    *
+    */
+    app.get('/api/user/banners',
+        [authJwt.verifyToken],
+        freelancerBannerProjectController.getAll
+    )
     
 };
