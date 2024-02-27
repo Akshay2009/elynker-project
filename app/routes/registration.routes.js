@@ -122,4 +122,12 @@ module.exports = function (app) {
     [authJwt.verifyToken],
     registrationController.getAll
   )
+
+  /**
+   * Search Business details by fieldName and  fieldValue from the database.
+  */
+  app.get('/api/business/search/:fieldName/:fieldValue',
+    [authJwt.verifyToken],
+    registrationController.searchBusiness
+  )
 };
