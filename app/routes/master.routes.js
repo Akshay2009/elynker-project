@@ -28,7 +28,7 @@ module.exports = function (app) {
 
   app.get(
     "/api/citymaster/",
-    //  [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.getAllCityMasters
   );
 
@@ -39,7 +39,7 @@ module.exports = function (app) {
 
   app.get(
     "/api/citymaster/:id",
-    //   [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.getCityMasters
   );
   /* End Point to UPDATE citymaster Record BYid
@@ -57,7 +57,7 @@ module.exports = function (app) {
     */
   app.get(
     "/api/currencymaster/",
-    //  [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.getAllcurrencyMaster
   );
 
@@ -76,7 +76,7 @@ module.exports = function (app) {
     */
   app.get(
     "/api/currencymaster/:id",
-    //  [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.getcurrencyMasterById
   );
 
@@ -107,8 +107,18 @@ module.exports = function (app) {
     */
   app.get(
     "/api/statemaster/",
-    //  [authJwt.verifyToken],
+    [authJwt.verifyToken],
     masterController.getAllStateMaster
+  );
+
+  /* End Point to GET by Id StateMaster Record
+     GET- /api/StateMaster/:state_id API endpoint
+        masterController.getAllStateMaster - Controller function to GET StateMaster record by ID
+  */
+  app.get(
+    "/api/statemaster/:id",
+    [authJwt.verifyToken],
+    masterController.getStateMasterById
   );
 
   /* End Point to UPDATE StateMaster Record BY id
@@ -169,10 +179,10 @@ module.exports = function (app) {
     masterController.updateUnitMaster
   );
 
-  // /* End Point to Get all Unit master Record
-  //     GET- "/api/unitmaster/", API endpoint
-  //       masterController.getUnitMaster - Controller function to get Unit master Record
-  //   */
+  /* End Point to Get all Unit master Record
+     GET- "/api/unitmaster/", API endpoint
+     masterController.getUnitMaster - Controller function to get Unit master Record
+  */
   app.get(
     "/api/unitmaster/",
     [authJwt.verifyToken],
@@ -197,5 +207,45 @@ module.exports = function (app) {
     "/api/unitmaster/:unit_id",
     [authJwt.verifyToken],
     masterController.delUnitmasterByid
+  );
+
+     // /* End Point to GET unitmaster details by field name and field value.
+  //     GET- "/api/unitmaster/search/:fieldName/:fieldValue", API endpoint
+  //       masterController.searchUnitMaster - Controller function to GET unitmaster details by field name and field value.
+  //   */
+  app.get(
+    "/api/unitmaster/search/:fieldName/:fieldValue",
+    [authJwt.verifyToken],
+    masterController.searchUnitMaster
+  );
+
+       // /* End Point to GET statemaster details by field name and field value.
+  //     GET- "/api/statemaster/search/:fieldName/:fieldValue", API endpoint
+  //       masterController.searchStateMaster - Controller function to GET statemaster details by field name and field value.
+  //   */
+  app.get(
+    "/api/statemaster/search/:fieldName/:fieldValue",
+    [authJwt.verifyToken],
+    masterController.searchStateMaster
+  );
+
+     // /* End Point to GET currencymaster details by field name and field value.
+  //     GET- "/api/currencymaster/search/:fieldName/:fieldValue", API endpoint
+  //       masterController.searchCurrencyMaster - Controller function to GET currencymaster details by field name and field value.
+  //   */
+  app.get(
+    "/api/currencymaster/search/:fieldName/:fieldValue",
+    [authJwt.verifyToken],
+    masterController.searchCurrencyMaster
+  );
+
+      // /* End Point to GET citymaster details by field name and field value.
+  //     GET- "/api/citymaster/search/:fieldName/:fieldValue", API endpoint
+  //       masterController.searchCityMaster - Controller function to GET citymaster details by field name and field value.
+  //   */
+  app.get(
+    "/api/citymaster/search/:fieldName/:fieldValue",
+    [authJwt.verifyToken],
+    masterController.searchCityMaster
   );
 };
