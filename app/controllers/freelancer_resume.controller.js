@@ -76,7 +76,7 @@ module.exports.uploadFreelancerResume = async (req, res) => {
         registrationId: registrationId,
       });
       if (uploadResume) {
-        return res.status(200).json({
+        return res.status(201).json({
           message: "Resume Uploaded Successfully",
           data: uploadResume,
         });
@@ -91,7 +91,7 @@ module.exports.uploadFreelancerResume = async (req, res) => {
           resume[0].filename
         )
       );
-      return res.status(404).json({ error: "resume not uploaded" });
+      return res.status(400).json({ error: "resume not uploaded" });
     }
   } catch (error) {
     console.error(error);
@@ -122,7 +122,6 @@ module.exports.getFreelancerResumes = async function (req, res) {
         .json({ error: "No Resume found with this Registration ID" });
     }
   } catch (err) {
-    console.error("Error fetching Freelancer Resume", err);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -174,3 +173,88 @@ module.exports.delFreelancerResumeById = async function (req, res) {
     return res.status(500).json({ error: "Internal Server Error in delete" });
   }
 };
+/**
+ * Controller function to Get all free lancer resume.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.getAllFreelancerResumes = async function (req, res) {
+  try {
+    const freelancer_resume = await Freelancer_Resume.findAll({});
+    if (freelancer_resume.length>0) {
+      return res.status(200).json({
+        message: "resume details fetched successfully",
+        data:freelancer_resume,
+      });
+    } else {
+      return res
+        .status(404)
+        .json({ error: "No Resumes found " });
+    }
+  } catch (err) {
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+/**
+ * Controller function to Get free lancer resume by ID.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.getFreelancerResumesById = async function (req, res) {
+  try {
+    const id = req.params.resume_id;
+    const freelancer_resume = await Freelancer_Resume.findOne({where:{id:id}});
+    if (freelancer_resume) {
+      return res.status(200).json({
+        message: "resume details fetched successfully",
+        data:freelancer_resume,
+      });
+    } else {
+      return res
+        .status(404)
+        .json({ error: "No Resumes found with this ID" });
+    }
+  } catch (err) {
+    return res.status(500).json({ error: "Internal Server Error " });
+  }
+};
+
+
+
+/**
+ * Search User Banner details by fieldName and  fieldValue from the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
+
+module.exports.search = async function (req, res) {
+  try {
+      const { fieldName, fieldValue } = req.params
+      if (!Freelancer_Resume.rawAttributes[fieldName]) {
+          return res.status(400).json({ error: 'Invalid field name' });
+      }
+      const records = await Freelancer_Resume.findAll({
+          where: {
+              [fieldName]: fieldValue,
+          },
+      });
+      if (records.length > 0) {
+          return res.status(200).json({ message: 'Fetched Records', data: records })
+      } else {
+          return res.status(404).json({ error: 'No record found' })
+      }
+
+  } catch (err) {
+      if (err instanceof Sequelize.Error) {
+          return res.status(400).json({ error: err.message })
+      }
+      return res.status(500).json({ error: 'Internal Server Error' })
+  }
+}
+
