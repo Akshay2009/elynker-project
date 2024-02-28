@@ -19,7 +19,7 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
       },
       budget:{
-        type: Sequelize.INTEGER,
+        type: Sequelize.NUMERIC(10,2),
       },
       moq:{
         type: Sequelize.INTEGER,

@@ -128,7 +128,7 @@ module.exports.getUsersBannerById = async function (req, res) {
         }
     });
     if (bannerUserRecord) {
-        return res.status(200).json(bannerUserRecord);
+        return res.status(200).json({message:"Fetched Record", data: bannerUserRecord});
     } else {
         return res.status(400).json({ error: 'No UserBanner Record with id Present' });
     }

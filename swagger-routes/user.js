@@ -110,4 +110,115 @@
  *           description: User not found
  *         '500':
  *           description: Some server error
+ *     delete:
+ *       summary: Delete user by ID
+ *       tags: [Users]
+ *       parameters:
+ *         - name: id
+ *           in: path
+ *           required: true
+ *           description: User ID
+ *           schema:
+ *             type: integer
+ *         - name: x-access-token
+ *           in: header
+ *           description: Access token for authentication
+ *           required: true
+ *           schema:
+ *             type: string
+ *       responses:
+ *         '200':
+ *           description: Successful response
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: User deleted successfully
+ *         '401':
+ *           description: Unauthorized - Access token is missing or invalid
+ *         '404':
+ *           description: User not found
+ *         '500':
+ *           description: Some server error
+ *   /api/users/search/{fieldName}/{fieldValue}:
+ *     get:
+ *       summary: Search user details by fieldName and fieldValue
+ *       tags: [Users]
+ *       parameters:
+ *         - name: fieldName
+ *           in: path
+ *           required: true
+ *           description: Field name to search
+ *           schema:
+ *             type: string
+ *         - name: fieldValue
+ *           in: path
+ *           required: true
+ *           description: Field value to search
+ *           schema:
+ *             type: string
+ *         - name: x-access-token
+ *           in: header
+ *           description: Access token for authentication
+ *           required: true
+ *           schema:
+ *             type: string
+ *       responses:
+ *         '200':
+ *           description: Successful response
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Fetched Records
+ *                 data:
+ *                   - id: 1
+ *                     email: gourav@gmail.com
+ *                     name: Gaurav
+ *                     city: Lucknow
+ *                     country_code: +91
+ *                     mobile_number: '1114441111'
+ *                     created_by: null
+ *                     updated_by: null
+ *                     createdAt: '2024-01-16T14:03:40.727Z'
+ *                     updatedAt: '2024-01-16T14:03:40.727Z'
+ *         '401':
+ *           description: Unauthorized - Access token is missing or invalid
+ *         '404':
+ *           description: No record found
+ *         '500':
+ *           description: Some server error
+ *   /api/users:
+ *     get:
+ *       summary: Get all user details
+ *       tags: [Users]
+ *       parameters:
+ *         - name: x-access-token
+ *           in: header
+ *           description: Access token for authentication
+ *           required: true
+ *           schema:
+ *             type: string
+ *       responses:
+ *         '200':
+ *           description: Successful response
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Details fetched successfully
+ *                 data:
+ *                   - id: 1
+ *                     email: gourav@gmail.com
+ *                     name: Gaurav
+ *                     city: Lucknow
+ *                     country_code: +91
+ *                     mobile_number: '1114441111'
+ *                     created_by: null
+ *                     updated_by: null
+ *                     createdAt: '2024-01-16T14:03:40.727Z'
+ *                     updatedAt: '2024-01-16T14:03:40.727Z'
+ *         '401':
+ *           description: Unauthorized - Access token is missing or invalid
+ *         '404':
+ *           description: Details not found
+ *         '500':
+ *           description: Some server error
  */
