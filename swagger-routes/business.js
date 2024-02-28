@@ -102,4 +102,67 @@
  *           description: Bad request
  *         '500':
  *           description: Some server error
+ *   
+ *   /api/business/search/{fieldName}/{fieldValue}:
+ *     get:
+ *       summary: Get business by field value and field name
+ *       tags: [Business]
+ *     description: "Search for business records based on a field name and field value." 
+ *     parameters: 
+ *       - name: fieldName 
+ *         in: path 
+ *         description: "Name of the field to search by" 
+ *         required: true 
+ *         schema: 
+ *           type: string 
+ *       - name: fieldValue 
+ *         in: path 
+ *         description: "Value of the field to search for" 
+ *         required: true 
+ *         schema: 
+ *           type: string 
+ *     responses: 
+ *       '200': 
+ *         description: "Successful response" 
+ *         content: 
+ *           application/json: 
+ *             schema: 
+ *               type: object 
+ *               properties: 
+ *                 message: 
+ *                   type: string 
+ *                   example: "Fetched Records" 
+ *                 data: 
+ *                   type: array 
+ *                   items: 
+ *                     $ref: "#/components/schemas/BusinessDetail" 
+ *       '400': 
+ *         description: "Invalid field name or bad request" 
+ *         content: 
+ *           application/json: 
+ *             schema: 
+ *               type: object 
+ *               properties: 
+ *                 error: 
+ *                   type: string 
+ *                   example: "Invalid field name" 
+ *       '404': 
+ *         description: "No record found" 
+ *         content: 
+ *           application/json: 
+ *             schema: 
+ *               type: object 
+ *               properties: 
+ *                 error: 
+ *                   type: string 
+ *                   example: "No record found" 
+ *       '500': 
+ *         description: "Internal Server Error"
+ *         content: 
+ *           application/json: 
+ *             schema: 
+ *               type: object 
+ *               properties: 
+ *                 error: 
+ *                   type: string 
  */
