@@ -116,4 +116,98 @@
  *         description: Freelancer resume not found
  *       500:
  *         description: Internal Server Error
+ * /api/resume/:
+ *   get:
+ *     summary: Retrieve all freelancer resumes
+ *     description: |
+ *       Retrieves details of all freelancer resumes.
+ *     operationId: getAllFreelancerResumes
+ *     tags: [Freelancer Resume]
+ *     security:
+ *       - jwt: []
+ *     responses:
+ *       '200':
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/FreelancerResume'
+ *       '404':
+ *         description: No resumes found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message
+ *       '500':
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message
+ * 
+ * /api/freelancer/resume/{resume_id}:
+ *   get:
+ *     summary: Retrieve a freelancer resume by ID
+ *     description: |
+ *       Retrieves details of a freelancer resume by its ID.
+ *     operationId: getFreelancerResumesById
+ *     tags: [Freelancer Resume]
+ *     security:
+ *       - jwt: []
+ *     parameters:
+ *       - in: path
+ *         name: resume_id
+ *         required: true
+ *         description: ID of the freelancer resume to retrieve
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message
+ *                 data:
+ *                   $ref: '#/components/schemas/FreelancerResume'
+ *       '404':
+ *         description: No resumes found with this ID
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message
+ *       '500':
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message
  */

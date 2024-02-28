@@ -147,4 +147,53 @@
  *         description: Social media master record not found
  *       500:
  *         description: Internal Server Error
+ * 
+ * /socialmediamaster/{social_id}:
+ *   get:
+ *    summary: "Get Social Media Details by ID"
+ *    tags: [Social Media Master]
+ *    security:
+ *       - jwt: []
+ *    description: "Returns the details of a social media record based on the provided ID."
+ *    parameters:
+ *     - name: social_id
+ *       in: path
+ *       description: "ID of the social media record to fetch"
+ *       required: true
+ *       type: integer
+ *       format: int64
+ *    responses:
+ *     200:
+ *      description: "Details fetched successfully"
+ *      schema:
+ *       type: object
+ *       properties:
+ *        message:
+ *         type: string
+ *         example: "details fetched successfully"
+ *        data:
+ *         $ref: "#/definitions/SocialMediaRecord"
+ *     404:
+ *      description: "Details not found with this Social Media Id"
+ *      schema:
+ *       type: object
+ *       properties:
+ *        message:
+ *         type: string
+ *         example: "details not found with this Social Media Id"
+ *     400:
+ *      description: "Bad request"
+ *      schema:
+ *       type: object
+ *       properties:
+ *        error:
+ *         type: string
+ *         example: "Bad request message"
+ *     500:
+ *      description: "Internal Server Error"
+ *      schema:
+ *       type: object
+ *       properties:
+ *        error:
+ *         type: string   
  */

@@ -26,7 +26,7 @@ module.exports.saveCityMaster = async function (req, res) {
   });
   return res
     .status(201)
-    .json({ message: "City Record saved Succesfully", cityRecord });
+    .json({ message: "City Record saved Succesfully", data:cityRecord });
 };
 
 /**
@@ -37,7 +37,7 @@ module.exports.saveCityMaster = async function (req, res) {
 
 module.exports.getAllCityMasters = async function (req, res) {
   const allCityRecords = await CityMaster.findAll();
-  return res.status(200).json(allCityRecords);
+  return res.status(200).json({message:"Details fetched successfully",data:allCityRecords});
 };
 
 //city master controller getting data by ID from database---
@@ -49,7 +49,7 @@ module.exports.getCityMasters = async function (req, res) {
     if (!cityRecord) {
       return res.status(404).json({ error: "City not found" });
     }
-    return res.status(200).json(cityRecord);
+    return res.status(200).json({message:"Details fetched successfully",data:cityRecord});
   }
 };
 
@@ -68,7 +68,7 @@ module.exports.updateCityMasterById = async function (req, res) {
     if (updatedMaster) {
       return res.status(200).json({
         message: "city updated successfully",
-        Master: updatedMaster.toJSON(),
+        data: updatedMaster.toJSON(),
       });
     } else {
       return res.status(404).json({ error: "city not found" });
@@ -100,7 +100,7 @@ module.exports.delCityMaster = async function (req, res) {
 
 module.exports.getAllcurrencyMaster = async function (req, res) {
   const allCurrencyRecords = await CurrencyMaster.findAll();
-  return res.status(200).json(allCurrencyRecords);
+  return res.status(200).json({message:"Details Fetched successfully",data:allCurrencyRecords});
 };
 /**
  * Controller function to Get currency Master details by ID--
@@ -111,7 +111,7 @@ module.exports.getcurrencyMasterById = async function (req, res) {
   const id = req.params.id;
   const currency = await CurrencyMaster.findByPk(id);
   if (currency) {
-    return res.status(200).json(currency);
+    return res.status(200).json({message:"Details Fetched successfully",data:currency});
   } else {
     return res.status(404).json({ error: "Currency Record not found" });
   }
@@ -133,7 +133,7 @@ module.exports.createCurrencyMaster = async function (req, res) {
   });
   return res.status(201).json({
     message: "Currency record created successfully",
-    newCurrencyRecord,
+    data:newCurrencyRecord,
   });
 };
 
@@ -157,7 +157,7 @@ module.exports.updateCurrencyMasterById = async function (req, res) {
   });
   return res.status(200).json({
     message: "Currency record updated successfully",
-    updatedCurrencyRecord: existingCurrencyRecord,
+    data: existingCurrencyRecord,
   });
 };
 
@@ -174,7 +174,7 @@ module.exports.createStateMaster = async function (req, res) {
   });
   return res.status(201).json({
     message: "State record created successfully",
-    newStateRecord,
+    data:newStateRecord,
   });
 };
 
@@ -186,7 +186,7 @@ module.exports.createStateMaster = async function (req, res) {
 module.exports.getAllStateMaster = async function (req, res) {
   const getStateRecords = await StateMaster.findAll();
   if (getStateRecords.length > 0) {
-    return res.status(200).json({message:"Details fetched successfully",getStateRecords});
+    return res.status(200).json({message:"Details fetched successfully",data:getStateRecords});
   } else {
     return res.status(404).json({ error: "state master record not found" });
   }
@@ -202,7 +202,7 @@ module.exports.getStateMasterById = async function (req, res) {
   const { id } = req.params;
   const getStateRecords = await StateMaster.findByPk(id);
   if (getStateRecords) {
-    return res.status(200).json({ message: "Details Fetched successfully", getStateRecords });
+    return res.status(200).json({ message: "Details Fetched successfully",data:getStateRecords });
   } else {
     return res.status(404).json({ error: "no state master record found with this state Id" });
   }
@@ -226,7 +226,7 @@ module.exports.updateStateMaster = async function (req, res) {
   });
   return res.status(200).json({
     message: "State record updated successfully",
-    updated_State_Record: existingStateRecord,
+    data: existingStateRecord,
   });
 };
 
@@ -299,7 +299,7 @@ module.exports.saveUnitMaster = async function (req, res) {
     const saveUnit = await UnitMaster.create({ name, description });
     return res
       .status(201)
-      .json({ success: "unit saved sucessfully", saveUnit });
+      .json({ success: "unit saved sucessfully", data:saveUnit });
   } catch (error) {
     console.error("Error creating Unit Master:", error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -337,7 +337,7 @@ module.exports.updateUnitMaster = async function (req, res) {
     });
     return res.status(200).json({
       message: "UnitMaster record updated successfully",
-      updated_Unit_Record: existingUnitRecord,
+      data: existingUnitRecord,
     });
   } catch (error) {
     console.error("Error updating Unit Master:", error);
@@ -353,7 +353,7 @@ module.exports.updateUnitMaster = async function (req, res) {
 module.exports.getUnitMaster = async function (req, res) {
   try {
     const getUnitmaster = await UnitMaster.findAll();
-    return res.status(200).json(getUnitmaster);
+    return res.status(200).json({message:"Details fetched successfully",data:getUnitmaster});
   } catch (error) {
     console.error("Error Getting Unit Master:", error);
     return res.status(500).json({ message: "internal server error" });
@@ -381,7 +381,7 @@ module.exports.getUnitmasterById = async function (req, res) {
     }
     const getUnitbyId = await UnitMaster.findByPk(unit_id);
     if (getUnitbyId) {
-      return res.status(200).json(getUnitbyId);
+      return res.status(200).json({message:"Details fetched successfully",data:getUnitbyId});
     } else {
       return res.status(404).json({ error: "Unit Master details not found" });
     }
@@ -713,7 +713,7 @@ module.exports.searchSocialMediaMaster = async function (req, res) {
           },
       });
       if (records.length > 0) {
-          return res.status(200).json({ message: 'Fetched Records', data: records })
+          return res.status(200).json({ message: 'Records Fetched', data: records })
       } else {
           return res.status(404).json({ error: 'No record found' })
       }
@@ -744,7 +744,7 @@ module.exports.searchCityMaster = async function (req, res) {
           },
       });
       if (records.length > 0) {
-          return res.status(200).json({ message: 'Fetched Records', data: records })
+          return res.status(200).json({ message: 'Records Fetched', data: records })
       } else {
           return res.status(404).json({ error: 'No record found' })
       }
@@ -775,7 +775,7 @@ module.exports.searchCurrencyMaster = async function (req, res) {
           },
       });
       if (records.length > 0) {
-          return res.status(200).json({ message: 'Fetched Records', data: records })
+          return res.status(200).json({ message: 'Records Fetched', data: records })
       } else {
           return res.status(404).json({ error: 'No record found' })
       }
@@ -807,7 +807,7 @@ module.exports.searchStateMaster = async function (req, res) {
           },
       });
       if (records.length > 0) {
-          return res.status(200).json({ message: 'Fetched Records', data: records })
+          return res.status(200).json({ message: 'Records Fetched', data: records })
       } else {
           return res.status(404).json({ error: 'No record found' })
       }

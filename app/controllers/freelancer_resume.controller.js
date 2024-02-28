@@ -114,7 +114,7 @@ module.exports.getFreelancerResumes = async function (req, res) {
     if (freelancer_resume.length > 0) {
       return res.status(200).json({
         success: "resume details fetched successfully",
-        freelancer_resume,
+        data:freelancer_resume,
       });
     } else {
       return res
