@@ -1,12 +1,8 @@
 /**
  * @swagger
  * tags:
- *   name: Social Media Master
- *   description: Operations related to Social Media Master management
- */
-
-/**
- * @swagger
+ *   name: SocialMediaMaster
+ *   description: API for managing social media master records
  * components:
  *   schemas:
  *     SocialMediaMaster:
@@ -14,186 +10,252 @@
  *       properties:
  *         id:
  *           type: integer
- *           description: ID of the social media master
- *         media_image_path:
+ *         social_media_name:
  *           type: string
- *           description: Filename of the media image
- *         media_name:
+ *         social_media_url:
  *           type: string
- *           description: Name of the media
- *         is_active:
- *           type: boolean
- *           description: Indicates whether the media is active or not
- *     NewSocialMediaMaster:
- *       type: object
- *       properties:
- *         media_name:
- *           type: string
- *           description: Name of the media
- *         is_active:
- *           type: boolean
- *           description: Indicates whether the media is active or not
  *         image:
  *           type: string
- *           format: binary
- *           description: Image file for the media
- */
-
-/**
- * @swagger
- * /api/socialmediamaster:
- *   post:
- *     summary: Create a new social media master record
- *     tags: [Social Media Master]
- *     security:
- *       - jwt: []
- *     requestBody:
- *       description: Data for creating a new social media master record
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             $ref: '#/components/schemas/NewSocialMediaMaster'
- *     responses:
- *       201:
- *         description: New social media master record created successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/SocialMediaMaster'
- *       400:
- *         description: Bad request
- *       500:
- *         description: Internal Server Error
- *
- *   get:
- *     summary: Get social media master record by ID
- *     tags: [Social Media Master]
- *     security:
- *       - jwt: []
- *     parameters:
- *       - in: path
- *         name: socialMediaMasterId
- *         schema:
- *           type: integer
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ * paths:
+ *   /api/socialmediamaster:
+ *     post:
+ *       summary: Create a social media master record
+ *       tags: [SocialMediaMaster]
+ *       parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       requestBody:
  *         required: true
- *         description: ID of the social media master
- *     responses:
- *       200:
- *         description: Social media master record retrieved successfully
  *         content:
- *           application/json:
+ *           multipart/form-data:
  *             schema:
- *               $ref: '#/components/schemas/SocialMediaMaster'
- *       404:
- *         description: Social media master record not found
- *       500:
- *         description: Internal Server Error
- *
- * /api/socialmediamaster/{socialMediaMasterId}:
- *   put:
- *     summary: Update social media master record by ID
- *     tags: [Social Media Master]
- *     security:
- *       - jwt: []
- *     parameters:
- *       - in: path
- *         name: socialMediaMasterId
- *         schema:
+ *               type: object
+ *               properties:
+ *                 social_media_name:
+ *                   type: string
+ *                 social_media_url:
+ *                   type: string
+ *                 image:
+ *                   type: string
+ *                   format: binary
+ *       responses:
+ *         '201':
+ *           description: Social media master record created successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Social Media Master Record Created Successfully
+ *                 data:
+ *                   id: 1
+ *                   social_media_name: Facebook
+ *                   social_media_url: https://www.facebook.com
+ *                   image: facebook.png
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '400':
+ *           description: Bad request
+ *         '401':
+ *           description: Unauthorized
+ *         '500':
+ *           description: Internal server error
+ *     get:
+ *       summary: Get all social media master records
+ *       tags: [SocialMediaMaster]
+ *       parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Social media master records fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Social Media Master Records Fetched Successfully
+ *                 data:
+ *                   - id: 1
+ *                     social_media_name: Facebook
+ *                     social_media_url: https://www.facebook.com
+ *                     image: facebook.png
+ *                     createdAt: '2024-02-28T00:00:00.000Z'
+ *                     updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: No social media master records found
+ *         '500':
+ *           description: Internal server error
+ *   /api/socialmediamaster/{socialMediaMasterId}:
+ *     put:
+ *       summary: Update a social media master record by ID
+ *       tags: [SocialMediaMaster]
+ *       parameters:
+ *         - in: path
+ *           name: socialMediaMasterId
+ *           description: ID of the social media master record
+ *           required: true
  *           type: integer
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       requestBody:
  *         required: true
- *         description: ID of the social media master
- *     requestBody:
- *       description: Data for updating the social media master record
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             $ref: '#/components/schemas/NewSocialMediaMaster'
- *     responses:
- *       200:
- *         description: Social media master record updated successfully
  *         content:
- *           application/json:
+ *           multipart/form-data:
  *             schema:
- *               $ref: '#/components/schemas/SocialMediaMaster'
- *       400:
- *         description: Bad request
- *       404:
- *         description: Social media master record not found
- *       500:
- *         description: Internal Server Error
- *
- *   delete:
- *     summary: Delete social media master record by ID
- *     tags: [Social Media Master]
- *     security:
- *       - jwt: []
- *     parameters:
- *       - in: path
- *         name: socialMediaMasterId
- *         schema:
+ *               type: object
+ *               properties:
+ *                 social_media_name:
+ *                   type: string
+ *                 social_media_url:
+ *                   type: string
+ *                 image:
+ *                   type: string
+ *                   format: binary
+ *       responses:
+ *         '200':
+ *           description: Social media master record updated successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Social Media Master Record Updated Successfully
+ *                 data:
+ *                   id: 1
+ *                   social_media_name: Facebook
+ *                   social_media_url: https://www.facebook.com
+ *                   image: facebook.png
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '400':
+ *           description: Bad request
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Social media master record not found
+ *         '500':
+ *           description: Internal server error
+ *     delete:
+ *       summary: Delete a social media master record by ID
+ *       tags: [SocialMediaMaster]
+ *       parameters:
+ *         - in: path
+ *           name: socialMediaMasterId
+ *           description: ID of the social media master record
+ *           required: true
  *           type: integer
- *         required: true
- *         description: ID of the social media master
- *     responses:
- *       200:
- *         description: Social media master record deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/SocialMediaMaster'
- *       404:
- *         description: Social media master record not found
- *       500:
- *         description: Internal Server Error
- * 
- * /socialmediamaster/{social_id}:
- *   get:
- *    summary: "Get Social Media Details by ID"
- *    tags: [Social Media Master]
- *    security:
- *       - jwt: []
- *    description: "Returns the details of a social media record based on the provided ID."
- *    parameters:
- *     - name: social_id
- *       in: path
- *       description: "ID of the social media record to fetch"
- *       required: true
- *       type: integer
- *       format: int64
- *    responses:
- *     200:
- *      description: "Details fetched successfully"
- *      schema:
- *       type: object
- *       properties:
- *        message:
- *         type: string
- *         example: "details fetched successfully"
- *        data:
- *         $ref: "#/definitions/SocialMediaRecord"
- *     404:
- *      description: "Details not found with this Social Media Id"
- *      schema:
- *       type: object
- *       properties:
- *        message:
- *         type: string
- *         example: "details not found with this Social Media Id"
- *     400:
- *      description: "Bad request"
- *      schema:
- *       type: object
- *       properties:
- *        error:
- *         type: string
- *         example: "Bad request message"
- *     500:
- *      description: "Internal Server Error"
- *      schema:
- *       type: object
- *       properties:
- *        error:
- *         type: string   
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Social media master record deleted successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Social Media Master Record Deleted Successfully
+ *                 data:
+ *                   id: 1
+ *                   social_media_name: Facebook
+ *                   social_media_url: https://www.facebook.com
+ *                   image: facebook.png
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Social media master record not found
+ *         '500':
+ *           description: Internal server error
+ *   /api/socialmediamaster/{social_id}:
+ *     get:
+ *       summary: Get a social media master record by ID
+ *       tags: [SocialMediaMaster]
+ *       parameters:
+ *         - in: path
+ *           name: social_id
+ *           description: ID of the social media master record
+ *           required: true
+ *           type: integer
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Social media master record fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Social Media Master Record Fetched Successfully
+ *                 data:
+ *                   id: 1
+ *                   social_media_name: Facebook
+ *                   social_media_url: https://www.facebook.com
+ *                   image: facebook.png
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Social media master record not found
+ *         '500':
+ *           description: Internal server error
+ *   /api/socialmediamaster/search/{fieldName}/{fieldValue}:
+ *     get:
+ *       summary: Search social media master records by field name and value
+ *       tags: [SocialMediaMaster]
+ *       parameters:
+ *         - in: path
+ *           name: fieldName
+ *           description: Name of the field to search by
+ *           required: true
+ *           type: string
+ *         - in: path
+ *           name: fieldValue
+ *           description: Value of the field to search by
+ *           required: true
+ *           type: string
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Social media master records fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Social Media Master Records Fetched Successfully
+ *                 data:
+ *                   - id: 1
+ *                     social_media_name: Facebook
+ *                     social_media_url: https://www.facebook.com
+ *                     image: facebook.png
+ *                     createdAt: '2024-02-28T00:00:00.000Z'
+ *                     updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '400':
+ *           description: Bad request
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: No social media master records found
+ *         '500':
+ *           description: Internal server error
  */

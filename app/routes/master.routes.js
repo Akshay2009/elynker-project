@@ -28,7 +28,7 @@ module.exports = function (app) {
 
   app.get(
     "/api/citymaster/",
-    [authJwt.verifyToken],
+    //[authJwt.verifyToken],
     masterController.getAllCityMasters
   );
 
@@ -57,7 +57,7 @@ module.exports = function (app) {
     */
   app.get(
     "/api/currencymaster/",
-    [authJwt.verifyToken],
+    //[authJwt.verifyToken],
     masterController.getAllcurrencyMaster
   );
 
@@ -107,7 +107,7 @@ module.exports = function (app) {
     */
   app.get(
     "/api/statemaster/",
-    [authJwt.verifyToken],
+    //[authJwt.verifyToken],
     masterController.getAllStateMaster
   );
 
@@ -185,64 +185,64 @@ module.exports = function (app) {
   */
   app.get(
     "/api/unitmaster/",
-    [authJwt.verifyToken],
+    //[authJwt.verifyToken],
     masterController.getUnitMaster
   );
 
-  // /* End Point to Get all Unit master Record by ID
-  //     GET- "/api/unitmaster/:unit_id", API endpoint
-  //       masterController.getUnitMaster - Controller function to get Unit master Record by ID
-  //   */
+  /* End Point to Get all Unit master Record by ID
+      GET- "/api/unitmaster/:unit_id", API endpoint
+        masterController.getUnitMaster - Controller function to get Unit master Record by ID
+  */
   app.get(
     "/api/unitmaster/:unit_id",
     [authJwt.verifyToken],
     masterController.getUnitmasterById
   );
 
-  // /* End Point to DELETE Unit master Record by ID
-  //     DELETE- "/api/unitmaster/:unit_id", API endpoint
-  //       masterController.delUnitmasterByid - Controller function to DELETE Unit master Record by ID
-  //   */
+  /* End Point to DELETE Unit master Record by ID
+      DELETE- "/api/unitmaster/:unit_id", API endpoint
+        masterController.delUnitmasterByid - Controller function to DELETE Unit master Record by ID
+  */
   app.delete(
     "/api/unitmaster/:unit_id",
     [authJwt.verifyToken],
     masterController.delUnitmasterByid
   );
 
-     // /* End Point to GET unitmaster details by field name and field value.
-  //     GET- "/api/unitmaster/search/:fieldName/:fieldValue", API endpoint
-  //       masterController.searchUnitMaster - Controller function to GET unitmaster details by field name and field value.
-  //   */
+  /* End Point to GET unitmaster details by field name and field value.
+      GET- "/api/unitmaster/search/:fieldName/:fieldValue", API endpoint
+        masterController.searchUnitMaster - Controller function to GET unitmaster details by field name and field value.
+  */
   app.get(
     "/api/unitmaster/search/:fieldName/:fieldValue",
     [authJwt.verifyToken],
     masterController.searchUnitMaster
   );
 
-       // /* End Point to GET statemaster details by field name and field value.
-  //     GET- "/api/statemaster/search/:fieldName/:fieldValue", API endpoint
-  //       masterController.searchStateMaster - Controller function to GET statemaster details by field name and field value.
-  //   */
+  /* End Point to GET statemaster details by field name and field value.
+      GET- "/api/statemaster/search/:fieldName/:fieldValue", API endpoint
+        masterController.searchStateMaster - Controller function to GET statemaster details by field name and field value.
+  */
   app.get(
     "/api/statemaster/search/:fieldName/:fieldValue",
     [authJwt.verifyToken],
     masterController.searchStateMaster
   );
 
-     // /* End Point to GET currencymaster details by field name and field value.
-  //     GET- "/api/currencymaster/search/:fieldName/:fieldValue", API endpoint
-  //       masterController.searchCurrencyMaster - Controller function to GET currencymaster details by field name and field value.
-  //   */
+  /* End Point to GET currencymaster details by field name and field value.
+      GET- "/api/currencymaster/search/:fieldName/:fieldValue", API endpoint
+        masterController.searchCurrencyMaster - Controller function to GET currencymaster details by field name and field value.
+  */
   app.get(
     "/api/currencymaster/search/:fieldName/:fieldValue",
     [authJwt.verifyToken],
     masterController.searchCurrencyMaster
   );
 
-      // /* End Point to GET citymaster details by field name and field value.
-  //     GET- "/api/citymaster/search/:fieldName/:fieldValue", API endpoint
-  //       masterController.searchCityMaster - Controller function to GET citymaster details by field name and field value.
-  //   */
+  /* End Point to GET citymaster details by field name and field value.
+      GET- "/api/citymaster/search/:fieldName/:fieldValue", API endpoint
+        masterController.searchCityMaster - Controller function to GET citymaster details by field name and field value.
+  */
   app.get(
     "/api/citymaster/search/:fieldName/:fieldValue",
     [authJwt.verifyToken],

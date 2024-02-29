@@ -1,213 +1,239 @@
 /**
  * @swagger
  * tags:
- *   name: Freelancer Resume
- *   description: Operations related to Freelancer Resume management
- */
-
-/**
- * @swagger
+ *   name: Resume
+ *   description: API for managing resumes
  * components:
  *   schemas:
- *     FreelancerResume:
+ *     Resume:
  *       type: object
  *       properties:
  *         id:
  *           type: integer
- *           description: ID of the freelancer resume
  *         freelancer_resume:
  *           type: string
- *           description: Filename of the freelancer resume
  *         registrationId:
  *           type: integer
- *           description: ID of the registration associated with the freelancer resume
- *     NewFreelancerResume:
- *       type: object
- *       properties:
- *         resume:
+ *         createdAt:
  *           type: string
- *           format: binary
- *           description: Resume file for the freelancer
- */
-
-/**
- * @swagger
- * /api/resume/{registrationId}:
- *   post:
- *     summary: Upload a freelancer resume
- *     tags: [Freelancer Resume]
- *     security:
- *       - jwt: []
- *     parameters:
- *       - in: path
- *         name: registrationId
- *         schema:
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ * paths:
+ *   /api/resume/{registrationId}:
+ *     post:
+ *       summary: Upload a resume for a registration
+ *       tags: [Resume]
+ *       parameters:
+ *         - in: path
+ *           name: registrationId
+ *           description: ID of the registration
+ *           required: true
  *           type: integer
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       requestBody:
  *         required: true
- *         description: ID of the registration associated with the freelancer resume
- *     requestBody:
- *       description: Data for uploading a freelancer resume
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             $ref: '#/components/schemas/NewFreelancerResume'
- *     responses:
- *       200:
- *         description: Resume uploaded successfully
  *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/FreelancerResume'
- *       400:
- *         description: Bad request
- *       404:
- *         description: Registration not found or not of freelancer type
- *       500:
- *         description: Internal Server Error
- *
- *   get:
- *     summary: Get freelancer resumes by registration ID
- *     tags: [Freelancer Resume]
- *     security:
- *       - jwt: []
- *     parameters:
- *       - in: path
- *         name: registrationId
- *         schema:
- *           type: integer
- *         required: true
- *         description: ID of the registration
- *     responses:
- *       200:
- *         description: Freelancer resumes retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/FreelancerResume'
- *       404:
- *         description: No resumes found for the provided registration ID
- *       500:
- *         description: Internal Server Error
- *
- * /api/resume/{resume_id}:
- *   delete:
- *     summary: Delete freelancer resume by ID
- *     tags: [Freelancer Resume]
- *     security:
- *       - jwt: []
- *     parameters:
- *       - in: path
- *         name: resume_id
- *         schema:
- *           type: integer
- *         required: true
- *         description: ID of the freelancer resume to delete
- *     responses:
- *       200:
- *         description: Freelancer resume deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/FreelancerResume'
- *       404:
- *         description: Freelancer resume not found
- *       500:
- *         description: Internal Server Error
- * /api/resume/:
- *   get:
- *     summary: Retrieve all freelancer resumes
- *     description: |
- *       Retrieves details of all freelancer resumes.
- *     operationId: getAllFreelancerResumes
- *     tags: [Freelancer Resume]
- *     security:
- *       - jwt: []
- *     responses:
- *       '200':
- *         description: Successful response
- *         content:
- *           application/json:
+ *           multipart/form-data:
  *             schema:
  *               type: object
  *               properties:
- *                 message:
+ *                 resume:
  *                   type: string
- *                   description: Success message
+ *                   format: binary
+ *       responses:
+ *         '201':
+ *           description: Resume uploaded successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Resume Uploaded Successfully
  *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/FreelancerResume'
- *       '404':
- *         description: No resumes found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: Error message
- *       '500':
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: Error message
- * 
- * /api/freelancer/resume/{resume_id}:
- *   get:
- *     summary: Retrieve a freelancer resume by ID
- *     description: |
- *       Retrieves details of a freelancer resume by its ID.
- *     operationId: getFreelancerResumesById
- *     tags: [Freelancer Resume]
- *     security:
- *       - jwt: []
- *     parameters:
- *       - in: path
- *         name: resume_id
- *         required: true
- *         description: ID of the freelancer resume to retrieve
- *         schema:
+ *                   id: 1
+ *                   freelancer_resume: resume.pdf
+ *                   registrationId: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '400':
+ *           description: Bad request
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Registration not found
+ *         '500':
+ *           description: Internal server error
+ *     get:
+ *       summary: Get all resumes associated with a registration
+ *       tags: [Resume]
+ *       parameters:
+ *         - in: path
+ *           name: registrationId
+ *           description: ID of the registration
+ *           required: true
  *           type: integer
- *     responses:
- *       '200':
- *         description: Successful response
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   description: Success message
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Resumes fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: resume details fetched successfully
  *                 data:
- *                   $ref: '#/components/schemas/FreelancerResume'
- *       '404':
- *         description: No resumes found with this ID
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: Error message
- *       '500':
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: Error message
+ *                   - id: 1
+ *                     freelancer_resume: resume.pdf
+ *                     registrationId: 1
+ *                     createdAt: '2024-02-28T00:00:00.000Z'
+ *                     updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: No Resume found with this Registration ID
+ *         '500':
+ *           description: Internal server error
+ *   /api/resume/{resume_id}:
+ *     delete:
+ *       summary: Delete a resume by ID
+ *       tags: [Resume]
+ *       parameters:
+ *         - in: path
+ *           name: resume_id
+ *           description: ID of the resume
+ *           required: true
+ *           type: integer
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Resume deleted successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 success: Resume deleted successfully!
+ *                 data:
+ *                   id: 1
+ *                   freelancer_resume: resume.pdf
+ *                   registrationId: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Resume not found
+ *         '500':
+ *           description: Internal server error
+ *   /api/resume/:
+ *     get:
+ *       summary: Get all resumes
+ *       tags: [Resume]
+ *       parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Resumes fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: resume details fetched successfully
+ *                 data:
+ *                   - id: 1
+ *                     freelancer_resume: resume.pdf
+ *                     registrationId: 1
+ *                     createdAt: '2024-02-28T00:00:00.000Z'
+ *                     updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: No Resumes found
+ *         '500':
+ *           description: Internal server error
+ *   /api/freelancer/resume/{resume_id}:
+ *     get:
+ *       summary: Get a resume by ID
+ *       tags: [Resume]
+ *       parameters:
+ *         - in: path
+ *           name: resume_id
+ *           description: ID of the resume
+ *           required: true
+ *           type: integer
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Resume fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: resume details fetched successfully
+ *                 data:
+ *                   id: 1
+ *                   freelancer_resume: resume.pdf
+ *                   registrationId: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: No Resumes found with this ID
+ *         '500':
+ *           description: Internal server error
+ *   /api/freelancer/resume/search/{fieldName}/{fieldValue}:
+ *     get:
+ *       summary: Search resumes by field name and value
+ *       tags: [Resume]
+ *       parameters:
+ *         - in: path
+ *           name: fieldName
+ *           description: Field name to search
+ *           required: true
+ *           type: string
+ *         - in: path
+ *           name: fieldValue
+ *           description: Field value to search
+ *           required: true
+ *           type: string
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Resumes fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Fetched Records
+ *                 data:
+ *                   - id: 1
+ *                     freelancer_resume: resume.pdf
+ *                     registrationId: 1
+ *                     createdAt: '2024-02-28T00:00:00.000Z'
+ *                     updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: No record found
+ *         '500':
+ *           description: Internal server error
  */

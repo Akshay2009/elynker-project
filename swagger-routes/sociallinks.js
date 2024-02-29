@@ -2,11 +2,7 @@
  * @swagger
  * tags:
  *   name: SocialLinks
- *   description: API endpoints for managing social links
- */
-
-/**
- * @swagger
+ *   description: API for managing social links
  * components:
  *   schemas:
  *     SocialLink:
@@ -14,296 +10,354 @@
  *       properties:
  *         id:
  *           type: integer
- *           description: Unique identifier for the social link
+ *         socialmedia_id:
+ *           type: integer
  *         social_name:
  *           type: string
- *           description: Name of the social link
  *         social_url:
  *           type: string
- *           description: URL of the social link
  *         created_by:
- *           type: string
- *           description: Creator of the social link
+ *           type: integer
  *         modified_by:
- *           type: string
- *           description: Modifier of the social link
+ *           type: integer
  *         registrationId:
  *           type: integer
- *           description: ID of the registration associated with the social link
- */
-
-/**
- * @swagger
- * /api/sociallinks/:
- *   post:
- *     summary: Create a social link
- *     tags: [SocialLinks]
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/SocialLink'
- *     responses:
- *       '201':
- *         description: Social link created successfully
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ * paths:
+ *   /api/sociallinks/:
+ *     post:
+ *       summary: Create a social link record
+ *       tags: [SocialLinks]
+ *       parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       requestBody:
+ *         required: true
  *         content:
  *           application/json:
- *             example:
- *               message: Social link created successfully
- *               newSociallinks:
- *                 id: 1
- *                 social_name: Facebook
- *                 social_url: https://www.facebook.com
- *                 created_by: admin
- *                 modified_by: admin
- *                 registrationId: 123
- *       '500':
- *         description: Failed to create social link
- */
-
-/**
- * @swagger
- * /api/users/sociallinks/{registrationId}:
- *   post:
- *     summary: Create social links in bulk for a registration ID
- *     tags: [SocialLinks]
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: registrationId
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: array
- *             items:
+ *             schema:
  *               $ref: '#/components/schemas/SocialLink'
- *     responses:
- *       '201':
- *         description: Social links created successfully
- *         content:
- *           application/json:
- *             example:
- *               message: Social links created successfully
- *               newSociallinks:
- *                 - id: 1
+ *       responses:
+ *         '201':
+ *           description: Social link created successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Sociallinks created successfully
+ *                 data:
+ *                   id: 1
+ *                   socialmedia_id: 1
  *                   social_name: Facebook
- *                   social_url: https://www.facebook.com
- *                   created_by: admin
- *                   modified_by: admin
- *                   registrationId: 123
- *                 - id: 2
- *                   social_name: Twitter
- *                   social_url: https://twitter.com
- *                   created_by: admin
- *                   modified_by: admin
- *                   registrationId: 123
- *       '401':
- *         description: Error updating social links
- *       '500':
- *         description: Failed to create social links
- */
-
-/**
- * @swagger
- * /api/sociallinks/:
- *   get:
- *     summary: Get all social links
- *     tags: [SocialLinks]
- *     security:
- *       - BearerAuth: []
- *     responses:
- *       '200':
- *         description: List of social links
- *         content:
- *           application/json:
- *             example:
- *               - id: 1
- *                 social_name: Facebook
- *                 social_url: https://www.facebook.com
- *                 created_by: admin
- *                 modified_by: admin
- *                 registrationId: 123
- *               - id: 2
- *                 social_name: Twitter
- *                 social_url: https://twitter.com
- *                 created_by: admin
- *                 modified_by: admin
- *                 registrationId: 123
- *       '404':
- *         description: No social links returned
- *       '500':
- *         description: Internal Server Error
- */
-
-/**
- * @swagger
- * /api/users/sociallinks/{registrationId}:
- *   get:
- *     summary: Get all social links by registration ID
- *     tags: [SocialLinks]
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: registrationId
- *         required: true
- *         schema:
+ *                   social_url: https://facebook.com
+ *                   created_by: 1
+ *                   modified_by: 1
+ *                   registrationId: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '400':
+ *           description: Bad request
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Not found
+ *         '500':
+ *           description: Internal server error
+ *     get:
+ *       summary: Get all social link records
+ *       tags: [SocialLinks]
+ *       parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Social links fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Social Links
+ *                 data:
+ *                   - id: 1
+ *                     socialmedia_id: 1
+ *                     social_name: Facebook
+ *                     social_url: https://facebook.com
+ *                     created_by: 1
+ *                     modified_by: 1
+ *                     registrationId: 1
+ *                     createdAt: '2024-02-28T00:00:00.000Z'
+ *                     updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Not found
+ *         '500':
+ *           description: Internal server error
+ *   /api/sociallinks/{social_id}:
+ *     get:
+ *       summary: Get a social link record by ID
+ *       tags: [SocialLinks]
+ *       parameters:
+ *         - in: path
+ *           name: social_id
+ *           description: ID of the social link to retrieve
+ *           required: true
  *           type: integer
- *     responses:
- *       '200':
- *         description: List of social links
- *         content:
- *           application/json:
- *             example:
- *               - id: 1
- *                 social_name: Facebook
- *                 social_url: https://www.facebook.com
- *                 created_by: admin
- *                 modified_by: admin
- *                 registrationId: 123
- *               - id: 2
- *                 social_name: Twitter
- *                 social_url: https://twitter.com
- *                 created_by: admin
- *                 modified_by: admin
- *                 registrationId: 123
- *       '404':
- *         description: No social links with this Registration ID
- *       '500':
- *         description: Internal Server Error
- */
-
-/**
- * @swagger
- * /api/sociallinks/{social_id}:
- *   get:
- *     summary: Get a social link by ID
- *     tags: [SocialLinks]
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: social_id
- *         required: true
- *         schema:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Social link fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Social Links
+ *                 data:
+ *                   id: 1
+ *                   socialmedia_id: 1
+ *                   social_name: Facebook
+ *                   social_url: https://facebook.com
+ *                   created_by: 1
+ *                   modified_by: 1
+ *                   registrationId: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Not found
+ *         '500':
+ *           description: Internal server error
+ *     put:
+ *       summary: Update a social link record by ID
+ *       tags: [SocialLinks]
+ *       parameters:
+ *         - in: path
+ *           name: social_id
+ *           description: ID of the social link to update
+ *           required: true
  *           type: integer
- *     responses:
- *       '200':
- *         description: Social link details
- *         content:
- *           application/json:
- *             example:
- *               id: 1
- *               social_name: Facebook
- *               social_url: https://www.facebook.com
- *               created_by: admin
- *               modified_by: admin
- *               registrationId: 123
- *       '404':
- *         description: Social link details not found
- *       '500':
- *         description: Internal Server Error
- */
-
-/**
- * @swagger
- * /api/sociallinks/{social_id}:
- *   put:
- *     summary: Update a social link by ID
- *     tags: [SocialLinks]
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: social_id
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       requestBody:
  *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/SocialLink'
- *     responses:
- *       '200':
- *         description: Social link record updated successfully
  *         content:
  *           application/json:
- *             example:
- *               message: Social link record updated successfully
- *               updatedSociallinksRecord:
- *                 id: 1
- *                 social_name: Facebook
- *                 social_url: https://www.facebook.com
- *                 created_by: admin
- *                 modified_by: admin
- *                 registrationId: 123
- *       '404':
- *         description: Social link not found
- *       '500':
- *         description: Failed to update social link record
- */
-
-/**
- * @swagger
- * /api/sociallinks/{social_id}:
- *   delete:
- *     summary: Delete a social link by ID
- *     tags: [SocialLinks]
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: social_id
+ *             schema:
+ *               $ref: '#/components/schemas/SocialLink'
+ *       responses:
+ *         '200':
+ *           description: Social link updated successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Social links record updated successfully
+ *                 data:
+ *                   id: 1
+ *                   socialmedia_id: 1
+ *                   social_name: Facebook
+ *                   social_url: https://facebook.com
+ *                   created_by: 1
+ *                   modified_by: 1
+ *                   registrationId: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '400':
+ *           description: Bad request
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Not found
+ *         '500':
+ *           description: Internal server error
+ *     delete:
+ *       summary: Delete a social link record by ID
+ *       tags: [SocialLinks]
+ *       parameters:
+ *         - in: path
+ *           name: social_id
+ *           description: ID of the social link to delete
+ *           required: true
+ *           type: integer
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Social link deleted successfully
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Not found
+ *         '500':
+ *           description: Internal server error
+ *   /api/sociallinks/search/{fieldName}/{fieldValue}:
+ *     get:
+ *       summary: Search social links by field name and value
+ *       tags: [SocialLinks]
+ *       parameters:
+ *         - in: path
+ *           name: fieldName
+ *           description: Field name to search
+ *           required: true
+ *           type: string
+ *         - in: path
+ *           name: fieldValue
+ *           description: Field value to search
+ *           required: true
+ *           type: string
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Social links fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Fetched Records
+ *                 data:
+ *                   - id: 1
+ *                     socialmedia_id: 1
+ *                     social_name: Facebook
+ *                     social_url: https://facebook.com
+ *                     created_by: 1
+ *                     modified_by: 1
+ *                     registrationId: 1
+ *                     createdAt: '2024-02-28T00:00:00.000Z'
+ *                     updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Not found
+ *         '500':
+ *           description: Internal server error
+ *   /api/users/sociallinks/{registrationId}:
+ *     post:
+ *       summary: Create social link records in bulk
+ *       tags: [SocialLinks]
+ *       parameters:
+ *         - in: path
+ *           name: registrationId
+ *           description: ID of the registration
+ *           required: true
+ *           type: integer
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       requestBody:
  *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       '200':
- *         description: Social link deleted successfully
  *         content:
  *           application/json:
- *             example:
- *               message: Social link deleted successfully
- *       '404':
- *         description: Social link not found
- *       '500':
- *         description: Failed to delete social link
- */
-
-/**
- * @swagger
- * /api/users/sociallinks/{reg_id}:
- *   delete:
- *     summary: Delete all social links by registration ID
- *     tags: [SocialLinks]
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: reg_id
- *         required: true
- *         schema:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/SocialLink'
+ *       responses:
+ *         '201':
+ *           description: Social links created successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Sociallinks created successfully
+ *                 data:
+ *                   - id: 1
+ *                     socialmedia_id: 1
+ *                     social_name: Facebook
+ *                     social_url: https://facebook.com
+ *                     created_by: 1
+ *                     modified_by: 1
+ *                     registrationId: 1
+ *                     createdAt: '2024-02-28T00:00:00.000Z'
+ *                     updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '400':
+ *           description: Bad request
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Not found
+ *         '500':
+ *           description: Internal server error
+ *     get:
+ *       summary: Get all social link records by registration ID
+ *       tags: [SocialLinks]
+ *       parameters:
+ *         - in: path
+ *           name: registrationId
+ *           description: ID of the registration
+ *           required: true
  *           type: integer
- *     responses:
- *       '200':
- *         description: Social links deleted successfully with provided Registration ID
- *         content:
- *           application/json:
- *             example:
- *               message: Social links deleted successfully with provided Registration ID
- *       '404':
- *         description: No records found for provided registration Id
- *       '500':
- *         description: Failed to delete social links
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Social links fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Social Links
+ *                 data:
+ *                   - id: 1
+ *                     socialmedia_id: 1
+ *                     social_name: Facebook
+ *                     social_url: https://facebook.com
+ *                     created_by: 1
+ *                     modified_by: 1
+ *                     registrationId: 1
+ *                     createdAt: '2024-02-28T00:00:00.000Z'
+ *                     updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Not found
+ *         '500':
+ *           description: Internal server error
+ *   /api/users/sociallinks/{reg_id}:
+ *     delete:
+ *       summary: Delete all social link records by registration ID
+ *       tags: [SocialLinks]
+ *       parameters:
+ *         - in: path
+ *           name: reg_id
+ *           description: ID of the registration
+ *           required: true
+ *           type: integer
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Social links deleted successfully
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Not found
+ *         '500':
+ *           description: Internal server error
  */

@@ -1,434 +1,957 @@
 /**
  * @swagger
- * tags:
- *   - name: City
- *     description: API for managing city master data
- *   - name: Currency
- *     description: API for managing currency master data
- *   - name: State
- *     description: API for managing state master data
- * components:
- *   schemas:
- *     City:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *         name:
+ * /api/currencymaster:
+ *   post:
+ *     summary: Create a new currency master record
+ *     tags: [CurrencyMaster]
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
  *           type: string
- *     Currency:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *         code:
- *           type: string
- *         name:
- *           type: string
- *     State:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *         name:
- *           type: string
- *     RegistrationType:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *         name:
- *           type: string
- * paths:
- *   /api/citymaster:
- *     get:
- *       summary: Get all city masters
- *       tags: [City]
- *       security:
- *         - auth_token: []
- *       responses:
- *         '200':
- *           description: Successful response
- *           content:
- *             application/json:
- *               example:
- *                 - id: 1
- *                   name: City1
- *                 - id: 2
- *                   name: City2
- *     post:
- *       summary: Create a new city master
- *       tags: [City]
- *       security:
- *         - auth_token: []
- *       requestBody:
- *         required: true
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               prefix:
+ *                 type: string
+ *               prefix_sign:
+ *                 type: string
+ *               country_name:
+ *                 type: string
+ *             required:
+ *               - name
+ *               - prefix
+ *               - prefix_sign
+ *               - country_name
+ *     responses:
+ *       '201':
+ *         description: Currency record created successfully
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/City'
- *       responses:
- *         '201':
- *           description: City master created successfully
- *         '400':
- *           description: Bad request
- *   /api/citymaster/{city_id}:
- *     get:
- *       summary: Get a city master by ID
- *       tags: [City]
- *       security:
- *         - auth_token: []
- *       parameters:
- *         - name: city_id
- *           in: path
- *           required: true
- *           description: City master ID
- *           schema:
- *             type: integer
- *       responses:
- *         '200':
- *           description: Successful response
- *           content:
- *             application/json:
- *               example:
+ *             example:
+ *               message: Currency record created successfully
+ *               data:
  *                 id: 1
- *                 name: City1
- *         '404':
- *           description: City master not found
- *     put:
- *       summary: Update a city master by ID
- *       tags: [City]
- *       security:
- *         - auth_token: []
- *       parameters:
- *         - name: city_id
- *           in: path
+ *                 name: Currency Name
+ *                 prefix: Prefix
+ *                 prefix_sign: Prefix Sign
+ *                 country_name: Country Name
+ *                 createdAt: '2024-02-28T00:00:00.000Z'
+ *                 updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '400':
+ *         description: Bad request
+ *       '401':
+ *         description: Unauthorized
+ *       '500':
+ *         description: Internal server error
+ *   get:
+ *     summary: Get all currency master records
+ *     tags: [CurrencyMaster]
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
  *           required: true
- *           description: City master ID
- *           schema:
- *             type: integer
- *       requestBody:
- *         required: true
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: Currency records fetched successfully
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/City'
- *       responses:
- *         '200':
- *           description: City master updated successfully
- *         '400':
- *           description: Bad request
- *         '404':
- *           description: City master not found
- *     delete:
- *       summary: Delete a city master by ID
- *       tags: [City]
- *       security:
- *         - auth_token: []
- *       parameters:
- *         - name: city_id
- *           in: path
- *           required: true
- *           description: City master ID
- *           schema:
- *             type: integer
- *       responses:
- *         '204':
- *           description: City master deleted successfully
- *         '404':
- *           description: City master not found
- *   /api/currencymaster:
- *     get:
- *       summary: Get all currency masters
- *       tags: [Currency]
- *       security:
- *         - auth_token: []
- *       responses:
- *         '200':
- *           description: Successful response
- *           content:
- *             application/json:
- *               example:
+ *             example:
+ *               message: Currency records fetched successfully
+ *               data:
  *                 - id: 1
- *                   code: USD
- *                   name: US Dollar
- *                 - id: 2
- *                   code: EUR
- *                   name: Euro
- *     post:
- *       summary: Create a new currency master
- *       tags: [Currency]
- *       security:
- *         - auth_token: []
- *       requestBody:
+ *                   name: Currency Name
+ *                   prefix: Prefix
+ *                   prefix_sign: Prefix Sign
+ *                   country_name: Country Name
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '500':
+ *         description: Internal server error
+ * /api/currencymaster/{id}:
+ *   get:
+ *     summary: Get currency master record by ID
+ *     tags: [CurrencyMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: Currency ID
  *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: Currency record fetched successfully
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Currency'
- *       responses:
- *         '201':
- *           description: Currency master created successfully
- *         '400':
- *           description: Bad request
- *   /api/currencymaster/{currency_id}:
- *     get:
- *       summary: Get a currency master by ID
- *       tags: [Currency]
- *       security:
- *         - auth_token: []
- *       parameters:
- *         - name: currency_id
- *           in: path
- *           required: true
- *           description: Currency master ID
- *           schema:
- *             type: integer
- *       responses:
- *         '200':
- *           description: Successful response
- *           content:
- *             application/json:
- *               example:
+ *             example:
+ *               message: Currency record fetched successfully
+ *               data:
  *                 id: 1
- *                 code: USD
- *                 name: US Dollar
- *         '404':
- *           description: Currency master not found
- *     put:
- *       summary: Update a currency master by ID
- *       tags: [Currency]
- *       security:
- *         - auth_token: []
- *       parameters:
- *         - name: currency_id
- *           in: path
- *           required: true
- *           description: Currency master ID
- *           schema:
- *             type: integer
- *       requestBody:
+ *                 name: Currency Name
+ *                 prefix: Prefix
+ *                 prefix_sign: Prefix Sign
+ *                 country_name: Country Name
+ *                 createdAt: '2024-02-28T00:00:00.000Z'
+ *                 updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: Currency not found
+ *       '500':
+ *         description: Internal server error
+ *   put:
+ *     summary: Update currency master record by ID
+ *     tags: [CurrencyMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: Currency ID
  *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               prefix:
+ *                 type: string
+ *               prefix_sign:
+ *                 type: string
+ *               country_name:
+ *                 type: string
+ *             required:
+ *               - name
+ *               - prefix
+ *               - prefix_sign
+ *               - country_name
+ *     responses:
+ *       '200':
+ *         description: Currency record updated successfully
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Currency'
- *       responses:
- *         '200':
- *           description: Currency master updated successfully
- *         '400':
- *           description: Bad request
- *         '404':
- *           description: Currency master not found
- *     delete:
- *       summary: Delete a currency master by ID
- *       tags: [Currency]
- *       security:
- *         - auth_token: []
- *       parameters:
- *         - name: currency_id
- *           in: path
- *           required: true
- *           description: Currency master ID
- *           schema:
- *             type: integer
- *       responses:
- *         '204':
- *           description: Currency master deleted successfully
- *         '404':
- *           description: Currency master not found
- *   /api/statemaster:
- *     get:
- *       summary: Get all state masters
- *       tags: [State]
- *       security:
- *         - auth_token: []
- *       responses:
- *         '200':
- *           description: Successful response
- *           content:
- *             application/json:
- *               example:
+ *             example:
+ *               message: Currency record updated successfully
+ *               data:
+ *                 id: 1
+ *                 name: Currency Name
+ *                 prefix: Prefix
+ *                 prefix_sign: Prefix Sign
+ *                 country_name: Country Name
+ *                 createdAt: '2024-02-28T00:00:00.000Z'
+ *                 updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: Currency not found
+ *       '500':
+ *         description: Internal server error
+ *   delete:
+ *     summary: Delete currency master record by ID
+ *     tags: [CurrencyMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: Currency ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: Currency record deleted successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Currency record deleted successfully
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: Currency not found
+ *       '500':
+ *         description: Internal server error
+ * /api/currencymaster/search/{fieldName}/{fieldValue}:
+ *   get:
+ *     summary: Search currency master records by field name and value
+ *     tags: [CurrencyMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: fieldName
+ *         description: Name of the field to search by
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: fieldValue
+ *         description: Value of the field to search by
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: Currency records fetched successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Currency records fetched successfully
+ *               data:
  *                 - id: 1
- *                   name: State1
- *                 - id: 2
- *                   name: State2
- *     post:
- *       summary: Create a new state master
- *       tags: [State]
- *       security:
- *         - auth_token: []
- *       requestBody:
- *         required: true
+ *                   name: Currency Name
+ *                   prefix: Prefix
+ *                   prefix_sign: Prefix Sign
+ *                   country_name: Country Name
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: Currency not found
+ *       '500':
+ *         description: Internal server error
+ * /api/citymaster:
+ *   post:
+ *     summary: Create a new city master record
+ *     tags: [CityMaster]
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               state_id:
+ *                 type: integer
+ *             required:
+ *               - name
+ *               - state_id
+ *     responses:
+ *       '201':
+ *         description: City record created successfully
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/State'
- *       responses:
- *         '201':
- *           description: State master created successfully
- *         '400':
- *           description: Bad request
- *   /api/statemaster/{state_id}:
- *     get:
- *       summary: Get a state master by ID
- *       tags: [State]
- *       security:
- *         - auth_token: []
- *       parameters:
- *         - name: state_id
- *           in: path
- *           required: true
- *           description: State master ID
- *           schema:
- *             type: integer
- *       responses:
- *         '200':
- *           description: Successful response
- *           content:
- *             application/json:
- *               example:
+ *             example:
+ *               message: City record created successfully
+ *               data:
  *                 id: 1
- *                 name: State1
- *         '404':
- *           description: State master not found
- *     put:
- *       summary: Update a state master by ID
- *       tags: [State]
- *       security:
- *         - auth_token: []
- *       parameters:
- *         - name: state_id
- *           in: path
+ *                 name: City Name
+ *                 state_id: 1
+ *                 createdAt: '2024-02-28T00:00:00.000Z'
+ *                 updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '400':
+ *         description: Bad request
+ *       '401':
+ *         description: Unauthorized
+ *       '500':
+ *         description: Internal server error
+ *   get:
+ *     summary: Get all city master records
+ *     tags: [CityMaster]
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
  *           required: true
- *           description: State master ID
- *           schema:
- *             type: integer
- *       requestBody:
- *         required: true
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       '200':
+ *         description: City records fetched successfully
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/State'
- *       responses:
- *         '200':
- *           description: State master updated successfully
- *         '400':
- *           description: Bad request
- *         '404':
- *           description: State master not found
- *     delete:
- *       summary: Delete a state master by ID
- *       tags: [State]
- *       security:
- *         - auth_token: []
- *       parameters:
- *         - name: state_id
- *           in: path
- *           required: true
- *           description: State master ID
- *           schema:
- *             type: integer
- *       responses:
- *         '204':
- *           description: State master deleted successfully
- *         '404':
- *           description: State master not found
- *   /api/registrationtypemaster:
- *     get:
- *       summary: Get all registration type masters
- *       tags: [RegistrationTypes]
- *       security:
- *         - auth_token: []
- *       responses:
- *         '200':
- *           description: Successful response
- *           content:
- *             application/json:
- *               example:
+ *             example:
+ *               message: City records fetched successfully
+ *               data:
  *                 - id: 1
- *                   name: Type1
- *                 - id: 2
- *                   name: Type2
- *     post:
- *       summary: Create a new registration type master
- *       tags: [RegistrationTypes]
- *       security:
- *         - auth_token: []
- *       requestBody:
+ *                   name: City Name
+ *                   state_id: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '500':
+ *         description: Internal server error
+ * /api/citymaster/{id}:
+ *   get:
+ *     summary: Get city master record by ID
+ *     tags: [CityMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: City ID
  *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: City record fetched successfully
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/RegistrationType'
- *       responses:
- *         '201':
- *           description: Registration type master created successfully
- *         '400':
- *           description: Bad request
- *   /api/registrationtypemaster/{registrationtype_id}:
- *     get:
- *       summary: Get a registration type master by ID
- *       tags: [RegistrationTypes]
- *       security:
- *         - auth_token: []
- *       parameters:
- *         - name: registrationtype_id
- *           in: path
- *           required: true
- *           description: Registration type master ID
- *           schema:
- *             type: integer
- *       responses:
- *         '200':
- *           description: Successful response
- *           content:
- *             application/json:
- *               example:
+ *             example:
+ *               message: City record fetched successfully
+ *               data:
  *                 id: 1
- *                 name: Type1
- *         '404':
- *           description: Registration type master not found
- *     put:
- *       summary: Update a registration type master by ID
- *       tags: [RegistrationTypes]
- *       security:
- *         - auth_token: []
- *       parameters:
- *         - name: registrationtype_id
- *           in: path
- *           required: true
- *           description: Registration type master ID
- *           schema:
- *             type: integer
- *       requestBody:
+ *                 name: City Name
+ *                 state_id: 1
+ *                 createdAt: '2024-02-28T00:00:00.000Z'
+ *                 updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: City not found
+ *       '500':
+ *         description: Internal server error
+ *   put:
+ *     summary: Update city master record by ID
+ *     tags: [CityMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: City ID
  *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               state_id:
+ *                 type: integer
+ *             required:
+ *               - name
+ *               - state_id
+ *     responses:
+ *       '200':
+ *         description: City record updated successfully
  *         content:
  *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/RegistrationType'
- *       responses:
- *         '200':
- *           description: Registration type master updated successfully
- *         '400':
- *           description: Bad request
- *         '404':
- *           description: Registration type master not found
- *     delete:
- *       summary: Delete a registration type master by ID
- *       tags: [RegistrationTypes]
- *       security:
- *         - auth_token: []
- *       parameters:
- *         - name: registrationtype_id
- *           in: path
+ *             example:
+ *               message: City record updated successfully
+ *               data:
+ *                 id: 1
+ *                 name: City Name
+ *                 state_id: 1
+ *                 createdAt: '2024-02-28T00:00:00.000Z'
+ *                 updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: City not found
+ *       '500':
+ *         description: Internal server error
+ *   delete:
+ *     summary: Delete city master record by ID
+ *     tags: [CityMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: City ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: City record deleted successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: City record deleted successfully
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: City not found
+ *       '500':
+ *         description: Internal server error
+ * /api/citymaster/search/{fieldName}/{fieldValue}:
+ *   get:
+ *     summary: Search city master records by field name and value
+ *     tags: [CityMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: fieldName
+ *         description: Name of the field to search by
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: fieldValue
+ *         description: Value of the field to search by
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: City records fetched successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: City records fetched successfully
+ *               data:
+ *                 - id: 1
+ *                   name: City Name
+ *                   state_id: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: City not found
+ *       '500':
+ *         description: Internal server error
+ * /api/statemaster:
+ *   post:
+ *     summary: Create a new state master record
+ *     tags: [StateMaster]
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
  *           required: true
- *           description: Registration type master ID
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
  *           schema:
- *             type: integer
- *       responses:
- *         '204':
- *           description: Registration type master deleted successfully
- *         '404':
- *           description: Registration type master not found
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               country_id:
+ *                 type: integer
+ *             required:
+ *               - name
+ *               - country_id
+ *     responses:
+ *       '201':
+ *         description: State record created successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: State record created successfully
+ *               data:
+ *                 id: 1
+ *                 name: State Name
+ *                 country_id: 1
+ *                 createdAt: '2024-02-28T00:00:00.000Z'
+ *                 updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '400':
+ *         description: Bad request
+ *       '401':
+ *         description: Unauthorized
+ *       '500':
+ *         description: Internal server error
+ *   get:
+ *     summary: Get all state master records
+ *     tags: [StateMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: State records fetched successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: State records fetched successfully
+ *               data:
+ *                 - id: 1
+ *                   name: State Name
+ *                   country_id: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '500':
+ *         description: Internal server error
+ * /api/statemaster/{id}:
+ *   get:
+ *     summary: Get state master record by ID
+ *     tags: [StateMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: State ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: State record fetched successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: State record fetched successfully
+ *               data:
+ *                 id: 1
+ *                 name: State Name
+ *                 country_id: 1
+ *                 createdAt: '2024-02-28T00:00:00.000Z'
+ *                 updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: State not found
+ *       '500':
+ *         description: Internal server error
+ *   put:
+ *     summary: Update state master record by ID
+ *     tags: [StateMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: State ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               country_id:
+ *                 type: integer
+ *             required:
+ *               - name
+ *               - country_id
+ *     responses:
+ *       '200':
+ *         description: State record updated successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: State record updated successfully
+ *               data:
+ *                 id: 1
+ *                 name: State Name
+ *                 country_id: 1
+ *                 createdAt: '2024-02-28T00:00:00.000Z'
+ *                 updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: State not found
+ *       '500':
+ *         description: Internal server error
+ *   delete:
+ *     summary: Delete state master record by ID
+ *     tags: [StateMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: State ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: State record deleted successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: State record deleted successfully
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: State not found
+ *       '500':
+ *         description: Internal server error
+ * /api/statemaster/search/{fieldName}/{fieldValue}:
+ *   get:
+ *     summary: Search state master records by field name and value
+ *     tags: [StateMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: fieldName
+ *         description: Name of the field to search by
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: fieldValue
+ *         description: Value of the field to search by
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: State records fetched successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: State records fetched successfully
+ *               data:
+ *                 - id: 1
+ *                   name: State Name
+ *                   country_id: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: State not found
+ *       '500':
+ *         description: Internal server error
+ * /api/countrymaster:
+ *   post:
+ *     summary: Create a new country master record
+ *     tags: [CountryMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               currency_id:
+ *                 type: integer
+ *             required:
+ *               - name
+ *               - currency_id
+ *     responses:
+ *       '201':
+ *         description: Country record created successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Country record created successfully
+ *               data:
+ *                 id: 1
+ *                 name: Country Name
+ *                 currency_id: 1
+ *                 createdAt: '2024-02-28T00:00:00.000Z'
+ *                 updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '400':
+ *         description: Bad request
+ *       '401':
+ *         description: Unauthorized
+ *       '500':
+ *         description: Internal server error
+ *   get:
+ *     summary: Get all country master records
+ *     tags: [CountryMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Country records fetched successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Country records fetched successfully
+ *               data:
+ *                 - id: 1
+ *                   name: Country Name
+ *                   currency_id: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '500':
+ *         description: Internal server error
+ * /api/countrymaster/{id}:
+ *   get:
+ *     summary: Get country master record by ID
+ *     tags: [CountryMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: Country ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: Country record fetched successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Country record fetched successfully
+ *               data:
+ *                 id: 1
+ *                 name: Country Name
+ *                 currency_id: 1
+ *                 createdAt: '2024-02-28T00:00:00.000Z'
+ *                 updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: Country not found
+ *       '500':
+ *         description: Internal server error
+ *   put:
+ *     summary: Update country master record by ID
+ *     tags: [CountryMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: Country ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               currency_id:
+ *                 type: integer
+ *             required:
+ *               - name
+ *               - currency_id
+ *     responses:
+ *       '200':
+ *         description: Country record updated successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Country record updated successfully
+ *               data:
+ *                 id: 1
+ *                 name: Country Name
+ *                 currency_id: 1
+ *                 createdAt: '2024-02-28T00:00:00.000Z'
+ *                 updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: Country not found
+ *       '500':
+ *         description: Internal server error
+ *   delete:
+ *     summary: Delete country master record by ID
+ *     tags: [CountryMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: Country ID
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: Country record deleted successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Country record deleted successfully
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: Country not found
+ *       '500':
+ *         description: Internal server error
+ * /api/countrymaster/search/{fieldName}/{fieldValue}:
+ *   get:
+ *     summary: Search country master records by field name and value
+ *     tags: [CountryMaster]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: fieldName
+ *         description: Name of the field to search by
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: fieldValue
+ *         description: Value of the field to search by
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: Country records fetched successfully
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Country records fetched successfully
+ *               data:
+ *                 - id: 1
+ *                   name: Country Name
+ *                   currency_id: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: Country not found
+ *       '500':
+ *         description: Internal server error
  */

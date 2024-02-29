@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   name: Certificate
- *   description: API for managing certificates
+ *   description: API for managing certificate records
  * components:
  *   schemas:
  *     Certificate:
@@ -14,15 +14,28 @@
  *           type: string
  *         description:
  *           type: string
- *         reg_id:
+ *         issued_on:
+ *           type: string
+ *           format: date
+ *         registrationId:
  *           type: integer
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
  * paths:
  *   /api/certificate:
  *     post:
- *       summary: Create a new certificate
+ *       summary: Create a certificate record
  *       tags: [Certificate]
- *       security:
- *         - api_key: []
+ *       parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
  *       requestBody:
  *         required: true
  *         content:
@@ -30,73 +43,109 @@
  *             schema:
  *               $ref: '#/components/schemas/Certificate'
  *       responses:
- *         '201':
- *           description: Certificate created successfully
- *         '400':
- *           description: Bad request
- *         '500':
- *           description: Some server error
- *     get:
- *       summary: Get all certificates
- *       tags: [Certificate]
- *       security:
- *         - api_key: []
- *       responses:
  *         '200':
- *           description: Successful response
+ *           description: Certificate record created successfully
  *           content:
  *             application/json:
  *               example:
- *                 - id: 1
- *                   name: Certificate1
- *                   description: Description1
- *                   reg_id: 123
- *                 - id: 2
- *                   name: Certificate2
- *                   description: Description2
- *                   reg_id: 456
+ *                 message: Certificate created successfully
+ *                 data:
+ *                   id: 1
+ *                   name: Certificate Name
+ *                   description: Certificate Description
+ *                   issued_on: '2024-02-28'
+ *                   registrationId: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '400':
+ *           description: Bad request
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Registration not found
  *         '500':
- *           description: Some server error
+ *           description: Internal server error
+ *     get:
+ *       summary: Get all certificate records
+ *       tags: [Certificate]
+ *       parameters:
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Certificate records fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Certificate records fetched successfully
+ *                 data:
+ *                   - id: 1
+ *                     name: Certificate Name
+ *                     description: Certificate Description
+ *                     issued_on: '2024-02-28'
+ *                     registrationId: 1
+ *                     createdAt: '2024-02-28T00:00:00.000Z'
+ *                     updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: No certificate records found
+ *         '500':
+ *           description: Internal server error
  *   /api/certificate/{reg_id}:
  *     get:
- *       summary: Get a certificate by registration ID
+ *       summary: Get certificate records by registration ID
  *       tags: [Certificate]
  *       parameters:
- *         - name: reg_id
- *           in: path
- *           required: true
+ *         - in: path
+ *           name: reg_id
  *           description: Registration ID
- *           schema:
- *             type: integer
- *       security:
- *         - api_key: []
+ *           required: true
+ *           type: integer
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
  *       responses:
  *         '200':
- *           description: Successful response
+ *           description: Certificate records fetched successfully
  *           content:
  *             application/json:
  *               example:
- *                 - id: 1
- *                   name: Certificate1
- *                   description: Description1
- *                   reg_id: 123
+ *                 message: Certificate records fetched successfully
+ *                 data:
+ *                   - id: 1
+ *                     name: Certificate Name
+ *                     description: Certificate Description
+ *                     issued_on: '2024-02-28'
+ *                     registrationId: 1
+ *                     createdAt: '2024-02-28T00:00:00.000Z'
+ *                     updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
  *         '404':
- *           description: Certificate not found
+ *           description: No certificate records found
  *         '500':
- *           description: Some server error
- *   /api/certificate/{certificate_id}:
+ *           description: Internal server error
+*   /api/certificate/{certificateId}:
  *     put:
- *       summary: Update a certificate by ID
+ *       summary: Update certificate record by ID
  *       tags: [Certificate]
  *       parameters:
- *         - name: certificate_id
- *           in: path
- *           required: true
+ *         - in: path
+ *           name: certificate_id
  *           description: Certificate ID
- *           schema:
- *             type: integer
- *       security:
- *         - api_key: []
+ *           required: true
+ *           type: integer
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
  *       requestBody:
  *         required: true
  *         content:
@@ -105,30 +154,103 @@
  *               $ref: '#/components/schemas/Certificate'
  *       responses:
  *         '200':
- *           description: Certificate updated successfully
+ *           description: Certificate record updated successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Certificate record updated successfully
+ *                 data:
+ *                   id: 1
+ *                   name: Certificate Name
+ *                   description: Certificate Description
+ *                   issued_on: '2024-02-28'
+ *                   registrationId: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
  *         '400':
  *           description: Bad request
+ *         '401':
+ *           description: Unauthorized
  *         '404':
  *           description: Certificate not found
  *         '500':
- *           description: Some server error
+ *           description: Internal server error
  *     delete:
- *       summary: Delete a certificate by ID
+ *       summary: Delete certificate record by ID
  *       tags: [Certificate]
  *       parameters:
- *         - name: certificate_id
- *           in: path
- *           required: true
+ *         - in: path
+ *           name: certificate_id
  *           description: Certificate ID
- *           schema:
- *             type: integer
- *       security:
- *         - api_key: []
+ *           required: true
+ *           type: integer
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
  *       responses:
- *         '204':
- *           description: Certificate deleted successfully
+ *         '200':
+ *           description: Certificate record deleted successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Certificate record deleted successfully
+ *                 data:
+ *                   id: 1
+ *                   name: Certificate Name
+ *                   description: Certificate Description
+ *                   issued_on: '2024-02-28'
+ *                   registrationId: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
  *         '404':
  *           description: Certificate not found
  *         '500':
- *           description: Some server error
+ *           description: Internal server error
+ *   /api/certificate/search/{fieldName}/{fieldValue}:
+ *     get:
+ *       summary: Search certificate records by field name and value
+ *       tags: [Certificate]
+ *       parameters:
+ *         - in: path
+ *           name: fieldName
+ *           description: Name of the field to search by
+ *           required: true
+ *           type: string
+ *         - in: path
+ *           name: fieldValue
+ *           description: Value of the field to search by
+ *           required: true
+ *           type: string
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           type: string
+ *       responses:
+ *         '200':
+ *           description: Certificate records fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Certificate records fetched successfully
+ *                 data:
+ *                   - id: 1
+ *                     name: Certificate Name
+ *                     description: Certificate Description
+ *                     issued_on: '2024-02-28'
+ *                     registrationId: 1
+ *                     createdAt: '2024-02-28T00:00:00.000Z'
+ *                     updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '400':
+ *           description: Bad request
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: No certificate records found
+ *         '500':
+ *           description: Internal server error
  */
