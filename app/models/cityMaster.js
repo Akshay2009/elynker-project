@@ -1,12 +1,12 @@
 module.exports = (sequelize, Sequelize) => {
-    const CityMaster = sequelize.define("city_master", {
+  const CityMaster = sequelize.define('city_master', {
 
-      name: {
-        type: Sequelize.STRING(50)
-      },
-    }
+    name: {
+      type: Sequelize.STRING(50),
+    },
+  },
   );
-  
-    return CityMaster;
-  };
+
+  return CityMaster;
+};
 

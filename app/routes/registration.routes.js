@@ -2,12 +2,12 @@ const {
   uploadCoverImages,
   uploadCompanyLogo,
   handleMulterError,
-} = require("../uploadUtils");
+} = require('../uploadUtils');
 
-const { authJwt } = require("../middleware");
-const registrationController = require("../controllers/registration.controller");
+const { authJwt } = require('../middleware');
+const registrationController = require('../controllers/registration.controller');
 
-module.exports = function (app) {
+module.exports = function(app) {
   /**
    * Endpoint to update the company logo.
    * Requires authentication and uses multer for handling file uploads.
@@ -17,11 +17,11 @@ module.exports = function (app) {
    * @param {Function} registrationController.updateCompanyLogo - Controller function to handle the update.
    */
   app.put(
-    "/api/update/companyLogo/:id",
-    [authJwt.verifyToken],
-    uploadCompanyLogo.fields([{ name: "images" }]),
-    handleMulterError,
-    registrationController.updateCompanyLogo
+      '/api/update/companyLogo/:id',
+      [authJwt.verifyToken],
+      uploadCompanyLogo.fields([{ name: 'images' }]),
+      handleMulterError,
+      registrationController.updateCompanyLogo,
   );
   /**
    * Endpoint to update the cover Image.
@@ -32,11 +32,11 @@ module.exports = function (app) {
    * @param {Function} registrationController.updateCoverImage - Controller function to handle the update.
    */
   app.put(
-    "/api/update/coverImage/:registrationId",
-    [authJwt.verifyToken],
-    uploadCoverImages.fields([{ name: "images" }]),
-    handleMulterError,
-    registrationController.updateCoverImage
+      '/api/update/coverImage/:registrationId',
+      [authJwt.verifyToken],
+      uploadCoverImages.fields([{ name: 'images' }]),
+      handleMulterError,
+      registrationController.updateCoverImage,
   );
 
   /**
@@ -48,9 +48,9 @@ module.exports = function (app) {
    * @param {Function} registrationController.getBusinessDetail - Controller function to get business details.
    */
   app.get(
-    "/api/business/:reg_id",
-    [authJwt.verifyToken],
-    registrationController.getBusinessDetail
+      '/api/business/:reg_id',
+      [authJwt.verifyToken],
+      registrationController.getBusinessDetail,
   );
 
   /**
@@ -62,11 +62,11 @@ module.exports = function (app) {
    * @param {Function} registrationController.saveBusinessDetail - Controller function to save business details.
    */
   app.post(
-    "/api/business/:reg_id",
-    [authJwt.verifyToken],
-    registrationController.saveBusinessDetail
+      '/api/business/:reg_id',
+      [authJwt.verifyToken],
+      registrationController.saveBusinessDetail,
   );
-  //post registration details--
+  // post registration details--
   /**
    * Endpoint to update Registration Record.
    * Requires authentication.
@@ -76,9 +76,9 @@ module.exports = function (app) {
    * @param {Function} registrationController.putRegDetail - Controller function to save Registration Record.
    */
   app.put(
-    "/api/registration/:reg_id",
-    [authJwt.verifyToken],
-    registrationController.putRegDetail
+      '/api/registration/:reg_id',
+      [authJwt.verifyToken],
+      registrationController.putRegDetail,
   );
 
   /**
@@ -88,46 +88,46 @@ module.exports = function (app) {
    * @param {Function} registrationController.updateCategoryIds - Controller function to handle the update.
    */
   app.put(
-    "/api/update/categoryIds/:registrationId",
-    [authJwt.verifyToken],
-    registrationController.updateCategoryIds
+      '/api/update/categoryIds/:registrationId',
+      [authJwt.verifyToken],
+      registrationController.updateCategoryIds,
   );
 
 
- /**
+  /**
    * Endpoint to Get registration details as per user id passed in params:
    * @param {String} '/api/registration/:user_id' - API endpoint path.
    * @param {Function[]} [authJwt.verifyToken,
    * @param {Function} registrationController.getRegById -getRegById Controller function to handle get request.
    */
-    app.get('/api/registration/:user_id',
-    [authJwt.verifyToken],
-    registrationController.getRegById
-  )
+  app.get('/api/registration/:user_id',
+      [authJwt.verifyToken],
+      registrationController.getRegById,
+  );
 
 
   /**
    * Search Registration details by fieldName and  fieldValue from the database.
   */
   app.get('/api/registration/search/:fieldName/:fieldValue',
-    [authJwt.verifyToken],
-    registrationController.search
-  )
+      [authJwt.verifyToken],
+      registrationController.search,
+  );
 
   /**
    * Get all Registration details from the database.
    *
    */
   app.get('/api/registration',
-    [authJwt.verifyToken],
-    registrationController.getAll
-  )
+      [authJwt.verifyToken],
+      registrationController.getAll,
+  );
 
   /**
    * Search Business details by fieldName and  fieldValue from the database.
   */
   app.get('/api/business/search/:fieldName/:fieldValue',
-    [authJwt.verifyToken],
-    registrationController.searchBusiness
-  )
+      [authJwt.verifyToken],
+      registrationController.searchBusiness,
+  );
 };

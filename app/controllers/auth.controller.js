@@ -1,5 +1,5 @@
-const db = require("../models");
-const config = require("../config/auth.config");
+const db = require('../models');
+const config = require('../config/auth.config');
 const User = db.user;
 const Role = db.role;
 const Registration = db.registration;
@@ -7,12 +7,12 @@ const { logErrorToFile } = require('../logger');
 
 const Op = db.Sequelize.Op;
 
-var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 /**
  * Controller function to signup and save user details.
- * 
+ *
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
@@ -24,7 +24,7 @@ exports.signup = async (req, res) => {
     country_code: req.body.country_code,
     mobile_number: req.body.mobile_number,
     city: req.body.city,
-    //password: bcrypt.hashSync(req.body.password, 8)
+    // password: bcrypt.hashSync(req.body.password, 8)
   });
   if (user) {
     const registration = await Registration.create({
@@ -32,73 +32,23 @@ exports.signup = async (req, res) => {
       city: req.body.city,
       isActive: true,
       registration_type: req.body.registration_type || 1,
-      userId: user.id
+      userId: user.id,
     });
 
     if (req.body.roles) {
       const roles = await Role.findAll({
         where: {
           name: {
-            [Op.or]: req.body.roles
-          }
-        }
+            [Op.or]: req.body.roles,
+          },
+        },
       });
       await user.setRoles(roles);
-    }
-    else {
+    } else {
       await user.setRoles([1]);
     }
 
     const token = jwt.sign({ id: user.id },
-      config.secret,
-      {
-        algorithm: 'HS256',
-        allowInsecureKeySizes: true,
-        expiresIn: 86400, // 24 hours
-      });
-
-    var authorities = [];
-    user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        authorities.push("ROLE_" + roles[i].name.toUpperCase());
-      }
-      return res.status(200).send({
-        user: user,
-        roles: authorities,
-        accessToken: token,
-        registration: registration
-      });
-    });
-
-  } else {
-    return res.status(500).send({ message: 'Error in creating user' });
-  }
-}
-
-/**
- * Controller function for get business details and sign-in.
- * 
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- */
-exports.signin = async (req, res) => {
-  User.findOne({
-    where: {
-      mobile_number: req.body.mobile_number
-    }
-  })
-    .then(async user => {
-      if (!user) {
-        return res.status(404).send({ message: "User Not found." });
-      }
-
-      const result = await Registration.findOne({
-        where: {
-          userId: user.id
-        }
-      })
-
-      const token = jwt.sign({ id: user.id },
         config.secret,
         {
           algorithm: 'HS256',
@@ -106,20 +56,68 @@ exports.signin = async (req, res) => {
           expiresIn: 86400, // 24 hours
         });
 
-      var authorities = [];
-      user.getRoles().then(roles => {
-        for (let i = 0; i < roles.length; i++) {
-          authorities.push("ROLE_" + roles[i].name.toUpperCase());
-        }
-        return res.status(200).send({
-          user: user,
-          roles: authorities,
-          accessToken: token,
-          registration: result
-        });
+    const authorities = [];
+    user.getRoles().then((roles) => {
+      for (let i = 0; i < roles.length; i++) {
+        authorities.push('ROLE_' + roles[i].name.toUpperCase());
+      }
+      return res.status(200).send({
+        user: user,
+        roles: authorities,
+        accessToken: token,
+        registration: registration,
       });
-    })
-    .catch(err => {
-      return res.status(500).send({ message: err.message });
     });
+  } else {
+    return res.status(500).send({ message: 'Error in creating user' });
+  }
+};
+
+/**
+ * Controller function for get business details and sign-in.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+exports.signin = async (req, res) => {
+  User.findOne({
+    where: {
+      mobile_number: req.body.mobile_number,
+    },
+  })
+      .then(async (user) => {
+        if (!user) {
+          return res.status(404).send({ message: 'User Not found.' });
+        }
+
+        const result = await Registration.findOne({
+          where: {
+            userId: user.id,
+          },
+        });
+
+        const token = jwt.sign({ id: user.id },
+            config.secret,
+            {
+              algorithm: 'HS256',
+              allowInsecureKeySizes: true,
+              expiresIn: 86400, // 24 hours
+            });
+
+        const authorities = [];
+        user.getRoles().then((roles) => {
+          for (let i = 0; i < roles.length; i++) {
+            authorities.push('ROLE_' + roles[i].name.toUpperCase());
+          }
+          return res.status(200).send({
+            user: user,
+            roles: authorities,
+            accessToken: token,
+            registration: result,
+          });
+        });
+      })
+      .catch((err) => {
+        return res.status(500).send({ message: err.message });
+      });
 };

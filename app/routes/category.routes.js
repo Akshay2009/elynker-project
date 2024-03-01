@@ -1,23 +1,20 @@
-const { authJwt } = require("../middleware");
+const { authJwt } = require('../middleware');
 const {
   upload,
   handleMulterError,
-} = require("../uploadUtils");
-const categoryController = require("../controllers/category.controller");
+} = require('../uploadUtils');
+const categoryController = require('../controllers/category.controller');
 
 
-
-
-
-module.exports = function (app) {
+module.exports = function(app) {
   /* End Point to  get all the categories Record
         GET - /api/categories API endpoint
         categoryController.getAllCategory - Controller function to get All Categories
     */
   app.get(
-    "/api/categories",
-    [authJwt.verifyToken],
-    categoryController.getAllCategory
+      '/api/categories',
+      [authJwt.verifyToken],
+      categoryController.getAllCategory,
   );
 
   /* End Point to  create a categories Record
@@ -25,11 +22,11 @@ module.exports = function (app) {
         categoryController.createCategory - Controller function to Create a categories record
     */
   app.post(
-    "/api/categories",
-    [authJwt.verifyToken],
-    upload.fields([{ name: "image_path", maxCount: 1 }, { name: "banner_image", maxCount: 1 }]),
-    handleMulterError,
-    categoryController.createCategory
+      '/api/categories',
+      [authJwt.verifyToken],
+      upload.fields([{ name: 'image_path', maxCount: 1 }, { name: 'banner_image', maxCount: 1 }]),
+      handleMulterError,
+      categoryController.createCategory,
   );
 
   /* End Point to  get  a categories Record by categoryId : id
@@ -37,9 +34,9 @@ module.exports = function (app) {
         categoryController.getCategoryById - Controller function to get a categories record with categoryId
     */
   app.get(
-    "/api/categories/:categoryId",
-    [authJwt.verifyToken],
-    categoryController.getCategoryById
+      '/api/categories/:categoryId',
+      [authJwt.verifyToken],
+      categoryController.getCategoryById,
   );
 
   /* End Point to  update a categories Record by categoryId : id
@@ -47,11 +44,11 @@ module.exports = function (app) {
         categoryController.updateCategory - Controller function to update a categories record with categoryId
     */
   app.put(
-    "/api/categories/:categoryId",
-    [authJwt.verifyToken],
-    upload.fields([{ name: "image_path", maxCount: 1 }, { name: "banner_image", maxCount: 1 }]),
-    handleMulterError,
-    categoryController.updateCategory
+      '/api/categories/:categoryId',
+      [authJwt.verifyToken],
+      upload.fields([{ name: 'image_path', maxCount: 1 }, { name: 'banner_image', maxCount: 1 }]),
+      handleMulterError,
+      categoryController.updateCategory,
   );
 
   /* End Point to  create multiple category record based on parent_id
@@ -80,9 +77,9 @@ module.exports = function (app) {
        categoryController.createMultipleCategory - Controller function to get All Categories
    */
   app.post(
-    "/api/categories/multiple/:parent_id",
-    [authJwt.verifyToken],
-    categoryController.createMultipleCategory
+      '/api/categories/multiple/:parent_id',
+      [authJwt.verifyToken],
+      categoryController.createMultipleCategory,
   );
 
   /* End Point to  get  all categories Record having parent_id as parent_id passed in params
@@ -90,9 +87,9 @@ module.exports = function (app) {
         categoryController.getSubcategories - Controller function to get a categories record with parent_id
     */
   app.get(
-    "/api/categories/subcategories/:parent_id",
-    [authJwt.verifyToken],
-    categoryController.getSubcategories
+      '/api/categories/subcategories/:parent_id',
+      [authJwt.verifyToken],
+      categoryController.getSubcategories,
   );
 
   /* End Point to Delete  categories Record having parent_id as parent_id passed in params
@@ -100,9 +97,9 @@ module.exports = function (app) {
         categoryController.getSubcategories - Controller function to Delete a categories record with parent_id
     */
   app.delete(
-    "/api/categories/:category_id",
-    [authJwt.verifyToken],
-    categoryController.delcategories
+      '/api/categories/:category_id',
+      [authJwt.verifyToken],
+      categoryController.delcategories,
   );
 
 
@@ -110,7 +107,7 @@ module.exports = function (app) {
    * Search Category details by fieldName and  fieldValue from the database.
   */
   app.get('/api/categories/search/:fieldName/:fieldValue',
-    [authJwt.verifyToken],
-    categoryController.search
-  )
+      [authJwt.verifyToken],
+      categoryController.search,
+  );
 };

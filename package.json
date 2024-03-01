@@ -4,7 +4,8 @@
   "description": "Node.js Demo for JWT Authentication with PostgreSQL",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint 'app/**/*.js?(x)'"
   },
   "keywords": [
     "node js",
@@ -31,5 +32,11 @@
     "sequelize": "^6.32.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0"
+  },
+  "devDependencies": {
+    "axios": "^1.6.7",
+    "eslint": "^8.57.0",
+    "eslint-config-google": "^0.14.0",
+    "express-async-errors": "^3.1.1"
   }
 }

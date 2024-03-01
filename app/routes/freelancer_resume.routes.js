@@ -1,12 +1,12 @@
-const { authJwt } = require("../middleware");
+const { authJwt } = require('../middleware');
 const {
   uploadfreelanceResume,
   handleMulterError,
-} = require("../uploadUtils");
-const freelancer_resumeController = require("../controllers/freelancer_resume.controller");
+} = require('../uploadUtils');
+const freelancer_resumeController = require('../controllers/freelancer_resume.controller');
 
 
-module.exports = function (app) {
+module.exports = function(app) {
   /**
    * Endpoint to upload file for registration on Registration Model.
    * @param {String} '/api/user/resume/:registrationId' - API endpoint path.
@@ -14,11 +14,11 @@ module.exports = function (app) {
    * @param {Function}freelancer_resumeController.uploadFreelancerResume - Controller function to handle the upload resume.
    */
   app.post(
-    "/api/resume/:registrationId",
-    [authJwt.verifyToken],
-    uploadfreelanceResume.fields([{ name: "resume" }]),
-    handleMulterError,
-    freelancer_resumeController.uploadFreelancerResume
+      '/api/resume/:registrationId',
+      [authJwt.verifyToken],
+      uploadfreelanceResume.fields([{ name: 'resume' }]),
+      handleMulterError,
+      freelancer_resumeController.uploadFreelancerResume,
   );
 
   /**
@@ -28,9 +28,9 @@ module.exports = function (app) {
    * @param {Function}freelancer_resumeController.getFreelancerResumes - Controller function to get resume associated with registration id.**/
 
   app.get(
-    "/api/resume/:registrationId",
-    [authJwt.verifyToken],
-    freelancer_resumeController.getFreelancerResumes
+      '/api/resume/:registrationId',
+      [authJwt.verifyToken],
+      freelancer_resumeController.getFreelancerResumes,
   );
 
   /**
@@ -40,9 +40,9 @@ module.exports = function (app) {
    * @param {Function} freelancer_resumeController.delFreelancerResumeById-to Delete resume associated with resume id.**/
 
   app.delete(
-    "/api/resume/:resume_id",
-    [authJwt.verifyToken],
-    freelancer_resumeController.delFreelancerResumeById
+      '/api/resume/:resume_id',
+      [authJwt.verifyToken],
+      freelancer_resumeController.delFreelancerResumeById,
   );
 
   /**
@@ -52,9 +52,9 @@ module.exports = function (app) {
  * @param {Function}freelancer_resumeController.getFreelancerResumes - Controller function to get all freelancer resume**/
 
   app.get(
-    "/api/resume/",
-    [authJwt.verifyToken],
-    freelancer_resumeController.getAllFreelancerResumes
+      '/api/resume/',
+      [authJwt.verifyToken],
+      freelancer_resumeController.getAllFreelancerResumes,
   );
 
 
@@ -65,9 +65,9 @@ module.exports = function (app) {
 * @param {Function}freelancer_resumeController.getFreelancerResumesById - Controller function  to get freelancer resume by Resume ID**/
 
   app.get(
-    "/api/freelancer/resume/:resume_id",
-    [authJwt.verifyToken],
-    freelancer_resumeController.getFreelancerResumesById
+      '/api/freelancer/resume/:resume_id',
+      [authJwt.verifyToken],
+      freelancer_resumeController.getFreelancerResumesById,
   );
 
   /**
@@ -77,7 +77,7 @@ module.exports = function (app) {
 * @param {Function} freelancer_resumeController.search - Controller function  to get freelancer resume by Resume ID**/
 
   app.get('/api/freelancer/resume/search/:fieldName/:fieldValue',
-    [authJwt.verifyToken],
-    freelancer_resumeController.search
-  )
+      [authJwt.verifyToken],
+      freelancer_resumeController.search,
+  );
 };

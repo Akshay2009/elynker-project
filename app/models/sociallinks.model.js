@@ -1,13 +1,13 @@
 module.exports = (sequelize, Sequelize) => {
-  const Social_links = sequelize.define("social_links", {
+  const Social_links = sequelize.define('social_links', {
     social_name: {
       type: Sequelize.STRING(100),
     },
     social_url: {
       type: Sequelize.STRING(100),
     },
-    socialmedia_id :{
-      type: Sequelize.INTEGER
+    socialmedia_id: {
+      type: Sequelize.INTEGER,
     },
     created_by: {
       type: Sequelize.NUMERIC,

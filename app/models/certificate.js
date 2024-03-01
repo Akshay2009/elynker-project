@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const Certificate = sequelize.define("certificate", {
+  const Certificate = sequelize.define('certificate', {
     name: {
       type: Sequelize.STRING(50),
     },

@@ -1,15 +1,15 @@
 // routeInitializer.js
-const authRoutes = require("../routes/auth.routes");
-const userRoutes = require("../routes/user.routes");
-const registrationRoutes = require("../routes/registration.routes");
-const productRoutes = require("../routes/product.routes");
-const masterRoutes = require("../routes/master.routes");
-const categoryRoutes = require("../routes/category.routes");
-const certificateRoutes = require("../routes/certificate.routes");
-const sociallinksRoutes = require("../routes/sociallinks.routes");
-const freelancerBannerProjectRoutes = require("../routes/freelancerBannerProject.routes");
-const freelancer_resumeRoutes = require("../routes/freelancer_resume.routes");
-const socialmedia_master=require("../routes/socialmediaMaster.routes");
+const authRoutes = require('../routes/auth.routes');
+const userRoutes = require('../routes/user.routes');
+const registrationRoutes = require('../routes/registration.routes');
+const productRoutes = require('../routes/product.routes');
+const masterRoutes = require('../routes/master.routes');
+const categoryRoutes = require('../routes/category.routes');
+const certificateRoutes = require('../routes/certificate.routes');
+const sociallinksRoutes = require('../routes/sociallinks.routes');
+const freelancerBannerProjectRoutes = require('../routes/freelancerBannerProject.routes');
+const freelancer_resumeRoutes = require('../routes/freelancer_resume.routes');
+const socialmedia_master=require('../routes/socialmediaMaster.routes');
 module.exports = function initializeRoutes(app) {
   authRoutes(app);
   userRoutes(app);

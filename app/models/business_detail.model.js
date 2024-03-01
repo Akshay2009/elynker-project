@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const BusinessDetail = sequelize.define("business_detail", {
+  const BusinessDetail = sequelize.define('business_detail', {
     company_name: {
       type: Sequelize.STRING(100),
     },
@@ -8,7 +8,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     upload_date: {
       type: Sequelize.DATE,
-      defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     },
     is_active: {
       type: Sequelize.INTEGER,
@@ -27,11 +27,11 @@ module.exports = (sequelize, Sequelize) => {
     },
     is_provided: {
       type: Sequelize.BOOLEAN,
-      allowNull : true
+      allowNull: true,
     },
     no_document_reason: {
       type: Sequelize.STRING(500),
-      allowNull: true
+      allowNull: true,
     },
   });
 

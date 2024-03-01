@@ -8,7 +8,7 @@ async function logErrorToFile(error, fileName, functionName) {
     const errorMessage = `Timestamp: ${new Date().toISOString()}\nFile: ${fileName}\nFunction: ${functionName}\nError: ${error.message}\nStack Trace: ${error.stack}\n\n`;
 
     // Specify the path to the log file
-    const logFilePath = path.join(__dirname, "error.log");
+    const logFilePath = path.join(__dirname, 'error.log');
 
     // Append the error message to the log file
     await fs.appendFile(logFilePath, errorMessage);

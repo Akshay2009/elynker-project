@@ -1,15 +1,15 @@
-const db = require("../models");
+const db = require('../models');
 const CityMaster = db.cityMaster;
 const CurrencyMaster = db.currencyMaster;
 const StateMaster = db.stateMaster;
 const RegistrationTypesMaster = db.registrationTypesMaster;
 const UnitMaster = db.unitMaster;
 const SocialMedia_Master = db.socialmedia_master;
-require("dotenv").config();
-const path = require("path");
-const fs = require("fs");
+require('dotenv').config();
+const path = require('path');
+const fs = require('fs');
 const SOCIAL_MEDIA_MASTER_PATH = path.join(
-  process.env.SOCIAL_MEDIA_MASTER_PATH
+    process.env.SOCIAL_MEDIA_MASTER_PATH,
 );
 const { Sequelize } = require('sequelize');
 
@@ -19,14 +19,14 @@ const { Sequelize } = require('sequelize');
  * @param {Object} res - Express response object.
  */
 
-module.exports.saveCityMaster = async function (req, res) {
+module.exports.saveCityMaster = async function(req, res) {
   const { name } = req.body;
   const cityRecord = await CityMaster.create({
     name: name,
   });
   return res
-    .status(201)
-    .json({ message: "City Record saved Succesfully", data:cityRecord });
+      .status(201)
+      .json({ message: 'City Record saved Succesfully', data: cityRecord });
 };
 
 /**
@@ -35,21 +35,21 @@ module.exports.saveCityMaster = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getAllCityMasters = async function (req, res) {
+module.exports.getAllCityMasters = async function(req, res) {
   const allCityRecords = await CityMaster.findAll();
-  return res.status(200).json({message:"Details fetched successfully",data:allCityRecords});
+  return res.status(200).json({ message: 'Details fetched successfully', data: allCityRecords });
 };
 
-//city master controller getting data by ID from database---
+// city master controller getting data by ID from database---
 
-module.exports.getCityMasters = async function (req, res) {
+module.exports.getCityMasters = async function(req, res) {
   const { id } = req.params;
   if (id) {
     const cityRecord = await CityMaster.findByPk(id);
     if (!cityRecord) {
-      return res.status(404).json({ error: "City not found" });
+      return res.status(404).json({ error: 'City not found' });
     }
-    return res.status(200).json({message:"Details fetched successfully",data:cityRecord});
+    return res.status(200).json({ message: 'Details fetched successfully', data: cityRecord });
   }
 };
 
@@ -59,7 +59,7 @@ module.exports.getCityMasters = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.updateCityMasterById = async function (req, res) {
+module.exports.updateCityMasterById = async function(req, res) {
   const { id } = req.params;
   const { name } = req.body;
   const [updatedRows] = await CityMaster.update({ name }, { where: { id } });
@@ -67,14 +67,14 @@ module.exports.updateCityMasterById = async function (req, res) {
     const updatedMaster = await CityMaster.findByPk(id);
     if (updatedMaster) {
       return res.status(200).json({
-        message: "city updated successfully",
+        message: 'city updated successfully',
         data: updatedMaster.toJSON(),
       });
     } else {
-      return res.status(404).json({ error: "city not found" });
+      return res.status(404).json({ error: 'city not found' });
     }
   } else {
-    return res.status(404).json({ error: "city not found" });
+    return res.status(404).json({ error: 'city not found' });
   }
 };
 
@@ -83,13 +83,13 @@ module.exports.updateCityMasterById = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.delCityMaster = async function (req, res) {
+module.exports.delCityMaster = async function(req, res) {
   const { city_id } = req.params;
   const delCity = await CityMaster.destroy({ where: { id: city_id } });
   if (delCity == 0) {
-    return res.status(404).json({ error: "city not found" });
+    return res.status(404).json({ error: 'city not found' });
   }
-  return res.status(200).json({ message: "City deleted successfully" });
+  return res.status(200).json({ message: 'City deleted successfully' });
 };
 
 /**
@@ -98,22 +98,22 @@ module.exports.delCityMaster = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getAllcurrencyMaster = async function (req, res) {
+module.exports.getAllcurrencyMaster = async function(req, res) {
   const allCurrencyRecords = await CurrencyMaster.findAll();
-  return res.status(200).json({message:"Details Fetched successfully",data:allCurrencyRecords});
+  return res.status(200).json({ message: 'Details Fetched successfully', data: allCurrencyRecords });
 };
 /**
  * Controller function to Get currency Master details by ID--
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getcurrencyMasterById = async function (req, res) {
+module.exports.getcurrencyMasterById = async function(req, res) {
   const id = req.params.id;
   const currency = await CurrencyMaster.findByPk(id);
   if (currency) {
-    return res.status(200).json({message:"Details Fetched successfully",data:currency});
+    return res.status(200).json({ message: 'Details Fetched successfully', data: currency });
   } else {
-    return res.status(404).json({ error: "Currency Record not found" });
+    return res.status(404).json({ error: 'Currency Record not found' });
   }
 };
 
@@ -123,7 +123,7 @@ module.exports.getcurrencyMasterById = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.createCurrencyMaster = async function (req, res) {
+module.exports.createCurrencyMaster = async function(req, res) {
   const { name, prefix, prefix_sign, country_name } = req.body;
   const newCurrencyRecord = await CurrencyMaster.create({
     name,
@@ -132,8 +132,8 @@ module.exports.createCurrencyMaster = async function (req, res) {
     country_name,
   });
   return res.status(201).json({
-    message: "Currency record created successfully",
-    data:newCurrencyRecord,
+    message: 'Currency record created successfully',
+    data: newCurrencyRecord,
   });
 };
 
@@ -142,12 +142,12 @@ module.exports.createCurrencyMaster = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.updateCurrencyMasterById = async function (req, res) {
+module.exports.updateCurrencyMasterById = async function(req, res) {
   const { id } = req.params;
   const { name, prefix, prefix_sign, country_name } = req.body;
   const existingCurrencyRecord = await CurrencyMaster.findByPk(id);
   if (!existingCurrencyRecord) {
-    return res.status(404).json({ error: "Currency Record not found" });
+    return res.status(404).json({ error: 'Currency Record not found' });
   }
   await existingCurrencyRecord.update({
     name,
@@ -156,7 +156,7 @@ module.exports.updateCurrencyMasterById = async function (req, res) {
     country_name,
   });
   return res.status(200).json({
-    message: "Currency record updated successfully",
+    message: 'Currency record updated successfully',
     data: existingCurrencyRecord,
   });
 };
@@ -167,14 +167,14 @@ module.exports.updateCurrencyMasterById = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.createStateMaster = async function (req, res) {
+module.exports.createStateMaster = async function(req, res) {
   const { name } = req.body;
   const newStateRecord = await StateMaster.create({
     name,
   });
   return res.status(201).json({
-    message: "State record created successfully",
-    data:newStateRecord,
+    message: 'State record created successfully',
+    data: newStateRecord,
   });
 };
 
@@ -183,14 +183,13 @@ module.exports.createStateMaster = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getAllStateMaster = async function (req, res) {
+module.exports.getAllStateMaster = async function(req, res) {
   const getStateRecords = await StateMaster.findAll();
   if (getStateRecords.length > 0) {
-    return res.status(200).json({message:"Details fetched successfully",data:getStateRecords});
+    return res.status(200).json({ message: 'Details fetched successfully', data: getStateRecords });
   } else {
-    return res.status(404).json({ error: "state master record not found" });
+    return res.status(404).json({ error: 'state master record not found' });
   }
-
 };
 
 /**
@@ -198,13 +197,13 @@ module.exports.getAllStateMaster = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getStateMasterById = async function (req, res) {
+module.exports.getStateMasterById = async function(req, res) {
   const { id } = req.params;
   const getStateRecords = await StateMaster.findByPk(id);
   if (getStateRecords) {
-    return res.status(200).json({ message: "Details Fetched successfully",data:getStateRecords });
+    return res.status(200).json({ message: 'Details Fetched successfully', data: getStateRecords });
   } else {
-    return res.status(404).json({ error: "no state master record found with this state Id" });
+    return res.status(404).json({ error: 'no state master record found with this state Id' });
   }
 };
 
@@ -214,18 +213,18 @@ module.exports.getStateMasterById = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.updateStateMaster = async function (req, res) {
+module.exports.updateStateMaster = async function(req, res) {
   const { id } = req.params;
   const { name } = req.body;
   const existingStateRecord = await StateMaster.findByPk(id);
   if (!existingStateRecord) {
-    return res.status(404).json({ error: "State not found" });
+    return res.status(404).json({ error: 'State not found' });
   }
   await existingStateRecord.update({
     name,
   });
   return res.status(200).json({
-    message: "State record updated successfully",
+    message: 'State record updated successfully',
     data: existingStateRecord,
   });
 };
@@ -235,24 +234,24 @@ module.exports.updateStateMaster = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.saveRegistrationTypeMaster = async function (req, res) {
+module.exports.saveRegistrationTypeMaster = async function(req, res) {
   await RegistrationTypesMaster.create({
     id: 1,
-    name: "user",
+    name: 'user',
   });
 
   await RegistrationTypesMaster.create({
     id: 2,
-    name: "b2b",
+    name: 'b2b',
   });
 
   await RegistrationTypesMaster.create({
     id: 3,
-    name: "freelancer",
+    name: 'freelancer',
   });
 
   return res.status(201).json({
-    message: "Registration types records created successfully",
+    message: 'Registration types records created successfully',
   });
 };
 
@@ -261,15 +260,15 @@ module.exports.saveRegistrationTypeMaster = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.delCurrencyMaster = async function (req, res) {
+module.exports.delCurrencyMaster = async function(req, res) {
   const { currency_id } = req.params;
   const delCurrency = await CurrencyMaster.destroy({
     where: { id: currency_id },
   });
   if (delCurrency == 0) {
-    return res.status(404).json({ error: "Currency Record not found" });
+    return res.status(404).json({ error: 'Currency Record not found' });
   }
-  return res.status(200).json({ message: "Currency deleted successfully" });
+  return res.status(200).json({ message: 'Currency deleted successfully' });
 };
 
 /**
@@ -277,15 +276,15 @@ module.exports.delCurrencyMaster = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.delStateMaster = async function (req, res) {
+module.exports.delStateMaster = async function(req, res) {
   const { state_id } = req.params;
   const delState = await StateMaster.destroy({
     where: { id: state_id },
   });
   if (delState == 0) {
-    return res.status(404).json({ error: "State not found" });
+    return res.status(404).json({ error: 'State not found' });
   }
-  return res.status(200).json({ message: "State deleted successfully" });
+  return res.status(200).json({ message: 'State deleted successfully' });
 };
 
 /**
@@ -293,16 +292,16 @@ module.exports.delStateMaster = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.saveUnitMaster = async function (req, res) {
+module.exports.saveUnitMaster = async function(req, res) {
   try {
     const { name, description } = req.body;
     const saveUnit = await UnitMaster.create({ name, description });
     return res
-      .status(201)
-      .json({ success: "unit saved sucessfully", data:saveUnit });
+        .status(201)
+        .json({ success: 'unit saved sucessfully', data: saveUnit });
   } catch (error) {
-    console.error("Error creating Unit Master:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error creating Unit Master:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -311,7 +310,7 @@ module.exports.saveUnitMaster = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.updateUnitMaster = async function (req, res) {
+module.exports.updateUnitMaster = async function(req, res) {
   try {
     const { unit_id } = req.params;
     const { name, description } = req.body;
@@ -320,15 +319,15 @@ module.exports.updateUnitMaster = async function (req, res) {
     if (
       !unit_id ||
       unit_id == 0 ||
-      unit_id === "null" ||
-      unit_id === "undefined"
+      unit_id === 'null' ||
+      unit_id === 'undefined'
     ) {
       return res
-        .status(404)
-        .json({ error: "Please provide valid UnitMaster Id to Update" });
+          .status(404)
+          .json({ error: 'Please provide valid UnitMaster Id to Update' });
     }
     if (!existingUnitRecord) {
-      return res.status(404).json({ error: "UnitMaster not found" });
+      return res.status(404).json({ error: 'UnitMaster not found' });
     }
 
     await existingUnitRecord.update({
@@ -336,12 +335,12 @@ module.exports.updateUnitMaster = async function (req, res) {
       description,
     });
     return res.status(200).json({
-      message: "UnitMaster record updated successfully",
+      message: 'UnitMaster record updated successfully',
       data: existingUnitRecord,
     });
   } catch (error) {
-    console.error("Error updating Unit Master:", error);
-    return res.status(500).json({ message: "internal server error" });
+    console.error('Error updating Unit Master:', error);
+    return res.status(500).json({ message: 'internal server error' });
   }
 };
 
@@ -350,13 +349,13 @@ module.exports.updateUnitMaster = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getUnitMaster = async function (req, res) {
+module.exports.getUnitMaster = async function(req, res) {
   try {
     const getUnitmaster = await UnitMaster.findAll();
-    return res.status(200).json({message:"Details fetched successfully",data:getUnitmaster});
+    return res.status(200).json({ message: 'Details fetched successfully', data: getUnitmaster });
   } catch (error) {
-    console.error("Error Getting Unit Master:", error);
-    return res.status(500).json({ message: "internal server error" });
+    console.error('Error Getting Unit Master:', error);
+    return res.status(500).json({ message: 'internal server error' });
   }
 };
 
@@ -366,28 +365,28 @@ module.exports.getUnitMaster = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getUnitmasterById = async function (req, res) {
+module.exports.getUnitmasterById = async function(req, res) {
   try {
     const { unit_id } = req.params;
     if (
       !unit_id ||
       unit_id == 0 ||
-      unit_id === "null" ||
-      unit_id === "undefined"
+      unit_id === 'null' ||
+      unit_id === 'undefined'
     ) {
       return res
-        .status(404)
-        .json({ error: "Please provide valid Unit Master Id to get" });
+          .status(404)
+          .json({ error: 'Please provide valid Unit Master Id to get' });
     }
     const getUnitbyId = await UnitMaster.findByPk(unit_id);
     if (getUnitbyId) {
-      return res.status(200).json({message:"Details fetched successfully",data:getUnitbyId});
+      return res.status(200).json({ message: 'Details fetched successfully', data: getUnitbyId });
     } else {
-      return res.status(404).json({ error: "Unit Master details not found" });
+      return res.status(404).json({ error: 'Unit Master details not found' });
     }
   } catch (error) {
-    console.error("Error Getting Unit Master:", error);
-    return res.status(500).json({ message: "internal server error" });
+    console.error('Error Getting Unit Master:', error);
+    return res.status(500).json({ message: 'internal server error' });
   }
 };
 
@@ -397,30 +396,30 @@ module.exports.getUnitmasterById = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.delUnitmasterByid = async function (req, res) {
+module.exports.delUnitmasterByid = async function(req, res) {
   try {
     const { unit_id } = req.params;
     if (
       !unit_id ||
       unit_id == 0 ||
-      unit_id === "null" ||
-      unit_id === "undefined"
+      unit_id === 'null' ||
+      unit_id === 'undefined'
     ) {
       return res
-        .status(404)
-        .json({ error: "Please provide valid Unit Master Id to Delete" });
+          .status(404)
+          .json({ error: 'Please provide valid Unit Master Id to Delete' });
     }
     const delUnit = await db.unitMaster.destroy({ where: { id: unit_id } });
     if (delUnit) {
       return res
-        .status(200)
-        .json({ success: "Unit Master deleted successfully" });
+          .status(200)
+          .json({ success: 'Unit Master deleted successfully' });
     } else {
-      return res.status(404).json({ error: "Unit Master details not found" });
+      return res.status(404).json({ error: 'Unit Master details not found' });
     }
   } catch (error) {
-    console.error("Error deleting Unit Master:", error);
-    return res.status(500).json({ message: "internal server error" });
+    console.error('Error deleting Unit Master:', error);
+    return res.status(500).json({ message: 'internal server error' });
   }
 };
 
@@ -429,25 +428,25 @@ module.exports.delUnitmasterByid = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.saveSocialMedia = async function (req, res) {
+module.exports.saveSocialMedia = async function(req, res) {
   try {
-    const image = req.files["image"];
+    const image = req.files['image'];
     const { media_name, is_active } = req.body;
 
     if (image && image.length > 0) {
       if (!media_name || !is_active) {
         fs.unlinkSync(
-          path.join(
-            __dirname,
-            "../..",
-            SOCIAL_MEDIA_MASTER_PATH,
-            "/",
-            image[0].filename
-          )
+            path.join(
+                __dirname,
+                '../..',
+                SOCIAL_MEDIA_MASTER_PATH,
+                '/',
+                image[0].filename,
+            ),
         );
         return res
-          .status(400)
-          .json({ message: "Kindly Provide media_name and is_active" });
+            .status(400)
+            .json({ message: 'Kindly Provide media_name and is_active' });
       }
       const socialmedia = await SocialMedia_Master.create({
         media_image_path: image[0].filename,
@@ -456,41 +455,41 @@ module.exports.saveSocialMedia = async function (req, res) {
       });
       if (socialmedia) {
         return res
-          .status(201)
-          .json({ message: "Social Media Master Saved", data: socialmedia });
+            .status(201)
+            .json({ message: 'Social Media Master Saved', data: socialmedia });
       } else {
         fs.unlinkSync(
-          path.join(
-            __dirname,
-            "../..",
-            SOCIAL_MEDIA_MASTER_PATH,
-            "/",
-            image[0].filename
-          )
+            path.join(
+                __dirname,
+                '../..',
+                SOCIAL_MEDIA_MASTER_PATH,
+                '/',
+                image[0].filename,
+            ),
         );
         return res
-          .status(400)
-          .json({ error: "Error in creating Social Media Master" });
+            .status(400)
+            .json({ error: 'Error in creating Social Media Master' });
       }
     } else {
       return res
-        .status(400)
-        .json({ error: "Please Upload Social Media Image" });
+          .status(400)
+          .json({ error: 'Please Upload Social Media Image' });
     }
   } catch (err) {
     if (err instanceof Sequelize.ValidationError) {
       fs.unlinkSync(
-        path.join(
-          __dirname,
-          "../..",
-          SOCIAL_MEDIA_MASTER_PATH,
-          "/",
-          req.files["image"][0].filename
-        )
+          path.join(
+              __dirname,
+              '../..',
+              SOCIAL_MEDIA_MASTER_PATH,
+              '/',
+              req.files['image'][0].filename,
+          ),
       );
-      return res.status(400).json({ error: err.message })
+      return res.status(400).json({ error: err.message });
     }
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -499,107 +498,107 @@ module.exports.saveSocialMedia = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.updateSocialMedia = async function (req, res) {
+module.exports.updateSocialMedia = async function(req, res) {
   try {
     const socialMediaMasterId = req.params.socialMediaMasterId;
-    
+
     const { media_name, is_active } = req.body;
 
-    if (req.files["image"]) {
-      const image = req.files["image"];
+    if (req.files['image']) {
+      const image = req.files['image'];
       const socialMediaMasterRecord = await SocialMedia_Master.findByPk(
-        socialMediaMasterId
+          socialMediaMasterId,
       );
       if (!socialMediaMasterRecord) {
         fs.unlinkSync(
-          path.join(
-            __dirname,
-            "../..",
-            SOCIAL_MEDIA_MASTER_PATH,
-            "/",
-            image[0].filename
-          )
+            path.join(
+                __dirname,
+                '../..',
+                SOCIAL_MEDIA_MASTER_PATH,
+                '/',
+                image[0].filename,
+            ),
         );
         return res
-          .status(400)
-          .json({
-            message:
-              "Social Media Master Record not exist for the provided id",
-          });
+            .status(400)
+            .json({
+              message:
+              'Social Media Master Record not exist for the provided id',
+            });
       }
       const dummypath = socialMediaMasterRecord.media_image_path;
 
       const [rowUpdated, socialmedia] = await SocialMedia_Master.update(
-        {
-          media_image_path: image[0].filename,
-          media_name: media_name,
-          is_active: is_active,
-        },
-        {
-          where: {
-            id: socialMediaMasterId,
+          {
+            media_image_path: image[0].filename,
+            media_name: media_name,
+            is_active: is_active,
           },
-          returning: true,
-        }
+          {
+            where: {
+              id: socialMediaMasterId,
+            },
+            returning: true,
+          },
       );
       if (rowUpdated > 0) {
         fs.unlinkSync(
-          path.join(
-            __dirname,
-            "../..",
-            SOCIAL_MEDIA_MASTER_PATH,
-            "/",
-            dummypath
-          )
+            path.join(
+                __dirname,
+                '../..',
+                SOCIAL_MEDIA_MASTER_PATH,
+                '/',
+                dummypath,
+            ),
         );
         return res
-          .status(200)
-          .json({
-            message: "Social Media Master Updated",
-            data: socialmedia[0],
-          });
+            .status(200)
+            .json({
+              message: 'Social Media Master Updated',
+              data: socialmedia[0],
+            });
       } else {
         fs.unlinkSync(
-          path.join(
-            __dirname,
-            "../..",
-            SOCIAL_MEDIA_MASTER_PATH,
-            "/",
-            image[0].filename
-          )
+            path.join(
+                __dirname,
+                '../..',
+                SOCIAL_MEDIA_MASTER_PATH,
+                '/',
+                image[0].filename,
+            ),
         );
         return res
-          .status(400)
-          .json({ error: "Error in Updating Social Media Master" });
+            .status(400)
+            .json({ error: 'Error in Updating Social Media Master' });
       }
     } else {
       const socialMediaMasterRecord = await SocialMedia_Master.findByPk(socialMediaMasterId);
-      if(!socialMediaMasterRecord){
-        return res.status(400).json({error : " Social Media Master Record not exist for the provided id "})
+      if (!socialMediaMasterRecord) {
+        return res.status(400).json({ error: ' Social Media Master Record not exist for the provided id ' });
       }
       const [rowUpdated, socialmedia] = await SocialMedia_Master.update(
-        {
-          media_name: media_name,
-          is_active: is_active,
-        },
-        {
-          where: {
-            id: socialMediaMasterId,
+          {
+            media_name: media_name,
+            is_active: is_active,
           },
-          returning: true,
-        }
+          {
+            where: {
+              id: socialMediaMasterId,
+            },
+            returning: true,
+          },
       );
-      if(rowUpdated>0){
-        return res.status(200).json({ message:"Social Media Master Updated", data: socialmedia[0]});
-      }else{
-        return res.status(400).json({ error : 'Error in Updating Social Media Master'})
+      if (rowUpdated>0) {
+        return res.status(200).json({ message: 'Social Media Master Updated', data: socialmedia[0] });
+      } else {
+        return res.status(400).json({ error: 'Error in Updating Social Media Master' });
       }
     }
   } catch (err) {
     if (err instanceof Sequelize.ValidationError) {
-      return res.status(400).json({ error: err.message })
+      return res.status(400).json({ error: err.message });
     }
-    return res.status(500).json({ error: "Internal Server Error"+err.message });
+    return res.status(500).json({ error: 'Internal Server Error'+err.message });
   }
 };
 
@@ -609,20 +608,20 @@ module.exports.updateSocialMedia = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getSocialMedia = async function (req, res) {
+module.exports.getSocialMedia = async function(req, res) {
   try {
     const Records = await SocialMedia_Master.findAll();
     if (Records) {
       return res
-        .status(200)
-        .json({ message: "details fetched successfully", data: Records });
+          .status(200)
+          .json({ message: 'details fetched successfully', data: Records });
     } else {
       return res
-        .status(404)
-        .json({ message: "details not found" });
+          .status(404)
+          .json({ message: 'details not found' });
     }
   } catch (err) {
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -633,36 +632,36 @@ module.exports.getSocialMedia = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.delSocialMediaMaster = async function (req, res) {
+module.exports.delSocialMediaMaster = async function(req, res) {
   try {
     const socialMediaMasterId = req.params.socialMediaMasterId;
-    const delrecord = await SocialMedia_Master.findByPk(socialMediaMasterId)
+    const delrecord = await SocialMedia_Master.findByPk(socialMediaMasterId);
     if (!delrecord) {
-      return res.status(404).json({ message: "Record not found with this Id." })
+      return res.status(404).json({ message: 'Record not found with this Id.' });
     }
     if (delrecord) {
       if (delrecord.media_image_path) {
         fs.unlinkSync(
-          path.join(
-            __dirname,
-            "../..",
-            SOCIAL_MEDIA_MASTER_PATH,
-            "/",
-            delrecord.media_image_path
-          )
+            path.join(
+                __dirname,
+                '../..',
+                SOCIAL_MEDIA_MASTER_PATH,
+                '/',
+                delrecord.media_image_path,
+            ),
         );
       }
     }
-    const recordtodel = await SocialMedia_Master.destroy({ where: { id: socialMediaMasterId } })
+    const recordtodel = await SocialMedia_Master.destroy({ where: { id: socialMediaMasterId } });
     if (recordtodel > 0) {
-      return res.status(200).json({ message: "Social Media Master Record Deleted Successfully", data: delrecord })
+      return res.status(200).json({ message: 'Social Media Master Record Deleted Successfully', data: delrecord });
     } else {
-      return res.status(404).json({ message: "Record not found with this Id." })
+      return res.status(404).json({ message: 'Record not found with this Id.' });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error' })
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 
 /**
  * Controller function to Get Record of Social Media Master by ID--
@@ -670,25 +669,25 @@ module.exports.delSocialMediaMaster = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getSocialMediaById = async function (req, res) {
+module.exports.getSocialMediaById = async function(req, res) {
   try {
-    const { social_id } = req.params
+    const { social_id } = req.params;
     console.log(social_id);
     const Records = await SocialMedia_Master.findByPk(social_id);
     if (Records) {
       return res
-        .status(200)
-        .json({ message: "details fetched successfully", data: Records });
+          .status(200)
+          .json({ message: 'details fetched successfully', data: Records });
     } else {
       return res
-        .status(404)
-        .json({ message: "details not found with this Social Media Id" });
+          .status(404)
+          .json({ message: 'details not found with this Social Media Id' });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message })
+      return res.status(400).json({ error: err.message });
     }
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -701,30 +700,29 @@ module.exports.getSocialMediaById = async function (req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.searchSocialMediaMaster = async function (req, res) {
+module.exports.searchSocialMediaMaster = async function(req, res) {
   try {
-      const { fieldName, fieldValue } = req.params
-      if (!SocialMedia_Master.rawAttributes[fieldName]) {
-          return res.status(400).json({ error: 'Invalid field name' });
-      }
-      const records = await SocialMedia_Master.findAll({
-          where: {
-              [fieldName]: fieldValue,
-          },
-      });
-      if (records.length > 0) {
-          return res.status(200).json({ message: 'Records Fetched', data: records })
-      } else {
-          return res.status(404).json({ error: 'No record found' })
-      }
-
+    const { fieldName, fieldValue } = req.params;
+    if (!SocialMedia_Master.rawAttributes[fieldName]) {
+      return res.status(400).json({ error: 'Invalid field name' });
+    }
+    const records = await SocialMedia_Master.findAll({
+      where: {
+        [fieldName]: fieldValue,
+      },
+    });
+    if (records.length > 0) {
+      return res.status(200).json({ message: 'Records Fetched', data: records });
+    } else {
+      return res.status(404).json({ error: 'No record found' });
+    }
   } catch (err) {
-      if (err instanceof Sequelize.Error) {
-          return res.status(400).json({ error: err.message })
-      }
-      return res.status(500).json({ error: 'Internal Server Error' })
+    if (err instanceof Sequelize.Error) {
+      return res.status(400).json({ error: err.message });
+    }
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 
 /**
  * Controller function to get City Master details by fieldName and  fieldValue from the database---
@@ -732,30 +730,29 @@ module.exports.searchSocialMediaMaster = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.searchCityMaster = async function (req, res) {
+module.exports.searchCityMaster = async function(req, res) {
   try {
-      const { fieldName, fieldValue } = req.params
-      if (!CityMaster.rawAttributes[fieldName]) {
-          return res.status(400).json({ error: 'Invalid field name' });
-      }
-      const records = await CityMaster.findAll({
-          where: {
-              [fieldName]: fieldValue,
-          },
-      });
-      if (records.length > 0) {
-          return res.status(200).json({ message: 'Records Fetched', data: records })
-      } else {
-          return res.status(404).json({ error: 'No record found' })
-      }
-
+    const { fieldName, fieldValue } = req.params;
+    if (!CityMaster.rawAttributes[fieldName]) {
+      return res.status(400).json({ error: 'Invalid field name' });
+    }
+    const records = await CityMaster.findAll({
+      where: {
+        [fieldName]: fieldValue,
+      },
+    });
+    if (records.length > 0) {
+      return res.status(200).json({ message: 'Records Fetched', data: records });
+    } else {
+      return res.status(404).json({ error: 'No record found' });
+    }
   } catch (err) {
-      if (err instanceof Sequelize.Error) {
-          return res.status(400).json({ error: err.message })
-      }
-      return res.status(500).json({ error: 'Internal Server Error' })
+    if (err instanceof Sequelize.Error) {
+      return res.status(400).json({ error: err.message });
+    }
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 
 /**
  * Controller function to get CurrencyMaster details by fieldName and  fieldValue from the database---
@@ -763,30 +760,29 @@ module.exports.searchCityMaster = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.searchCurrencyMaster = async function (req, res) {
+module.exports.searchCurrencyMaster = async function(req, res) {
   try {
-      const { fieldName, fieldValue } = req.params
-      if (!CurrencyMaster.rawAttributes[fieldName]) {
-          return res.status(400).json({ error: 'Invalid field name' });
-      }
-      const records = await CurrencyMaster.findAll({
-          where: {
-              [fieldName]: fieldValue,
-          },
-      });
-      if (records.length > 0) {
-          return res.status(200).json({ message: 'Records Fetched', data: records })
-      } else {
-          return res.status(404).json({ error: 'No record found' })
-      }
-
+    const { fieldName, fieldValue } = req.params;
+    if (!CurrencyMaster.rawAttributes[fieldName]) {
+      return res.status(400).json({ error: 'Invalid field name' });
+    }
+    const records = await CurrencyMaster.findAll({
+      where: {
+        [fieldName]: fieldValue,
+      },
+    });
+    if (records.length > 0) {
+      return res.status(200).json({ message: 'Records Fetched', data: records });
+    } else {
+      return res.status(404).json({ error: 'No record found' });
+    }
   } catch (err) {
-      if (err instanceof Sequelize.Error) {
-          return res.status(400).json({ error: err.message })
-      }
-      return res.status(500).json({ error: 'Internal Server Error' })
+    if (err instanceof Sequelize.Error) {
+      return res.status(400).json({ error: err.message });
+    }
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 
 
 /**
@@ -795,30 +791,29 @@ module.exports.searchCurrencyMaster = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.searchStateMaster = async function (req, res) {
+module.exports.searchStateMaster = async function(req, res) {
   try {
-      const { fieldName, fieldValue } = req.params
-      if (!StateMaster.rawAttributes[fieldName]) {
-          return res.status(400).json({ error: 'Invalid field name' });
-      }
-      const records = await StateMaster.findAll({
-          where: {
-              [fieldName]: fieldValue,
-          },
-      });
-      if (records.length > 0) {
-          return res.status(200).json({ message: 'Records Fetched', data: records })
-      } else {
-          return res.status(404).json({ error: 'No record found' })
-      }
-
+    const { fieldName, fieldValue } = req.params;
+    if (!StateMaster.rawAttributes[fieldName]) {
+      return res.status(400).json({ error: 'Invalid field name' });
+    }
+    const records = await StateMaster.findAll({
+      where: {
+        [fieldName]: fieldValue,
+      },
+    });
+    if (records.length > 0) {
+      return res.status(200).json({ message: 'Records Fetched', data: records });
+    } else {
+      return res.status(404).json({ error: 'No record found' });
+    }
   } catch (err) {
-      if (err instanceof Sequelize.Error) {
-          return res.status(400).json({ error: err.message })
-      }
-      return res.status(500).json({ error: 'Internal Server Error' })
+    if (err instanceof Sequelize.Error) {
+      return res.status(400).json({ error: err.message });
+    }
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 
 /**
  * Controller function to get UnitMaster details by fieldName and  fieldValue from the database---
@@ -826,29 +821,28 @@ module.exports.searchStateMaster = async function (req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.searchUnitMaster = async function (req, res) {
+module.exports.searchUnitMaster = async function(req, res) {
   try {
-      const { fieldName, fieldValue } = req.params
-      if (!UnitMaster.rawAttributes[fieldName]) {
-          return res.status(400).json({ error: 'Invalid field name' });
-      }
-      const records = await UnitMaster.findAll({
-          where: {
-              [fieldName]: fieldValue,
-          },
-      });
-      if (records.length > 0) {
-          return res.status(200).json({ message: 'Fetched Records', data: records })
-      } else {
-          return res.status(404).json({ error: 'No record found' })
-      }
-
+    const { fieldName, fieldValue } = req.params;
+    if (!UnitMaster.rawAttributes[fieldName]) {
+      return res.status(400).json({ error: 'Invalid field name' });
+    }
+    const records = await UnitMaster.findAll({
+      where: {
+        [fieldName]: fieldValue,
+      },
+    });
+    if (records.length > 0) {
+      return res.status(200).json({ message: 'Fetched Records', data: records });
+    } else {
+      return res.status(404).json({ error: 'No record found' });
+    }
   } catch (err) {
-      if (err instanceof Sequelize.Error) {
-          return res.status(400).json({ error: err.message })
-      }
-      return res.status(500).json({ error: 'Internal Server Error' })
+    if (err instanceof Sequelize.Error) {
+      return res.status(400).json({ error: err.message });
+    }
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 
 
