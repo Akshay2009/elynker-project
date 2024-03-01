@@ -3,7 +3,7 @@ const FreelancerBannerProject = db.freelancerBannerProject;
 const Registration = db.registration;
 const path = require('path');
 const fs = require('fs');
-const { error } = require('console');
+
 require('dotenv').config();
 const USERS_BANNER_PATH = path.join(process.env.USERS_BANNER_PATH);
 

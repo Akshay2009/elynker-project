@@ -1,10 +1,10 @@
 const db = require('../models');
-const Freelancer_Resume = db.freelancer_resume;
+const freelancerResume = db.freelancerResume;
 const Registration = db.registration;
 require('dotenv').config();
 const path = require('path');
 const fs = require('fs');
-const { log } = require('console');
+// const { log } = require('console');
 const FREELANCER_RESUME_PATH = path.join(process.env.FREELANCER_RESUME_PATH);
 /**
  * Controller function to Upload resume with provided RegistrationId
@@ -49,7 +49,7 @@ module.exports.uploadFreelancerResume = async (req, res) => {
           .json({ error: 'Registration is not of freelancer type' });
     }
     if (resume && resume.length > 0) {
-      const existingResume = await Freelancer_Resume.findAll({
+      const existingResume = await freelancerResume.findAll({
         where: { registrationId: registrationId },
       });
       if (existingResume) {
@@ -66,12 +66,12 @@ module.exports.uploadFreelancerResume = async (req, res) => {
         }
       }
       if (existingResume) {
-        await Freelancer_Resume.destroy({
+        await freelancerResume.destroy({
           where: { registrationId: registrationId },
         });
       }
 
-      const uploadResume = await Freelancer_Resume.create({
+      const uploadResume = await freelancerResume.create({
         freelancer_resume: resume[0].filename,
         registrationId: registrationId,
       });
@@ -108,7 +108,7 @@ module.exports.uploadFreelancerResume = async (req, res) => {
 module.exports.getFreelancerResumes = async function(req, res) {
   try {
     const registrationId = req.params.registrationId;
-    const freelancer_resume = await Freelancer_Resume.findAll({
+    const freelancer_resume = await freelancerResume.findAll({
       where: { registrationId: registrationId },
     });
     if (freelancer_resume.length > 0) {
@@ -135,7 +135,7 @@ module.exports.getFreelancerResumes = async function(req, res) {
 module.exports.delFreelancerResumeById = async function(req, res) {
   try {
     const resume_id = req.params.resume_id;
-    const recordToDelete = await Freelancer_Resume.findOne({
+    const recordToDelete = await freelancerResume.findOne({
       where: { id: resume_id },
     });
     if (!recordToDelete) {
@@ -156,7 +156,7 @@ module.exports.delFreelancerResumeById = async function(req, res) {
         );
       }
     }
-    const deletedResume = await Freelancer_Resume.destroy({
+    const deletedResume = await freelancerResume.destroy({
       where: { id: resume_id },
     });
     if (deletedResume > 0) {
@@ -181,7 +181,7 @@ module.exports.delFreelancerResumeById = async function(req, res) {
 
 module.exports.getAllFreelancerResumes = async function(req, res) {
   try {
-    const freelancer_resume = await Freelancer_Resume.findAll({});
+    const freelancer_resume = await freelancerResume.findAll({});
     if (freelancer_resume.length>0) {
       return res.status(200).json({
         message: 'resume details fetched successfully',
@@ -207,7 +207,7 @@ module.exports.getAllFreelancerResumes = async function(req, res) {
 module.exports.getFreelancerResumesById = async function(req, res) {
   try {
     const id = req.params.resume_id;
-    const freelancer_resume = await Freelancer_Resume.findOne({ where: { id: id } });
+    const freelancer_resume = await freelancerResume.findOne({ where: { id: id } });
     if (freelancer_resume) {
       return res.status(200).json({
         message: 'resume details fetched successfully',
@@ -235,10 +235,10 @@ module.exports.getFreelancerResumesById = async function(req, res) {
 module.exports.search = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
-    if (!Freelancer_Resume.rawAttributes[fieldName]) {
+    if (!freelancerResume.rawAttributes[fieldName]) {
       return res.status(400).json({ error: 'Invalid field name' });
     }
-    const records = await Freelancer_Resume.findAll({
+    const records = await freelancerResume.findAll({
       where: {
         [fieldName]: fieldValue,
       },

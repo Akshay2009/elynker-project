@@ -36,8 +36,8 @@ db.certificate=require('../models/certificate.js')(sequelize, Sequelize);
 db.sociallinks=require('../models/sociallinks.model.js')(sequelize, Sequelize);
 db.freelancerBannerProject = require('../models/freelancerBannerProject.js')(sequelize, Sequelize);
 db.unitMaster = require('../models/unitMaster.model.js')(sequelize, Sequelize);
-db.freelancer_resume=require('../models/freelancer_resume.model.js')(sequelize, Sequelize);
-db.socialmedia_master=require('./socialMediaMaster.model.js')(sequelize, Sequelize);
+db.freelancerResume=require('../models/freelancer_resume.model.js')(sequelize, Sequelize);
+db.socialMediaMaster=require('../models/socialMediaMaster.model.js')(sequelize, Sequelize);
 
 db.role.belongsToMany(db.user, {
   through: 'user_roles',
@@ -70,8 +70,8 @@ db.registration.hasMany(db.sociallinks, { onDelete: 'CASCADE' });
 db.sociallinks.belongsTo(db.registration);
 
 // associate sociallinks associated with registration as 1:1 foreign key on Resume
-db.registration.hasMany(db.freelancer_resume, { onDelete: 'CASCADE' });
-db.freelancer_resume.belongsTo(db.registration);
+db.registration.hasMany(db.freelancerResume, { onDelete: 'CASCADE' });
+db.freelancerResume.belongsTo(db.registration);
 
 // associate Product and Category as m:m
 db.product.belongsToMany(db.category, {

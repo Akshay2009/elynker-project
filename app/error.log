@@ -1,0 +1,13 @@
+Timestamp: 2024-03-01T13:40:36.165Z
+File: undefined
+Function: undefined
+Error: Validation error: User Name length must be between 3 to 50 characters
+Stack Trace: SequelizeValidationError: Validation error: User Name length must be between 3 to 50 characters
+    at InstanceValidator._validate (D:\elynker\nw\elynker-services\node_modules\sequelize\lib\instance-validator.js:50:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async InstanceValidator._validateAndRunHooks (D:\elynker\nw\elynker-services\node_modules\sequelize\lib\instance-validator.js:60:7)
+    at async InstanceValidator.validate (D:\elynker\nw\elynker-services\node_modules\sequelize\lib\instance-validator.js:54:12)
+    at async model.save (D:\elynker\nw\elynker-services\node_modules\sequelize\lib\model.js:2426:7)
+    at async users.create (D:\elynker\nw\elynker-services\node_modules\sequelize\lib\model.js:1362:12)
+    at async exports.signup (D:\elynker\nw\elynker-services\app\controllers\auth.controller.js:21:16)
+

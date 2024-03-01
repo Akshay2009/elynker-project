@@ -1,7 +1,7 @@
 const db = require('../models');
 const Sociallinks = db.sociallinks;
 const Registration = db.registration;
-const SocialMedia_Master = db.socialmedia_master;
+const socialMediaMaster = db.socialMediaMaster;
 const { Op } = require('sequelize');
 // creating certificate---
 
@@ -23,17 +23,17 @@ module.exports.bulkCreateSociallinks = async function(req, res) {
       error: 'Registration Record not found',
     });
   }
-  const social_media_id_array = [...new Set(socialLinkArray.map((obj) => obj.socialmedia_id))];
+  const socialMediaIdArray = [...new Set(socialLinkArray.map((obj) => obj.socialmedia_id))];
 
-  const socialMediaMasterRecord = await SocialMedia_Master.findAll({
+  const socialMediaMasterRecord = await socialMediaMaster.findAll({
     where: {
       id: {
-        [Op.in]: social_media_id_array,
+        [Op.in]: socialMediaIdArray,
       },
     },
   });
 
-  if (socialMediaMasterRecord.length!=social_media_id_array.length) {
+  if (socialMediaMasterRecord.length!=socialMediaIdArray.length) {
     return res.status(400).json({ error: 'Record not exist for provided socialmedia_id in json Array' });
   }
 
@@ -63,8 +63,8 @@ module.exports.bulkCreateSociallinks = async function(req, res) {
 module.exports.createSociallinks = async function(req, res) {
   const { socialmedia_id, social_name, social_url, created_by, modified_by, registrationId } =
     req.body;
-  const socialMediaMaster = await SocialMedia_Master.findByPk(socialmedia_id);
-  if (!socialMediaMaster) {
+  const socialMediaMasterRecord = await socialMediaMaster.findByPk(socialmedia_id);
+  if (!socialMediaMasterRecord) {
     return res.status(404).json({
       error:
         'No Social Media Master Found with provided socialmedia_id',
@@ -145,8 +145,8 @@ module.exports.updateSociallinksById = async function(req, res) {
   const { social_id } = req.params;
   const { socialmedia_id, social_name, social_url, created_by, modified_by, registrationId } =
     req.body;
-  const socialMediaMaster = await SocialMedia_Master.findByPk(socialmedia_id);
-  if (!socialMediaMaster) {
+  const socialMediaMasterRecord = await socialMediaMaster.findByPk(socialmedia_id);
+  if (!socialMediaMasterRecord) {
     return res.status(404).json({
       error:
         'No Social Media Master Found with provided socialmedia_id',
@@ -161,22 +161,28 @@ module.exports.updateSociallinksById = async function(req, res) {
       error: 'This Registration  Doesnot exist with this registrationId',
     });
   }
-  const existingSociallinks = await Sociallinks.findByPk(social_id);
-  if (!existingSociallinks) {
-    return res.status(404).json({ error: 'Social Links not found' });
-  }
-  await existingSociallinks.update({
+  
+  const [rowUpdated, record]=await Sociallinks.update({
     socialmedia_id,
     social_name,
     social_url,
     created_by,
     modified_by,
     registrationId,
+  }, {
+    where: {
+      id: social_id,
+    },
+    returning: true,
   });
-  return res.status(200).json({
-    message: 'Social links record updated successfully',
-    data: existingSociallinks.toJSON(),
-  });
+  if (rowUpdated > 0) {
+    return res.status(200).json({
+      message: 'Social links record updated successfully',
+      data: record[0],
+    });
+  }else{
+    return res.status(404).json({ error: 'No SocialLink record found with this social_id' });
+  }
 };
 
 /**

@@ -6,7 +6,7 @@ const Category = db.category;
 const parseCSV = require('./csvParser');
 const fs = require('fs');
 const axios = require('axios');
-const { log } = require('console');
+
 const { Op } = require('sequelize');
 require('dotenv').config();
 const PRODUCT_IMAGE_PATH = path.join(process.env.PRODUCT_IMAGE_PATH);
@@ -14,12 +14,17 @@ const PRODUCT_IMAGE_PATH = path.join(process.env.PRODUCT_IMAGE_PATH);
 
 /**
  method to generate unique SKU in form SKU_****
+ * @return { string } SKU is returned
  */
 function generateUniqueSKU() {
   return 'SKU_' + Date.now().toString() + Math.floor(Math.random() * 1000);
 }
 
-// method to download image from csv file
+/**
+ * 
+ * @param {*} imageUrl 
+ * @param {*} imageName 
+ */
 async function downloadImage(imageUrl, imageName) {
   try {
     // Fetch the image using axios

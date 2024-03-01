@@ -4,7 +4,7 @@ const CurrencyMaster = db.currencyMaster;
 const StateMaster = db.stateMaster;
 const RegistrationTypesMaster = db.registrationTypesMaster;
 const UnitMaster = db.unitMaster;
-const SocialMedia_Master = db.socialmedia_master;
+const SocialMediaMaster = db.socialMediaMaster;
 require('dotenv').config();
 const path = require('path');
 const fs = require('fs');
@@ -448,7 +448,7 @@ module.exports.saveSocialMedia = async function(req, res) {
             .status(400)
             .json({ message: 'Kindly Provide media_name and is_active' });
       }
-      const socialmedia = await SocialMedia_Master.create({
+      const socialmedia = await SocialMediaMaster.create({
         media_image_path: image[0].filename,
         media_name: media_name,
         is_active: is_active,
@@ -506,7 +506,7 @@ module.exports.updateSocialMedia = async function(req, res) {
 
     if (req.files['image']) {
       const image = req.files['image'];
-      const socialMediaMasterRecord = await SocialMedia_Master.findByPk(
+      const socialMediaMasterRecord = await SocialMediaMaster.findByPk(
           socialMediaMasterId,
       );
       if (!socialMediaMasterRecord) {
@@ -528,7 +528,7 @@ module.exports.updateSocialMedia = async function(req, res) {
       }
       const dummypath = socialMediaMasterRecord.media_image_path;
 
-      const [rowUpdated, socialmedia] = await SocialMedia_Master.update(
+      const [rowUpdated, socialmedia] = await SocialMediaMaster.update(
           {
             media_image_path: image[0].filename,
             media_name: media_name,
@@ -572,11 +572,11 @@ module.exports.updateSocialMedia = async function(req, res) {
             .json({ error: 'Error in Updating Social Media Master' });
       }
     } else {
-      const socialMediaMasterRecord = await SocialMedia_Master.findByPk(socialMediaMasterId);
+      const socialMediaMasterRecord = await SocialMediaMaster.findByPk(socialMediaMasterId);
       if (!socialMediaMasterRecord) {
         return res.status(400).json({ error: ' Social Media Master Record not exist for the provided id ' });
       }
-      const [rowUpdated, socialmedia] = await SocialMedia_Master.update(
+      const [rowUpdated, socialmedia] = await SocialMediaMaster.update(
           {
             media_name: media_name,
             is_active: is_active,
@@ -610,7 +610,7 @@ module.exports.updateSocialMedia = async function(req, res) {
 
 module.exports.getSocialMedia = async function(req, res) {
   try {
-    const Records = await SocialMedia_Master.findAll();
+    const Records = await SocialMediaMaster.findAll();
     if (Records) {
       return res
           .status(200)
@@ -635,7 +635,7 @@ module.exports.getSocialMedia = async function(req, res) {
 module.exports.delSocialMediaMaster = async function(req, res) {
   try {
     const socialMediaMasterId = req.params.socialMediaMasterId;
-    const delrecord = await SocialMedia_Master.findByPk(socialMediaMasterId);
+    const delrecord = await SocialMediaMaster.findByPk(socialMediaMasterId);
     if (!delrecord) {
       return res.status(404).json({ message: 'Record not found with this Id.' });
     }
@@ -652,7 +652,7 @@ module.exports.delSocialMediaMaster = async function(req, res) {
         );
       }
     }
-    const recordtodel = await SocialMedia_Master.destroy({ where: { id: socialMediaMasterId } });
+    const recordtodel = await SocialMediaMaster.destroy({ where: { id: socialMediaMasterId } });
     if (recordtodel > 0) {
       return res.status(200).json({ message: 'Social Media Master Record Deleted Successfully', data: delrecord });
     } else {
@@ -673,7 +673,7 @@ module.exports.getSocialMediaById = async function(req, res) {
   try {
     const { social_id } = req.params;
     console.log(social_id);
-    const Records = await SocialMedia_Master.findByPk(social_id);
+    const Records = await SocialMediaMaster.findByPk(social_id);
     if (Records) {
       return res
           .status(200)
@@ -703,10 +703,10 @@ module.exports.getSocialMediaById = async function(req, res) {
 module.exports.searchSocialMediaMaster = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
-    if (!SocialMedia_Master.rawAttributes[fieldName]) {
+    if (!SocialMediaMaster.rawAttributes[fieldName]) {
       return res.status(400).json({ error: 'Invalid field name' });
     }
-    const records = await SocialMedia_Master.findAll({
+    const records = await SocialMediaMaster.findAll({
       where: {
         [fieldName]: fieldValue,
       },

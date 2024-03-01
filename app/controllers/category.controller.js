@@ -275,7 +275,7 @@ module.exports.createMultipleCategory = async function(req, res) {
     }
     if (parent_id) {
       const record = await Category.findOne({ where: { id: parent_id } });
-      const returnArr = [];
+      
       if (record) {
         const updatedArr = arr.map((item) => {
           return {

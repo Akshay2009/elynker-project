@@ -3,12 +3,12 @@ const config = require('../config/auth.config');
 const User = db.user;
 const Role = db.role;
 const Registration = db.registration;
-const { logErrorToFile } = require('../logger');
+
 
 const Op = db.Sequelize.Op;
 
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+
 
 /**
  * Controller function to signup and save user details.

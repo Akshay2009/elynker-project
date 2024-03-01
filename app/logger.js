@@ -1,7 +1,12 @@
 // logger.js
 const fs = require('fs').promises;
 const path = require('path');
-
+/**
+ * 
+ * @param {*} error 
+ * @param {*} fileName 
+ * @param {*} functionName 
+ */
 async function logErrorToFile(error, fileName, functionName) {
   try {
     // Format the error message as needed

@@ -14,23 +14,22 @@ const Sequelize = db.Sequelize;
 module.exports.updateUser = async function(req, res) {
   const userId = req.params.id;
   const { name, email, city, mobile_number, country_code } = req.body;
-  const existingUser = await User.findByPk(userId);
-  if (existingUser) {
-    const [numberOfUpdatedRows, updatedRecords] = await User.update(
-        { name, email, mobile_number, city, country_code },
-        { where: { id: userId }, returning: true },
-    );
-    const registration = await Registration.update(
-        { name, city },
-        {
-          where: {
-            userId: userId,
-          },
-        },
-    );
+  const [numberOfUpdatedRows, updatedRecords] = await User.update(
+    { name, email, mobile_number, city, country_code },
+    { where: { id: userId }, returning: true,
+  });
+  await Registration.update(
+    { name, city },
+    {
+      where: {
+        userId: userId,
+      },
+    },
+  );
+  if (numberOfUpdatedRows > 0) {
     return res.status(200).json(updatedRecords[0]);
   } else {
-    return res.status(404).json({ error: 'User Not Found ' });
+    return res.status(404).json({ error: 'User Not Found with this id' });
   }
 };
 
@@ -77,8 +76,8 @@ module.exports.delUserById = async function(req, res) {
   });
   if (deletedUser) {
     return res
-        .status(200)
-        .json({ message: 'User deleted successfully', userToDelete });
+      .status(200)
+      .json({ message: 'User deleted successfully', userToDelete });
   } else {
     return res.status(404).json({ message: 'User not found' });
   }
@@ -95,7 +94,7 @@ module.exports.delUserById = async function(req, res) {
 module.exports.search = async function(req, res) {
   try {
     console.log(req.params);
-    const { fieldName, fieldValue }= req.params;
+    const { fieldName, fieldValue } = req.params;
     if (!User.rawAttributes[fieldName]) {
       return res.status(400).json({ error: 'Invalid field name' });
     }
@@ -104,7 +103,7 @@ module.exports.search = async function(req, res) {
         [fieldName]: fieldValue,
       },
     });
-    if (users.length>0) {
+    if (users.length > 0) {
       return res.status(200).json({ message: 'Fetched Records', data: users });
     } else {
       return res.status(404).json({ error: 'No record found' });
@@ -126,17 +125,17 @@ module.exports.search = async function(req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.getAllUser= async function(req, res) {
+module.exports.getAllUser = async function(req, res) {
   try {
     const UserRecords = await User.findAll({});
-    if (UserRecords.length>0) {
+    if (UserRecords.length > 0) {
       return res
-          .status(200)
-          .json({ message: 'Details fetched successfully', data: UserRecords });
+        .status(200)
+        .json({ message: 'Details fetched successfully', data: UserRecords });
     } else {
       return res
-          .status(404)
-          .json({ error: 'details not found' });
+        .status(404)
+        .json({ error: 'details not found' });
     }
   } catch (err) {
     return res.status(500).json({ error: 'Internal Server Error' });

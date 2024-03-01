@@ -7,6 +7,7 @@ const initializeRoutes = require("./app/routes/routeInitializer")
 const bodyParser = require('body-parser')
 require('dotenv').config();
 require('express-async-errors');
+const logErrorToFile = require('./app/logger');
 
 const app = express();
 app.use(
@@ -51,6 +52,7 @@ app.use((err, req, res, next) => {
     // Extracting controller and function names from the error stack
     const stack = err.stack.split('\n').slice(1);
     console.log("stack",stack)
+    logErrorToFile.logErrorToFile(err);
   if (err.message === 'access denied') {
     res.status(403);
     res.json({ error: err.message });

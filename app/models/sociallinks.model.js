@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const Social_links = sequelize.define('social_links', {
+  const socialLinks = sequelize.define('social_links', {
     social_name: {
       type: Sequelize.STRING(100),
     },
@@ -16,5 +16,5 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.NUMERIC,
     },
   });
-  return Social_links;
+  return socialLinks;
 };

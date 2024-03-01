@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const Socialmedia_Master = sequelize.define('social_media_master', {
+  const socialMediaMaster = sequelize.define('social_media_master', {
     media_name: {
       type: Sequelize.STRING(50),
       validate: {
@@ -16,5 +16,5 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.BOOLEAN,
     },
   });
-  return Socialmedia_Master;
+  return socialMediaMaster;
 };

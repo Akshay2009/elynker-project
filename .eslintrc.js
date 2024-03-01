@@ -24,6 +24,13 @@ module.exports = {
     'ecmaVersion': 'latest',
   },
   "rules": {
+    "new-cap":"off",
+    "keyword-spacing":"off", // if else 
+    "indent": "off", // 
+    "no-trailing-spaces" : "off",
+    "camelcase" : "off",
+    "max-len": "off",
+    "linebreak-style": "off",
     "object-curly-spacing": ["error", "always"],
     "quotes": [
       2,

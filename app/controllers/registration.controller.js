@@ -24,13 +24,13 @@ module.exports.updateCompanyLogo = async function(req, res) {
     if (companyLogo && companyLogo.length > 0) {
       if (registration.image_path) {
         fs.unlinkSync(
-            path.join(
-                __dirname,
-                '../..',
-                COMPANY_LOGO_PATH,
-                '/',
-                registration.image_path,
-            ),
+          path.join(
+            __dirname,
+            '../..',
+            COMPANY_LOGO_PATH,
+            '/',
+            registration.image_path,
+          ),
         );
       }
       registration.image_path = companyLogo[0].filename;
@@ -62,13 +62,13 @@ module.exports.updateCoverImage = async function(req, res) {
   if (coverImages && coverImages.length > 0) {
     if (registration.cover_image) {
       fs.unlinkSync(
-          path.join(
-              __dirname,
-              '../..',
-              COVER_IMAGE_PATH,
-              '/',
-              registration.cover_image,
-          ),
+        path.join(
+          __dirname,
+          '../..',
+          COVER_IMAGE_PATH,
+          '/',
+          registration.cover_image,
+        ),
       );
     }
     registration.cover_image = coverImages[0].filename;
@@ -88,12 +88,12 @@ module.exports.saveBusinessDetail = async function(req, res) {
 
   if (!existingRegistration) {
     return res
-        .status(404)
-        .json({ error: 'Provided registration Id does not exists!' });
+      .status(404)
+      .json({ error: 'Provided registration Id does not exists!' });
   }
 
   const arr = req.body;
-  let registration_company_name;
+
   if (!arr.length) {
     return res.status(400).json({
       error: 'Please provide your business data in json array[]!',
@@ -109,7 +109,7 @@ module.exports.saveBusinessDetail = async function(req, res) {
   let validationFlag = true;
   for (let i = 0; i < updatedArr.length; i++) {
     const item = updatedArr[i];
-    if (item.is_provided===false) {
+    if (item.is_provided === false) {
       if (!item.no_document_reason) {
         validationFlag = false;
         break;
@@ -118,8 +118,8 @@ module.exports.saveBusinessDetail = async function(req, res) {
   }
   if (validationFlag === false) {
     return res
-        .status(400)
-        .json({ error: 'Please provide a reason when is_provided is false or not provided' });
+      .status(400)
+      .json({ error: 'Please provide a reason when is_provided is false or not provided' });
   }
   const result = await BusinessDetail.bulkCreate(updatedArr, {
     updateOnDuplicate: [
@@ -137,9 +137,9 @@ module.exports.saveBusinessDetail = async function(req, res) {
 
   // const { company_name,document,is_active,document_name,document_number,is_provided,no_document_reason } = req.body;
   // const result = await BusinessDetail.create({company_name,document,is_active,document_name,document_number,is_provided,no_document_reason,registrationId:reg_Id});
-  const [numberOfUpdatedRows, updatedRecords] = await Registration.update(
-      { company_name: arr[0].company_name },
-      { where: { id: reg_Id } },
+  await Registration.update(
+    { company_name: arr[0].company_name },
+    { where: { id: reg_Id } },
   );
   if (result) {
     return res.status(200).json({
@@ -162,8 +162,8 @@ module.exports.getBusinessDetail = async function(req, res) {
 
   if (!existingRegistration) {
     return res
-        .status(404)
-        .json({ message: 'Provided registration Id does not exists!' });
+      .status(404)
+      .json({ message: 'Provided registration Id does not exists!' });
   }
 
   const businessDetails = await BusinessDetail.findAll({
@@ -215,39 +215,39 @@ module.exports.putRegDetail = async function(req, res) {
     return res.status(404).json({ error: 'Registration record not found' });
   } else if (existingRegistration) {
     const [row, record] = await Registration.update(
-        {
-          name,
-          ip_address,
-          business_type,
-          registration_type,
-          dob,
-          latitude,
-          longitude,
-          steps_completed,
-          active_steps,
-          address1,
-          address2,
-          city,
-          state,
-          country,
-          education,
-          available_hrs_per_week,
-          hourly_rate,
-          service_fee,
-          freelancer_role,
-          freelancer_bio,
-          language,
-          about_company,
-          currency_id,
-          created_by,
-          updated_by,
+      {
+        name,
+        ip_address,
+        business_type,
+        registration_type,
+        dob,
+        latitude,
+        longitude,
+        steps_completed,
+        active_steps,
+        address1,
+        address2,
+        city,
+        state,
+        country,
+        education,
+        available_hrs_per_week,
+        hourly_rate,
+        service_fee,
+        freelancer_role,
+        freelancer_bio,
+        language,
+        about_company,
+        currency_id,
+        created_by,
+        updated_by,
+      },
+      {
+        where: {
+          id: registrationId,
         },
-        {
-          where: {
-            id: registrationId,
-          },
-          returning: true,
-        },
+        returning: true,
+      },
     );
     if (row > 0) {
       return res.status(200).json({
@@ -265,8 +265,8 @@ module.exports.updateCategoryIds = async function(req, res) {
   const { category_ids } = req.body;
   if (!category_ids) {
     return res
-        .status(400)
-        .json({ error: 'Category Ids for Registration Not Provided' });
+      .status(400)
+      .json({ error: 'Category Ids for Registration Not Provided' });
   }
   const existingRegistration = await Registration.findByPk(registrationId);
 
@@ -283,8 +283,8 @@ module.exports.updateCategoryIds = async function(req, res) {
   });
   if (categories.length == 0) {
     return res
-        .status(400)
-        .json({ error: 'No category with provided Category Ids Present' });
+      .status(400)
+      .json({ error: 'No category with provided Category Ids Present' });
   }
   const catArray = [];
   categories.forEach((cat) => {
@@ -292,15 +292,15 @@ module.exports.updateCategoryIds = async function(req, res) {
   });
 
   const [rowUpdated, registrationUpdated] = await Registration.update(
-      {
-        category_ids: catArray.join(','),
+    {
+      category_ids: catArray.join(','),
+    },
+    {
+      where: {
+        id: registrationId,
       },
-      {
-        where: {
-          id: registrationId,
-        },
-        returning: true,
-      },
+      returning: true,
+    },
   );
   if (rowUpdated > 0) {
     return res.status(200).json(registrationUpdated[0]);
@@ -315,14 +315,14 @@ module.exports.getRegById = async function(req, res) {
     const { user_id } = req.params;
     if (user_id == 0 || user_id === 'null') {
       return res
-          .status(400)
-          .json({ error: 'Unable to find User Id kindly provide Valid User Id' });
+        .status(400)
+        .json({ error: 'Unable to find User Id kindly provide Valid User Id' });
     }
     const getRegById = await Registration.findOne({ where: { userId: user_id } });
     if (getRegById) {
       return res
-          .status(200)
-          .json({ message: 'details successfully fetched', data: getRegById });
+        .status(200)
+        .json({ message: 'details successfully fetched', data: getRegById });
     } else {
       return res.status(404).json({ error: 'Registration Not Found' });
     }
