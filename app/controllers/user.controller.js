@@ -1,7 +1,10 @@
 const db = require('../models');
 const User = db.user;
+const Role = db.role;
 const Registration = db.registration;
 const Sequelize = db.Sequelize;
+const Op = db.Sequelize.Op;
+const logErrorToFile = require('../logger');
 
 /**
  * Update user details in the database.
@@ -141,3 +144,149 @@ module.exports.getAllUser = async function(req, res) {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+/**
+ * Create new User By admin with roles
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
+module.exports.userCreateByAdmin = async function (req, res) {
+  try {
+    const { email, name, city, country_code, mobile_number, username, is_active, roles } = req.body;
+    if(!roles){
+      return res.status(400).json({ error: 'Role Not Given'});
+    }
+    const rolesRecord = await Role.findAll({
+      where: {
+        name: {
+          [Op.or]: roles,
+        },
+      },
+    });
+    if(rolesRecord.length===0){
+      return res.status(404).json({ error: 'No Roles Found'});
+    }
+    const user = await User.create({
+      email: email,
+      name: name,
+      city: city,
+      country_code: country_code,
+      mobile_number: mobile_number,
+      username: username,
+      is_active: is_active
+    });
+    if(user){
+      await user.setRoles(rolesRecord);
+      const authorities = [];
+      const userRoles = await user.getRoles();
+      for (let i = 0; i < userRoles.length; i++) {
+        authorities.push('ROLE_' + userRoles[i].name.toUpperCase());
+      }
+      return res.status(201).json({ message:'User Created By Admin', user:user, roles:authorities });
+    }else{
+      return res.status(400).json({ error: 'Error in creating user by admin'});
+    }
+
+  } catch (err) {
+    logErrorToFile.logErrorToFile(err, 'user.controller', 'createAdminUser');
+    if (err instanceof Sequelize.Error) {
+      return res.status(400).json({ error: err.errors[0].message });
+    }
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+/**
+ * Update User By admin 
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
+module.exports.updateUserByAdminById = async function(req,res){
+  try {
+    const id = req.params.id;
+    const user = await User.findByPk(id);
+    if(!user){
+      return res.status(404).json({ error:' No user with this id'})
+    }
+    const { email, name, city, country_code, mobile_number, username, is_active, roles } = req.body;
+    let rolesRecord =  await user.getRoles();
+    if (roles) {
+      rolesRecord = await Role.findAll({
+        where: {
+          name: {
+            [Op.or]: roles,
+          },
+        },
+      });
+      if (rolesRecord.length === 0) {
+        return res.status(404).json({ error: 'No Roles Found' });
+      }
+    }    
+    const [row, record] = await User.update({
+      email: email,
+      name: name,
+      city: city,
+      country_code,
+      mobile_number: mobile_number,
+      username: username,
+      is_active: is_active
+    }, {
+      where: {
+        id: id,
+      },
+      returning: true,
+    });
+    if(row){
+      await record[0].setRoles(rolesRecord);
+      const authorities = [];
+      const userRoles = await record[0].getRoles();
+      for (let i = 0; i < userRoles.length; i++) {
+        authorities.push('ROLE_' + userRoles[i].name.toUpperCase());
+      }
+      return res.status(200).json({ message:'User Updated By Admin', user:record[0], roles:authorities });
+    }else{
+      return res.status(404).json({ error: 'No User Found with provide id'})
+    }
+
+  } catch (err) {
+    logErrorToFile.logErrorToFile(err, 'user.controller', 'updateUserByAdminById');
+    if (err instanceof Sequelize.Error) {
+      return res.status(400).json({ error: err.errors[0].message });
+    }
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+/**
+ * Delete User By admin 
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
+module.exports.deleteUserByAdminById = async function(req,res){
+  try{
+    const id = req.params.id;
+    const userToDelete = await User.findByPk(id);
+    const row = await User.destroy({
+      where: {
+        id:id
+      }
+    });
+    if(row){
+      return res.status(200).json({ message:'User Deleted by Admin',user: userToDelete});
+    }else{
+      return res.status(400).json({ error: 'No User with the id present'})
+    }
+  } catch (err) {
+    logErrorToFile.logErrorToFile(err, 'user.controller', 'updateUserByAdminById');
+    if (err instanceof Sequelize.Error) {
+      return res.status(400).json({ error: err.errors[0].message });
+    }
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+}

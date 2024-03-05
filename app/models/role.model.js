@@ -3,9 +3,15 @@ module.exports = (sequelize, Sequelize) => {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
     },
     name: {
-      type: Sequelize.STRING,
+      type: Sequelize.STRING(50),
+      unique: true,
+      allowNull: false,
+    },
+    permissions: {
+      type: Sequelize.STRING(500),
     },
   });
 

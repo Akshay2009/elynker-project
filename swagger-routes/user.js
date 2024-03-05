@@ -221,4 +221,144 @@
  *           description: Details not found
  *         '500':
  *           description: Some server error
+ *   /api/admin/users:
+ *       post:
+ *         summary: Create a new user by admin with roles
+ *         tags: [Users]
+ *         parameters:
+ *           - name: x-access-token
+ *             in: header
+ *             description: Access token for authentication
+ *             required: true
+ *             schema:
+ *               type: string
+ *         requestBody:
+ *           required: true
+ *           content:
+ *             application/json:
+ *               schema:
+ *                 $ref: '#/components/schemas/User'
+ *             roles:
+ *                 'CFO' 
+ *         responses:
+ *           '201':
+ *             description: User created successfully
+ *             content:
+ *               application/json:
+ *                 example:
+ *                   message: User Created By Admin
+ *                   user:
+ *                     id: 1
+ *                     email: gourav@gmail.com
+ *                     name: Gaurav
+ *                     city: Lucknow
+ *                     country_code: +91
+ *                     mobile_number: '1114441111'
+ *                     created_by: null
+ *                     updated_by: null
+ *                     createdAt: '2024-01-16T14:03:40.727Z'
+ *                     updatedAt: '2024-01-16T14:03:40.727Z'
+ *                   roles: 
+ *                     - ROLE_ADMIN
+ *                     - ROLE_USER  # Example roles
+ *           '400':
+ *             description: Role Not Given or Error in creating user by admin
+ *           '404':
+ *             description: No Roles Found
+ *           '401':
+ *             description: Unauthorized - Access token is missing or invalid
+ *           '500':
+ *             description: Internal Server Error
+ *   /api/admin/users/{id}:
+ *         put:
+ *           summary: Update user by admin by ID
+ *           tags: [Users]
+ *           parameters:
+ *             - name: id
+ *               in: path
+ *               required: true
+ *               description: User ID
+ *               schema:
+ *                 type: integer
+ *             - name: x-access-token
+ *               in: header
+ *               description: Access token for authentication
+ *               required: true
+ *               schema:
+ *                 type: string
+ *           requestBody:
+ *             required: true
+ *             content:
+ *               application/json:
+ *                 schema:
+ *                   $ref: '#/components/schemas/User'
+ *           responses:
+ *             '200':
+ *               description: Successful update
+ *               content:
+ *                 application/json:
+ *                   example:
+ *                     message: User Updated By Admin
+ *                     user:
+ *                       id: 1
+ *                       email: gourav@gmail.com
+ *                       name: Gaurav
+ *                       city: Lucknow
+ *                       country_code: +91
+ *                       mobile_number: '1114441111'
+ *                       created_by: null
+ *                       updated_by: null
+ *                       createdAt: '2024-01-16T14:03:40.727Z'
+ *                       updatedAt: '2024-01-16T14:03:40.727Z'
+ *                     roles: 
+ *                       - ROLE_ADMIN
+ *                       - ROLE_USER  # Example roles
+ *             '400':
+ *               description: No User Found with provided ID or Error in updating user by admin
+ *             '404':
+ *               description: No Roles Found
+ *             '401':
+ *               description: Unauthorized - Access token is missing or invalid
+ *             '500':
+ *               description: Internal Server Error
+ *         delete:
+ *           summary: Delete user by admin by ID
+ *           tags: [Users]
+ *           parameters:
+ *             - name: id
+ *               in: path
+ *               required: true
+ *               description: User ID
+ *               schema:
+ *                 type: integer
+ *             - name: x-access-token
+ *               in: header
+ *               description: Access token for authentication
+ *               required: true
+ *               schema:
+ *                 type: string
+ *           responses:
+ *             '200':
+ *               description: Successful response
+ *               content:
+ *                 application/json:
+ *                   example:
+ *                     message: User Deleted by Admin
+ *                     user:
+ *                       id: 1
+ *                       email: gourav@gmail.com
+ *                       name: Gaurav
+ *                       city: Lucknow
+ *                       country_code: +91
+ *                       mobile_number: '1114441111'
+ *                       created_by: null
+ *                       updated_by: null
+ *                       createdAt: '2024-01-16T14:03:40.727Z'
+ *                       updatedAt: '2024-01-16T14:03:40.727Z'
+ *             '400':
+ *               description: No User with the ID present
+ *             '401':
+ *               description: Unauthorized - Access token is missing or invalid
+ *             '500':
+ *               description: Internal Server Error
  */

@@ -2,6 +2,7 @@ module.exports = (sequelize, Sequelize) => {
   const User = sequelize.define('users', {
     email: {
       type: Sequelize.STRING(200),
+      unique: true, // This makes the 'email' field unique
       validate: {
         isEmail: {
           msg: 'Invalid email format',
@@ -49,6 +50,13 @@ module.exports = (sequelize, Sequelize) => {
           msg: 'User Mobile Number must be of 10 characters',
         },
       },
+    },
+    username: {
+      type: Sequelize.STRING(50),
+      unique: true, // This makes the 'username' field unique
+    },
+    is_active: {
+      type: Sequelize.BOOLEAN,
     },
     created_by: {
       type: Sequelize.NUMERIC,
