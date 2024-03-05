@@ -11,6 +11,8 @@ const freelancerBannerProjectRoutes = require('../routes/freelancerBannerProject
 const freelancerResumeRoutes = require('../routes/freelancer_resume.routes');
 const socialmediaMasterRoutes=require('../routes/socialmediaMaster.routes');
 const adminModulesRoutes=require('../routes/adminModules.routes');
+const rolesRoutes = require('../routes/role.routes');
+
 module.exports = function initializeRoutes(app) {
   authRoutes(app);
   userRoutes(app);
@@ -24,4 +26,5 @@ module.exports = function initializeRoutes(app) {
   freelancerResumeRoutes(app);
   socialmediaMasterRoutes(app);
   adminModulesRoutes(app);
+  rolesRoutes(app);
 };

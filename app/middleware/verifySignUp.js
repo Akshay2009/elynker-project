@@ -4,14 +4,14 @@ const User = db.user;
 
 checkMobileNumberExist = (req, res, next) =>{
   if (!req.body.mobile_number) {
-    return res.status(404).send({ message: 'Mobile Number is mandatory' });
+    return res.status(400).send({ message: 'Mobile Number is mandatory' });
   }
   next();
 };
 
 checkDuplicateUsernameOrEmail = (req, res, next) => {
-  console.log(req.body.mobile_number);
-  // Username
+  const email = req.body.email;
+  // Mobile Number
   User.findOne({
     where: {
       mobile_number: req.body.mobile_number,
@@ -23,6 +23,22 @@ checkDuplicateUsernameOrEmail = (req, res, next) => {
       });
       return;
     }
+    // Email
+    if (email) {
+      User.findOne({
+        where: {
+          email: email,
+        },
+      }).then((user) => {
+        if (user) {
+          res.status(400).send({
+            message: 'Failed! Email is already in use!',
+          });
+          return;
+        }
+      });
+    }
+
     next();
   });
 };

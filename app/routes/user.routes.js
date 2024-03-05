@@ -44,4 +44,26 @@ module.exports = function(app) {
       [authJwt.verifyToken],
       controller.getAllUser,
   );
+  /**
+   * Users Created By Admin
+ */  
+  app.post('/api/admin/users',
+        [authJwt.verifyToken],
+        controller.userCreateByAdmin,
+  );
+  /**
+   * Users Updated By Admin
+ */  
+  app.put('/api/admin/users/:id',
+        [authJwt.verifyToken],
+        controller.updateUserByAdminById,
+  );
+
+  /**
+   * Users Delete By Admin
+ */  
+  app.delete('/api/admin/users/:id',
+        [authJwt.verifyToken],
+        controller.deleteUserByAdminById,
+  );
 };
