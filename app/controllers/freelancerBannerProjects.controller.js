@@ -84,7 +84,7 @@ module.exports.updateUsersBanner = async function(req, res) {
     const [row, bannerRecord] = await FreelancerBannerProject.update({
       banner_image: bannerImages[0].filename,
       banner_name: banner_name,
-      registrationId: registrationId,
+      registrationId: reg_id,
     }, {
       where: {
         id: userBannerId,
