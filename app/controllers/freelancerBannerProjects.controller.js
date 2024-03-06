@@ -61,8 +61,11 @@ module.exports.updateUsersBanner = async function(req, res) {
     return res.status(404).json({ error: 'No record found with provided userBannerId' });
   }
   const { banner_name, registrationId } = req.body;
-
-  const registrationRecord = await Registration.findByPk(registrationId);
+  let reg_id = userBanner.registrationId;
+  if(registrationId){
+    reg_id = registrationId;
+  }
+  const registrationRecord = await Registration.findByPk(reg_id);
   if (!registrationRecord || registrationRecord.registration_type !== 3) {
     if (req.files['images']) {
       fs.unlinkSync(path.join(__dirname, '../..', USERS_BANNER_PATH, '/', req.files['images'][0].filename));
@@ -96,7 +99,7 @@ module.exports.updateUsersBanner = async function(req, res) {
   } else {
     const [row, bannerRecord] = await FreelancerBannerProject.update({
       banner_name: banner_name,
-      registrationId: registrationId,
+      registrationId: reg_id,
     }, {
       where: {
         id: userBannerId,
