@@ -48,13 +48,26 @@ exports.signup = async (req, res) => {
       await user.setRoles([1]);
     }
 
-    const token = jwt.sign({ id: user.id },
-        config.secret,
-        {
-          algorithm: 'HS256',
-          allowInsecureKeySizes: true,
-          expiresIn: 86400, // 24 hours
-        });
+    const roleOfUser = await user.getRoles();
+        const roleNames = roleOfUser.map(role => role.dataValues.name);
+        let token;
+            if(roleNames.includes('user')){
+              token = jwt.sign({ id: user.id },
+                config.secret,
+                {
+                  algorithm: 'HS256',
+                  allowInsecureKeySizes: true,
+                  expiresIn: 86400, // 24 hours
+                });
+            }else{
+              token = jwt.sign({ id: user.id },
+                config.secret,
+                {
+                  algorithm: 'HS256',
+                  allowInsecureKeySizes: true,
+                  expiresIn: 3*86400, // 3 days
+                });
+            }
 
     const authorities = [];
     user.getRoles().then((roles) => {
@@ -95,14 +108,26 @@ exports.signin = async (req, res) => {
             userId: user.id,
           },
         });
-
-        const token = jwt.sign({ id: user.id },
-            config.secret,
-            {
-              algorithm: 'HS256',
-              allowInsecureKeySizes: true,
-              expiresIn: 86400, // 24 hours
-            });
+        const roleOfUser = await user.getRoles();
+        const roleNames = roleOfUser.map(role => role.dataValues.name);
+        let token;
+            if(roleNames.includes('user')){
+              token = jwt.sign({ id: user.id },
+                config.secret,
+                {
+                  algorithm: 'HS256',
+                  allowInsecureKeySizes: true,
+                  expiresIn: 86400, // 24 hours 
+                });
+            }else{
+              token = jwt.sign({ id: user.id },
+                config.secret,
+                {
+                  algorithm: 'HS256',
+                  allowInsecureKeySizes: true,
+                  expiresIn: 3*86400, // 3 days
+                });
+            }
 
         const authorities = [];
         user.getRoles().then((roles) => {
