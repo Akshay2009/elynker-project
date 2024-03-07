@@ -41,6 +41,10 @@ module.exports = (sequelize, Sequelize) => {
         },
       },
     },
+    icon_path: {
+      type: Sequelize.STRING(200),
+      allowNull: true,
+    },
     parent_id: {
       type: Sequelize.INTEGER,
       allowNull: true,

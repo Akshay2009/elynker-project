@@ -24,7 +24,7 @@ module.exports = function(app) {
   app.post(
       '/api/categories',
       [authJwt.verifyToken],
-      upload.fields([{ name: 'image_path', maxCount: 1 }, { name: 'banner_image', maxCount: 1 }]),
+      upload.fields([{ name: 'image_path', maxCount: 1 }, { name: 'banner_image', maxCount: 1 }, { name: 'icon_path', maxCount: 1 }]),
       handleMulterError,
       categoryController.createCategory,
   );
@@ -46,7 +46,7 @@ module.exports = function(app) {
   app.put(
       '/api/categories/:categoryId',
       [authJwt.verifyToken],
-      upload.fields([{ name: 'image_path', maxCount: 1 }, { name: 'banner_image', maxCount: 1 }]),
+      upload.fields([{ name: 'image_path', maxCount: 1 }, { name: 'banner_image', maxCount: 1 }, { name: 'icon_path', maxCount: 1 }]),
       handleMulterError,
       categoryController.updateCategory,
   );

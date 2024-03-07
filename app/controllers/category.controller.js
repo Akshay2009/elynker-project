@@ -36,12 +36,16 @@ module.exports.createCategory = async function(req, res) {
     const { title, description, parent_id, category_type } = req.body;
     let imagePath;
     let bannerImage;
+    let iconPath;
     if (req.files['image_path']) {
       // Extract file names
       imagePath = req.files['image_path'][0].filename;
     }
     if (req.files['banner_image']) {
       bannerImage = req.files['banner_image'][0].filename;
+    }
+    if (req.files['icon_path']) {
+      iconPath = req.files['icon_path'][0].filename;
     }
     if (parent_id) {
       const record = await Category.findOne({ where: { id: parent_id } });
@@ -53,6 +57,7 @@ module.exports.createCategory = async function(req, res) {
           category_type,
           image_path: imagePath,
           banner_image: bannerImage,
+          icon_path: iconPath,
         });
 
         if (category) {
@@ -67,6 +72,9 @@ module.exports.createCategory = async function(req, res) {
         if (bannerImage) {
           fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', bannerImage));
         }
+        if (iconPath) {
+          fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', iconPath));
+        }
         return res.status(404).json({ error: 'No Category found exist with this parent_id' });
       }
     } else {
@@ -77,6 +85,7 @@ module.exports.createCategory = async function(req, res) {
         category_type,
         image_path: imagePath,
         banner_image: bannerImage,
+        icon_path: iconPath
       });
 
       if (newCategory) {
@@ -128,12 +137,16 @@ module.exports.updateCategory = async function(req, res) {
     const { title, description, parent_id, category_type } = req.body;
     let imagePath;
     let bannerImage;
+    let iconPath
     if (req.files['image_path']) {
       // Extract file names
       imagePath = req.files['image_path'][0].filename;
     }
     if (req.files['banner_image']) {
       bannerImage = req.files['banner_image'][0].filename;
+    }
+    if (req.files['icon_path']) {
+      iconPath = req.files['icon_path'][0].filename;
     }
 
     if (parent_id) {
@@ -146,6 +159,9 @@ module.exports.updateCategory = async function(req, res) {
           }
           if (bannerImage) {
             fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', bannerImage));
+          }
+          if (iconPath) {
+            fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', iconPath));
           }
           return res.status(404).json({ error: 'No Category Record with this categoryId' });
         }
@@ -170,6 +186,16 @@ module.exports.updateCategory = async function(req, res) {
             // }
             bannerImage=existingCategory.banner_image;
           }
+          if (iconPath) {
+            if (existingCategory.icon_path) {
+              fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', existingCategory.icon_path));
+            }
+          } else {
+            // if (existingCategory.banner_image) {
+            //     fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH,'/',existingCategory.banner_image));
+            // }
+            iconPath=existingCategory.icon_path;
+          }
         }
 
 
@@ -180,6 +206,7 @@ module.exports.updateCategory = async function(req, res) {
           category_type,
           image_path: imagePath,
           banner_image: bannerImage,
+          icon_path: iconPath,
         }, {
           where: {
             id: categoryId,
@@ -199,6 +226,9 @@ module.exports.updateCategory = async function(req, res) {
         if (bannerImage) {
           fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', bannerImage));
         }
+        if(iconPath){
+          fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', iconPath));
+        }
         return res.status(404).json({ error: 'No Category found exist with this parent_id' });
       }
     } else {
@@ -209,6 +239,9 @@ module.exports.updateCategory = async function(req, res) {
         }
         if (bannerImage) {
           fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', bannerImage));
+        }
+        if (iconPath) {
+          fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', iconPath));
         }
         return res.status(404).json({ error: 'No Category Record with this categoryId' });
       }
@@ -233,6 +266,16 @@ module.exports.updateCategory = async function(req, res) {
           // }
           bannerImage=existingCategory.banner_image;
         }
+        if (iconPath) {
+          if (existingCategory.icon_path) {
+            fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', existingCategory.icon_path));
+          }
+        } else {
+          // if (existingCategory.banner_image) {
+          //     fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', existingCategory.banner_image));
+          // }
+          iconPath=existingCategory.icon_path;
+        }
       }
 
       const [rowCount, updatedCategory] = await Category.update({
@@ -241,6 +284,7 @@ module.exports.updateCategory = async function(req, res) {
         category_type,
         image_path: imagePath,
         banner_image: bannerImage,
+        icon_path: iconPath
       }, {
         where: {
           id: categoryId,
@@ -352,6 +396,9 @@ module.exports.delcategories = async function(req, res) {
       }
       if (categoryToDelete.banner_image) {
         fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', categoryToDelete.banner_image));
+      }
+      if (categoryToDelete.icon_path) {
+        fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', categoryToDelete.icon_path));
       }
     }
     const categories = await Category.destroy({
