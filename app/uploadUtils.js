@@ -360,7 +360,7 @@ const storageCategory = multer.diskStorage({
 });
 const fileFilterCategory = function(req, file, cb) {
   try {
-    const allowedFileTypes = /jpeg|jpg|png/;
+    const allowedFileTypes = /jpeg|jpg|png|svg/;
     const mimetype = allowedFileTypes.test(file.mimetype);
     const extname = allowedFileTypes.test(
         path.extname(file.originalname).toLowerCase(),
