@@ -39,6 +39,8 @@ db.unitMaster = require('../models/unitMaster.model.js')(sequelize, Sequelize);
 db.freelancerResume=require('../models/freelancer_resume.model.js')(sequelize, Sequelize);
 db.socialMediaMaster=require('../models/socialMediaMaster.model.js')(sequelize, Sequelize);
 db.adminModules=require('../models/adminModules.model.js')(sequelize, Sequelize);
+
+
 db.role.belongsToMany(db.user, {
   through: 'user_roles',
   onDelete: 'CASCADE',
@@ -53,23 +55,23 @@ db.ROLES = ['user', 'admin', 'moderator'];
 db.user.hasOne(db.registration, { onDelete: 'CASCADE' });
 db.registration.belongsTo(db.user);
 
-// associate registration and document as 1:1
+// associate registration and document as 1:m
 db.registration.hasMany(db.businessDetail, { onDelete: 'CASCADE' });
 db.businessDetail.belongsTo(db.registration);
 
-// associate registration and product as 1:1 with foreign key on product model
+// associate registration and product as 1:m with foreign key on product model
 db.registration.hasMany(db.product, { onDelete: 'CASCADE' });
 db.product.belongsTo(db.registration);
 
-// associate certificate with registration as 1:1 foreign key on certificate
+// associate certificate with registration as 1:m foreign key on certificate
 db.registration.hasMany(db.certificate, { onDelete: 'CASCADE' });
 db.certificate.belongsTo(db.registration);
 
-// associate sociallinks associated with registration as 1:1 foreign key on sociallink
+// associate sociallinks associated with registration as 1:m foreign key on sociallink
 db.registration.hasMany(db.sociallinks, { onDelete: 'CASCADE' });
 db.sociallinks.belongsTo(db.registration);
 
-// associate sociallinks associated with registration as 1:1 foreign key on Resume
+// associate sociallinks associated with registration as 1:m foreign key on Resume
 db.registration.hasMany(db.freelancerResume, { onDelete: 'CASCADE' });
 db.freelancerResume.belongsTo(db.registration);
 
@@ -87,7 +89,7 @@ db.category.belongsToMany(db.product, {
 db.category.hasMany(db.category, { foreignKey: 'parent_id', onDelete: 'CASCADE', as: 'children' });
 
 
-// associate Registration and UsersBanners as 1 to m
+// associate Registration and freelancerBannerProject as 1 to m
 db.registration.hasMany(db.freelancerBannerProject, { onDelete: 'CASCADE' });
 db.freelancerBannerProject.belongsTo(db.registration);
 

@@ -64,6 +64,18 @@ module.exports = (sequelize, Sequelize) => {
     updated_by: {
       type: Sequelize.NUMERIC,
     },
+  }, {
+    indexes: [
+      {
+        fields: ['mobile_number'], // Add index on the mobile_number field
+      },
+      {
+        fields: ['email'], // Add index on the email field
+      },
+      {
+        fields: ['username'], // Add index on the username field
+      },
+    ],
   });
 
   return User;

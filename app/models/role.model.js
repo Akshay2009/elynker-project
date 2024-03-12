@@ -13,6 +13,12 @@ module.exports = (sequelize, Sequelize) => {
     permissions: {
       type: Sequelize.STRING(500),
     },
+  }, {
+    indexes: [
+      {
+        fields: ['name'], // Add index on the name field
+      },
+    ],
   });
 
   return Role;

@@ -33,6 +33,15 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING(500),
       allowNull: true,
     },
+  }, {
+    indexes: [
+      {
+        fields: ['document_name'], // Add index on the document_name field
+      },
+      {
+        fields: ['document_number'], // Add index on the document_number field
+      },
+    ],
   });
 
   return BusinessDetail;

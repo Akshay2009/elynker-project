@@ -54,6 +54,15 @@ module.exports = (sequelize, Sequelize) => {
     updated_by: {
       type: Sequelize.NUMERIC,
     },
+  }, {
+    indexes: [
+      {
+        fields: ['type'], // Add index on the type field
+      },
+      {
+        fields: ['budget'], // Add index on the budget field
+      },
+    ],
   });
 
   return Product;

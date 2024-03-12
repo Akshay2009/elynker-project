@@ -178,6 +178,15 @@ module.exports = (sequelize, Sequelize) => {
     updated_by: {
       type: Sequelize.NUMERIC,
     },
+  }, {
+    indexes: [
+      {
+        fields: ['registration_type'], // Add index on the registration_type field
+      },
+      {
+        fields: ['city'], // Add index on the city field
+      },
+    ],
   });
 
 

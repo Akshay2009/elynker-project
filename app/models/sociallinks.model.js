@@ -15,6 +15,15 @@ module.exports = (sequelize, Sequelize) => {
     modified_by: {
       type: Sequelize.NUMERIC,
     },
+  }, {
+    indexes: [
+      {
+        fields: ['socialmedia_id'], // Add index on the socialmedia_id field
+      },
+      {
+        fields: ['social_name'], // Add index on the social_name field
+      },
+    ],
   });
   return socialLinks;
 };

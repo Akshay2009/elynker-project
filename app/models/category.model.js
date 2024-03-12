@@ -55,6 +55,18 @@ module.exports = (sequelize, Sequelize) => {
     updated_by: {
       type: Sequelize.NUMERIC,
     },
+  }, {
+    indexes: [
+      {
+        fields: ['title'], // Add index on the title field
+      },
+      {
+        fields: ['category_type'], // Add index on the category_type field
+      },
+      {
+        fields: ['parent_id'], // Add index on the parent_id field
+      },
+    ],
   });
 
   return Category;

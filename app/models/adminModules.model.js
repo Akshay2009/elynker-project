@@ -20,7 +20,7 @@ module.exports = (sequelize, Sequelize) => {
             },
         },
         is_active: {
-            type: Sequelize.BOOLEAN
+            type: Sequelize.BOOLEAN,
         },
     });
 
