@@ -12,7 +12,7 @@ const freelancerResumeRoutes = require('../routes/freelancer_resume.routes');
 const socialmediaMasterRoutes=require('../routes/socialmediaMaster.routes');
 const adminModulesRoutes=require('../routes/adminModules.routes');
 const rolesRoutes = require('../routes/role.routes');
-
+const filterVendors=require('../routes/miscellaneous.routes')
 module.exports = function initializeRoutes(app) {
   authRoutes(app);
   userRoutes(app);
@@ -27,4 +27,5 @@ module.exports = function initializeRoutes(app) {
   socialmediaMasterRoutes(app);
   adminModulesRoutes(app);
   rolesRoutes(app);
+  filterVendors(app);
 };
