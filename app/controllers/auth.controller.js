@@ -3,7 +3,7 @@ const config = require('../config/auth.config');
 const User = db.user;
 const Role = db.role;
 const Registration = db.registration;
-const serviceResponse = require('../config/serviceResponse')
+const serviceResponse = require('../config/serviceResponse');
 
 
 const Op = db.Sequelize.Op;
@@ -50,9 +50,9 @@ exports.signup = async (req, res) => {
     }
 
     const roleOfUser = await user.getRoles();
-        const roleNames = roleOfUser.map(role => role.dataValues.name);
+        const roleNames = roleOfUser.map((role) => role.dataValues.name);
         let token;
-            if(roleNames.includes('user')){
+            if(roleNames.includes('user')) {
               token = jwt.sign({ id: user.id },
                 config.secret,
                 {
@@ -110,9 +110,9 @@ exports.signin = async (req, res) => {
           },
         });
         const roleOfUser = await user.getRoles();
-        const roleNames = roleOfUser.map(role => role.dataValues.name);
+        const roleNames = roleOfUser.map((role) => role.dataValues.name);
         let token;
-            if(roleNames.includes('user')){
+            if(roleNames.includes('user')) {
               token = jwt.sign({ id: user.id },
                 config.secret,
                 {

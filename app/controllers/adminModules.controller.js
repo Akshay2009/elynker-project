@@ -1,6 +1,6 @@
 const db = require('../models');
 const AdminModules = db.adminModules;
-const { Op } = require('sequelize');
+
 const serviceResponse = require('../config/serviceResponse');
 
 /**
@@ -8,12 +8,12 @@ const serviceResponse = require('../config/serviceResponse');
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.createAdminModule = async function (req, res) {
+module.exports.createAdminModule = async function(req, res) {
     const { name, description, is_active } = req.body;
     const newAdminRecord = await AdminModules.create({
         name,
         description,
-        is_active
+        is_active,
     });
     return res.status(serviceResponse.saveSuccess).json({
         message: serviceResponse.createdMessage,
@@ -25,29 +25,26 @@ module.exports.createAdminModule = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getAdminModule = async function (req, res) {
+module.exports.getAdminModule = async function(req, res) {
     try {
-        const { page, pageSize } = req.body;
+        const maxLimit = 50;
+        let { page, pageSize } = req.query;
+        page = page ? page : 1;
+        let offset = 0;
         if (page && pageSize) {
-            const offset = (page - 1) * pageSize;
+            pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+            offset = (page - 1) * pageSize;
+        }
 
-            const { count, rows } = await AdminModules.findAndCountAll({
-                limit: pageSize,
-                offset: offset
-            });
-            if (count > 0) {
-                return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-            } else {
-                return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-            }
+        const { count, rows } = await AdminModules.findAndCountAll({
+            limit: pageSize,
+            offset: offset,
+            order: [['createdAt', 'ASC']],
+        });
+        if (count > 0) {
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
         } else {
-            const { count, rows } = await AdminModules.findAndCountAll();
-
-            if (count > 0) {
-                return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-            } else {
-                return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-            }
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
     } catch (err) {
         return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
@@ -59,7 +56,7 @@ module.exports.getAdminModule = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getAdminModuleById = async function (req, res) {
+module.exports.getAdminModuleById = async function(req, res) {
     const { adminId } = req.params;
     const AdminModulesById = await AdminModules.findOne({
         where: { id: adminId },
@@ -77,18 +74,18 @@ module.exports.getAdminModuleById = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.updateAdminModuleById = async function (req, res) {
+module.exports.updateAdminModuleById = async function(req, res) {
     const { adminId } = req.params;
     const { name, description, is_active } = req.body;
     const existingAdminRecord = await AdminModules.findByPk(adminId);
     if (!adminId || adminId == 0) {
-        return res.status(serviceResponse.notFound).json({ error: "Kindly provide valid Admin ID" });
+        return res.status(serviceResponse.notFound).json({ error: 'Kindly provide valid Admin ID' });
     }
     if (!existingAdminRecord) {
         return res.status(serviceResponse.notFound).json({ error: 'Admin Module not found with this id' });
     }
     await existingAdminRecord.update({
-        name, description, is_active
+        name, description, is_active,
     });
     return res.status(serviceResponse.ok).json({
         message: serviceResponse.updatedMessage,
@@ -102,17 +99,17 @@ module.exports.updateAdminModuleById = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.deleteAdminModuleById = async function (req, res) {
+module.exports.deleteAdminModuleById = async function(req, res) {
     const { adminId } = req.params;
     const existingAdminRecord = await AdminModules.findByPk(adminId);
     if (!adminId || adminId == 0) {
-        return res.status(serviceResponse.notFound).json({ error: "Kindly provide valid Admin ID" });
+        return res.status(serviceResponse.notFound).json({ error: 'Kindly provide valid Admin ID' });
     }
     if (!existingAdminRecord) {
         return res.status(serviceResponse.notFound).json({ error: 'Admin Module not found with this id' });
     }
     await existingAdminRecord.destroy({
-        where: { id: adminId }
+        where: { id: adminId },
     });
     return res.status(serviceResponse.ok).json({
         message: serviceResponse.deletedMessage,
@@ -126,7 +123,7 @@ module.exports.deleteAdminModuleById = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.searchAdminModules = async function (req, res) {
+module.exports.searchAdminModules = async function(req, res) {
     try {
         const { fieldName, fieldValue } = req.params;
         if (!AdminModules.rawAttributes[fieldName]) {

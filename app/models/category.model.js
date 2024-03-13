@@ -49,6 +49,14 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.INTEGER,
       allowNull: true,
     },
+    rank: {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      validate: {
+        min: 1,
+        max: 10,
+      },
+    },
     created_by: {
       type: Sequelize.NUMERIC,
     },

@@ -27,7 +27,7 @@ module.exports.saveCityMaster = async function(req, res) {
   });
   return res
       .status(serviceResponse.saveSuccess)
-      .json({ message: serviceResponse.createdMessage , data: cityRecord });
+      .json({ message: serviceResponse.createdMessage, data: cityRecord });
 };
 
 /**
@@ -36,29 +36,26 @@ module.exports.saveCityMaster = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getAllCityMasters = async function (req, res) {
+module.exports.getAllCityMasters = async function(req, res) {
   try {
-    const { page, pageSize } = req.body;
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
     if (page && pageSize) {
-      const offset = (page - 1) * pageSize;
-
-      const { count, rows } = await CityMaster.findAndCountAll({
-        limit: pageSize,
-        offset: offset
-      });
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-    } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
     }
-    } else {
-      const { count, rows } = await CityMaster.findAndCountAll();
 
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+    const { count, rows } = await CityMaster.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
     } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-    }
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     console.error('Error retrieving data:', err);
@@ -75,7 +72,7 @@ module.exports.getCityMasters = async function(req, res) {
     if (!cityRecord) {
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
-    return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage , data: cityRecord });
+    return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: cityRecord });
   }
 };
 
@@ -93,7 +90,7 @@ module.exports.updateCityMasterById = async function(req, res) {
     const updatedMaster = await CityMaster.findByPk(id);
     if (updatedMaster) {
       return res.status(serviceResponse.ok).json({
-        message: serviceResponse.updatedMessage ,
+        message: serviceResponse.updatedMessage,
         data: updatedMaster.toJSON(),
       });
     } else {
@@ -124,29 +121,26 @@ module.exports.delCityMaster = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getAllcurrencyMaster = async function (req, res) {
+module.exports.getAllcurrencyMaster = async function(req, res) {
   try {
-    const { page, pageSize } = req.body;
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
     if (page && pageSize) {
-      const offset = (page - 1) * pageSize;
-
-      const { count, rows } = await CurrencyMaster.findAndCountAll({
-        limit: pageSize,
-        offset: offset
-      });
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-    } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
     }
-    } else {
-      const { count, rows } = await CurrencyMaster.findAndCountAll();
 
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+    const { count, rows } = await CurrencyMaster.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
     } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-    }
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     console.error('Error retrieving data:', err);
@@ -224,7 +218,7 @@ module.exports.createStateMaster = async function(req, res) {
     name,
   });
   return res.status(serviceResponse.saveSuccess).json({
-    message: serviceResponse.createdMessage ,
+    message: serviceResponse.createdMessage,
     data: newStateRecord,
   });
 };
@@ -234,28 +228,26 @@ module.exports.createStateMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getAllStateMaster = async function (req, res) {
+module.exports.getAllStateMaster = async function(req, res) {
   try {
-    const { page, pageSize } = req.body;
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
     if (page && pageSize) {
-      const offset = (page - 1) * pageSize;
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
+    }
 
-      const { count, rows } = await StateMaster.findAndCountAll({
-        limit: pageSize,
-        offset: offset
-      });
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+    const { count, rows } = await StateMaster.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
     } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-    }
-    } else {
-      const { count, rows } = await StateMaster.findAndCountAll();
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-    } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-    }
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     console.error('Error retrieving data:', err);
@@ -421,29 +413,26 @@ module.exports.updateUnitMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getUnitMaster = async function (req, res) {
+module.exports.getUnitMaster = async function(req, res) {
   try {
-    const { page, pageSize } = req.body;
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
     if (page && pageSize) {
-      const offset = (page - 1) * pageSize;
-
-      const { count, rows } = await UnitMaster.findAndCountAll({
-        limit: pageSize,
-        offset: offset
-      });
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-    } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
     }
-    } else {
-      const { count, rows } = await UnitMaster.findAndCountAll();
 
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+    const { count, rows } = await UnitMaster.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
     } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-    }
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     console.error('Error retrieving data:', err);
@@ -507,11 +496,11 @@ module.exports.delUnitmasterByid = async function(req, res) {
           .status(serviceResponse.ok)
           .json({ success: serviceResponse.deletedMessage });
     } else {
-      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound});
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (error) {
     console.error('Error deleting Unit Master:', error);
-    return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage});
+    return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -700,36 +689,32 @@ module.exports.updateSocialMedia = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getSocialMedia= async function (req, res) {
+module.exports.getSocialMedia= async function(req, res) {
   try {
-      const { page, pageSize } = req.body;
-      if (page && pageSize) {
-          const offset = (page - 1) * pageSize;
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
+    if (page && pageSize) {
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
+    }
 
-          const { count, rows } = await SocialMediaMaster.findAndCountAll({
-              limit: pageSize,
-              offset: offset
-          });
-          if (count > 0) {
-            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-        } else {
-            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-        }
-      } else {
-          const { count, rows } = await SocialMediaMaster.findAndCountAll();
-
-          if (count > 0) {
-            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-        } else {
-            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-        }
-      }
+    const { count, rows } = await SocialMediaMaster.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
+    } else {
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
   } catch (err) {
     console.error('Error retrieving data:', err);
     return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
-
 
 
 /**
@@ -820,7 +805,7 @@ module.exports.searchSocialMediaMaster = async function(req, res) {
     if (records.length > 0) {
       return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound});
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {

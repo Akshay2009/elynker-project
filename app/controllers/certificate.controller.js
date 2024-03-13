@@ -33,33 +33,29 @@ module.exports.createCertificate = async function(req, res) {
 
 // /getting certificate data--
 
-module.exports.getCertificate = async function (req, res) {
+module.exports.getCertificate = async function(req, res) {
   try {
-      const { page, pageSize } = req.body;
-      if (page && pageSize) {
-          const offset = (page - 1) * pageSize;
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
+    if (page && pageSize) {
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
+    }
 
-          const { count, rows } = await Certificate.findAndCountAll({
-              limit: pageSize,
-              offset: offset
-          });
-          if (count > 0) {
-              return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-          } else {
-              return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-          }
-      } else {
-          const { count, rows } = await Certificate.findAndCountAll();
-
-          if (count > 0) {
-              return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-          } else {
-              return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-          }
-      }
+    const { count, rows } = await Certificate.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
+    } else {
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
   } catch (err) {
-      console.error('Error retrieving data:', err);
-      return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -122,7 +118,7 @@ module.exports.updateCertificateById = async function(req, res) {
 module.exports.delCertificate = async function(req, res) {
   const { certificate_id } = req.params;
   const certificateToDelete = await Certificate.findByPk(certificate_id);
-  if(!certificateToDelete){
+  if(!certificateToDelete) {
     return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
   const delCertificate = await Certificate.destroy({

@@ -1,7 +1,7 @@
 const { authJwt } = require('../middleware');
 const adminModulesController = require('../controllers/adminModules.controller');
 
-module.exports = function (app) {
+module.exports = function(app) {
     /**
  * Endpoint to post admin modules details 
  * @param {String} '/api/admin/modules' - API endpoint path.
@@ -76,4 +76,4 @@ app.get(
     [authJwt.verifyToken],
     adminModulesController.searchAdminModules,
 );
-}
+};

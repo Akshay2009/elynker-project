@@ -144,6 +144,16 @@
  *           description: Access token for authentication
  *           required: true
  *           type: string
+ *         - name: page
+ *           in: query
+ *           description: Page for Pagination
+ *           schema:
+ *             type: integer
+ *         - name: pageSize
+ *           in: query
+ *           description: Page Size to show records on the Page for Pagination
+ *           schema:
+ *             type: integer
  *       responses:
  *         '200':
  *           description: Resumes fetched successfully

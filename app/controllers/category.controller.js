@@ -13,29 +13,26 @@ const serviceResponse = require('../config/serviceResponse');
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getAllCategory = async function (req, res) {
+module.exports.getAllCategory = async function(req, res) {
   try {
-    const { page, pageSize } = req.body;
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
     if (page && pageSize) {
-      const offset = (page - 1) * pageSize;
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
+    }
 
-      const { count, rows } = await Category.findAndCountAll({
-        limit: pageSize,
-        offset: offset
-      });
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-      } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-      }
+    const { count, rows } = await Category.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      order: [['rank', 'ASC'], ['createdAt', 'ASC']],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
     } else {
-      const { count, rows } = await Category.findAndCountAll();
-
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-      } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-      }
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
@@ -49,7 +46,7 @@ module.exports.getAllCategory = async function (req, res) {
  */
 module.exports.createCategory = async function(req, res) {
   try {
-    const { title, description, parent_id, category_type } = req.body;
+    const { title, description, parent_id, category_type, rank } = req.body;
     let imagePath;
     let bannerImage;
     let iconPath;
@@ -74,10 +71,11 @@ module.exports.createCategory = async function(req, res) {
           image_path: imagePath,
           banner_image: bannerImage,
           icon_path: iconPath,
+          rank: rank,
         });
 
         if (category) {
-          return res.status(serviceResponse.saveSuccess).json(category);
+          return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage, data: category });
         } else {
           return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorCreatingRecord });
         }
@@ -101,16 +99,20 @@ module.exports.createCategory = async function(req, res) {
         category_type,
         image_path: imagePath,
         banner_image: bannerImage,
-        icon_path: iconPath
+        icon_path: iconPath,
+        rank: rank,
       });
 
       if (newCategory) {
-        return res.status(serviceResponse.saveSuccess).json(newCategory);
+        return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage, data: newCategory });
       } else {
         return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorCreatingRecord });
       }
     }
   } catch (err) {
+    if (err instanceof Sequelize.Error) {
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
+    }
     return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
@@ -130,7 +132,7 @@ module.exports.getCategoryById = async function(req, res) {
       },
     });
     if (categories) {
-      return res.status(serviceResponse.ok).json(categories);
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.createdMessage, data: categories });
     } else {
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
@@ -150,10 +152,10 @@ module.exports.getCategoryById = async function(req, res) {
 module.exports.updateCategory = async function(req, res) {
   try {
     const categoryId = req.params.categoryId;
-    const { title, description, parent_id, category_type } = req.body;
+    const { title, description, parent_id, category_type, rank } = req.body;
     let imagePath;
     let bannerImage;
-    let iconPath
+    let iconPath;
     if (req.files['image_path']) {
       // Extract file names
       imagePath = req.files['image_path'][0].filename;
@@ -179,7 +181,7 @@ module.exports.updateCategory = async function(req, res) {
           if (iconPath) {
             fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', iconPath));
           }
-          return res.status(serviceResponse.notFound).json({ error: 'No Category Record with this categoryId' });
+          return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
         if (existingCategory) {
           if (imagePath) {
@@ -223,6 +225,7 @@ module.exports.updateCategory = async function(req, res) {
           image_path: imagePath,
           banner_image: bannerImage,
           icon_path: iconPath,
+          rank: rank,
         }, {
           where: {
             id: categoryId,
@@ -231,7 +234,7 @@ module.exports.updateCategory = async function(req, res) {
         });
 
         if (rowCount > 0) {
-          return res.status(serviceResponse.ok).json(updatedCategory[0]);
+          return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, data: updatedCategory[0] });
         } else {
           return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
@@ -242,7 +245,7 @@ module.exports.updateCategory = async function(req, res) {
         if (bannerImage) {
           fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', bannerImage));
         }
-        if(iconPath){
+        if(iconPath) {
           fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', iconPath));
         }
         return res.status(serviceResponse.notFound).json({ error: serviceResponse.noCategoryParentMessage });
@@ -300,7 +303,8 @@ module.exports.updateCategory = async function(req, res) {
         category_type,
         image_path: imagePath,
         banner_image: bannerImage,
-        icon_path: iconPath
+        icon_path: iconPath,
+        rank: rank,
       }, {
         where: {
           id: categoryId,
@@ -308,12 +312,15 @@ module.exports.updateCategory = async function(req, res) {
         returning: true,
       });
       if (rowCount > 0) {
-        return res.status(serviceResponse.ok).json(updatedCategory[0]);
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, data: updatedCategory[0] });
       } else {
         return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
       }
     }
   } catch (err) {
+    if (err instanceof Sequelize.Error) {
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
+    }
     return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
@@ -346,7 +353,7 @@ module.exports.createMultipleCategory = async function(req, res) {
         const result = await Category.bulkCreate(
             updatedArr,
             {
-              updateOnDuplicate: ['title', 'description', 'parent_id', 'category_type'],
+              updateOnDuplicate: ['title', 'description', 'parent_id', 'category_type', 'rank'],
             },
         );
         if (result) {
@@ -355,7 +362,7 @@ module.exports.createMultipleCategory = async function(req, res) {
           return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorCreatingRecord });
         }
       } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.noCategoryParentMessage });
       }
     }
   } catch (err) {
@@ -378,7 +385,7 @@ module.exports.getSubcategories = async function(req, res) {
       },
     });
     if (categories.length > 0) { // if subcategories exist then simply return sub-categories
-      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage , subCategories: categories, products: [] });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, subCategories: categories, products: [] });
     } else {// if no subcategories then return Product having this id as category_id
       const products = await Product.findAll({
         where: {
@@ -387,7 +394,7 @@ module.exports.getSubcategories = async function(req, res) {
           },
         },
       });
-      return res.status(serviceResponse.ok).json({ message: serviceResponse.errorNotFound , subCategories: [], products: products });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.errorNotFound, subCategories: [], products: products });
     }
   } catch (err) {
     return res.status(500).json({ error: serviceResponse.internalServerErrorMessage });
@@ -452,7 +459,7 @@ module.exports.search = async function(req, res) {
       },
     });
     if (categories.length > 0) {
-      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage , data: categories });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: categories });
     } else {
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }

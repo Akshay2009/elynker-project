@@ -373,30 +373,27 @@ module.exports.search = async function(req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.getAll= async function (req, res) {
+module.exports.getAll= async function(req, res) {
   try {
-      const { page, pageSize } = req.body;
-      if (page && pageSize) {
-          const offset = (page - 1) * pageSize;
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
+    if (page && pageSize) {
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
+    }
 
-          const { count, rows } = await Registration.findAndCountAll({
-              limit: pageSize,
-              offset: offset
-          });
-          if (count > 0) {
-            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-        } else {
-            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-        }
-      } else {
-          const { count, rows } = await Registration.findAndCountAll();
-
-          if (count > 0) {
-            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-        } else {
-            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-        }
-      }
+    const { count, rows } = await Registration.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
+    } else {
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
   } catch (err) {
     console.error('Error retrieving data:', err);
     return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
