@@ -1,26 +1,28 @@
+const { serve } = require('swagger-ui-express');
 const db = require('../models');
 const Sociallinks = db.sociallinks;
 const Registration = db.registration;
 const socialMediaMaster = db.socialMediaMaster;
 const { Op } = require('sequelize');
+const serviceResponse = require('../config/serviceResponse');
 // creating certificate---
 
 module.exports.bulkCreateSociallinks = async function(req, res) {
   const socialLinkArray = req.body;
   const registrationId = req.params.registrationId;
   if (socialLinkArray.length == 0) {
-    return res.status(400).json({ error: 'Please provide data in array' });
+    return res.status(serviceResponse.badRequest).json({ error: 'Please provide data in array' });
   }
   if (!registrationId || registrationId === '') {
-    return res.status(400).json({
+    return res.status(serviceResponse.badRequest).json({
       error:
         'registration id not found,kindly provide correct registration id',
     });
   }
   const regRecord = await Registration.findByPk(registrationId);
   if (!regRecord) {
-    return res.status(404).json({
-      error: 'Registration Record not found',
+    return res.status(serviceResponse.notFound).json({
+      error: serviceResponse.registrationNotFound,
     });
   }
   const socialMediaIdArray = [...new Set(socialLinkArray.map((obj) => obj.socialmedia_id))];
@@ -34,7 +36,7 @@ module.exports.bulkCreateSociallinks = async function(req, res) {
   });
 
   if (socialMediaMasterRecord.length!=socialMediaIdArray.length) {
-    return res.status(400).json({ error: 'Record not exist for provided socialmedia_id in json Array' });
+    return res.status(serviceResponse.badRequest).json({ error: 'Record not exist for provided socialmedia_id in json Array' });
   }
 
 
@@ -49,12 +51,12 @@ module.exports.bulkCreateSociallinks = async function(req, res) {
   });
 
   if (result) {
-    return res.status(201).json({
-      message: 'Sociallinks created successfully',
+    return res.status(serviceResponse.saveSuccess).json({
+      message: serviceResponse.createdMessage,
       data: result,
     });
   } else {
-    return res.status(400).json({
+    return res.status(serviceResponse.badRequest).json({
       error: 'Error updating socialLinks..',
     });
   }
@@ -65,21 +67,21 @@ module.exports.createSociallinks = async function(req, res) {
     req.body;
   const socialMediaMasterRecord = await socialMediaMaster.findByPk(socialmedia_id);
   if (!socialMediaMasterRecord) {
-    return res.status(404).json({
+    return res.status(serviceResponse.notFound).json({
       error:
         'No Social Media Master Found with provided socialmedia_id',
     });
   }
   if (!registrationId || registrationId === '') {
-    return res.status(404).json({
+    return res.status(serviceResponse.notFound).json({
       error:
         'registration id not found,kindly provide correct registration id',
     });
   }
   const regRecord = await Registration.findByPk(registrationId);
   if (!regRecord) {
-    return res.status(404).json({
-      error: 'This Registration  Doesnot exist with this registrationId',
+    return res.status(serviceResponse.notFound).json({
+      error: serviceResponse.registrationNotFound,
     });
   }
 
@@ -92,24 +94,44 @@ module.exports.createSociallinks = async function(req, res) {
     registrationId,
   });
   if (newSociallinks) {
-    return res.status(201).json({
-      message: 'Sociallinks created successfully',
+    return res.status(serviceResponse.saveSuccess).json({
+      message: serviceResponse.createdMessage,
       data: newSociallinks,
     });
   } else {
-    return res.status(400).json({
-      error: 'Sociallinks not created',
+    return res.status(serviceResponse.badRequest).json({
+      error: serviceResponse.errorCreatingRecord,
     });
   }
 };
 
 // /getting all sociallinks --
-module.exports.getSociallinks = async function(req, res) {
-  const sociallinks = await Sociallinks.findAll({});
-  if (sociallinks.length>0) {
-    return res.status(200).json(sociallinks);
-  } else {
-    return res.status(404).json({ error: 'No social links Returned' });
+module.exports.getSociallinks = async function (req, res) {
+  try {
+      const { page, pageSize } = req.body;
+      if (page && pageSize) {
+          const offset = (page - 1) * pageSize;
+
+          const { count, rows } = await Sociallinks.findAndCountAll({
+              limit: pageSize,
+              offset: offset
+          });
+          if (count > 0) {
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+        } else {
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
+      } else {
+          const { count, rows } = await Sociallinks.findAndCountAll();
+          if (count > 0) {
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+        } else {
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
+      }
+  } catch (err) {
+      console.error('Error retrieving data:', err);
+      return res.status(apiStatus.internalServerError).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -119,9 +141,9 @@ module.exports.getSociallinksByRegistrationId = async function(req, res) {
     where: { registrationId: registrationId },
   });
   if (sociallinks.length > 0) {
-    return res.status(200).json({ message: 'Social Links', data: sociallinks });
+    return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: sociallinks });
   } else {
-    return res.status(404).json({ error: 'No social links with this Registration ID' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -133,9 +155,9 @@ module.exports.getSociallinksById = async function(req, res) {
   });
 
   if (SociallinksDetails) {
-    return res.status(200).json({ message: 'Social Links', data: SociallinksDetails });
+    return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: SociallinksDetails });
   } else {
-    return res.status(404).json({ error: 'Social Links Details not found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -147,18 +169,18 @@ module.exports.updateSociallinksById = async function(req, res) {
     req.body;
   const socialMediaMasterRecord = await socialMediaMaster.findByPk(socialmedia_id);
   if (!socialMediaMasterRecord) {
-    return res.status(404).json({
+    return res.status(serviceResponse.notFound).json({
       error:
         'No Social Media Master Found with provided socialmedia_id',
     });
   }
   if (!registrationId || registrationId === '') {
-    return res.status(404).json({ error: 'registrationId  is not provided' });
+    return res.status(serviceResponse.notFound).json({ error: 'registrationId  is not provided' });
   }
   const regRecord = await Registration.findByPk(registrationId);
   if (!regRecord) {
-    return res.status(404).json({
-      error: 'This Registration  Doesnot exist with this registrationId',
+    return res.status(serviceResponse.notFound).json({
+      error: serviceResponse.registrationNotFound,
     });
   }
   
@@ -176,12 +198,12 @@ module.exports.updateSociallinksById = async function(req, res) {
     returning: true,
   });
   if (rowUpdated > 0) {
-    return res.status(200).json({
-      message: 'Social links record updated successfully',
+    return res.status(serviceResponse.ok).json({
+      message: serviceResponse.updatedMessage,
       data: record[0],
     });
   }else{
-    return res.status(404).json({ error: 'No SocialLink record found with this social_id' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -197,9 +219,9 @@ module.exports.delSociallinksById = async function(req, res) {
     where: { id: social_id },
   });
   if (delSocialLink === 0) {
-    return res.status(404).json({ error: 'Social link not found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
-  return res.status(200).json({ message: 'Social link deleted successfully' });
+  return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage });
 };
 
 /**
@@ -214,9 +236,9 @@ module.exports.delSociallinksByRegId = async function(req, res) {
     where: { registrationId: reg_id },
   });
   if (delSocialLink === 0) {
-    return res.status(404).json({ error: 'No records found for provided regstration Id' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
-  return res.status(200).json({ message: ' Social link deleted successfully with Provided Registration Id' });
+  return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage });
 };
 
 
@@ -232,7 +254,7 @@ module.exports.search = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!Sociallinks.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const records = await Sociallinks.findAll({
       where: {
@@ -240,14 +262,14 @@ module.exports.search = async function(req, res) {
       },
     });
     if (records.length > 0) {
-      return res.status(200).json({ message: 'Fetched Records', data: records });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.notFound).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };

@@ -5,6 +5,7 @@ const Registration = db.registration;
 const Sequelize = db.Sequelize;
 const Op = db.Sequelize.Op;
 const logErrorToFile = require('../logger');
+const serviceResponse = require('../config/serviceResponse');
 
 /**
  * Update user details in the database.
@@ -30,9 +31,9 @@ module.exports.updateUser = async function(req, res) {
     },
   );
   if (numberOfUpdatedRows > 0) {
-    return res.status(200).json(updatedRecords[0]);
+    return res.status(serviceResponse.ok).json(updatedRecords[0]);
   } else {
-    return res.status(404).json({ error: 'User Not Found with this id' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -46,12 +47,11 @@ module.exports.updateUser = async function(req, res) {
 
 module.exports.getUserById = async function(req, res) {
   const userId = req.params.id;
-  console.log(userId);
   const user = await User.findByPk(userId);
   if (user) {
-    return res.status(200).json(user);
+    return res.status(serviceResponse.ok).json(user);
   } else {
-    return res.status(404).json({ error: 'User Not Found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 /**
@@ -66,7 +66,7 @@ module.exports.delUserById = async function(req, res) {
   // Fetch the user before deleting
   const userToDelete = await User.findByPk(id);
   if (!userToDelete) {
-    return res.status(404).json({ message: 'User not found' });
+    return res.status(serviceResponse.notFound).json({ message: serviceResponse.errorNotFound });
   }
 
   // Now, delete the user
@@ -79,10 +79,10 @@ module.exports.delUserById = async function(req, res) {
   });
   if (deletedUser) {
     return res
-      .status(200)
+      .status(serviceResponse.ok)
       .json({ message: 'User deleted successfully', userToDelete });
   } else {
-    return res.status(404).json({ message: 'User not found' });
+    return res.status(serviceResponse.notFound).json({ message: serviceResponse.errorNotFound });
   }
 };
 
@@ -99,7 +99,7 @@ module.exports.search = async function(req, res) {
     console.log(req.params);
     const { fieldName, fieldValue } = req.params;
     if (!User.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const users = await User.findAll({
       where: {
@@ -107,15 +107,15 @@ module.exports.search = async function(req, res) {
       },
     });
     if (users.length > 0) {
-      return res.status(200).json({ message: 'Fetched Records', data: users });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: users });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -128,20 +128,33 @@ module.exports.search = async function(req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.getAllUser = async function(req, res) {
+
+module.exports.getAllUser = async function (req, res) {
   try {
-    const UserRecords = await User.findAll({});
-    if (UserRecords.length > 0) {
-      return res
-        .status(200)
-        .json({ message: 'Details fetched successfully', data: UserRecords });
+    const { page, pageSize } = req.body;
+    if (page && pageSize) {
+      const offset = (page - 1) * pageSize;
+
+      const { count, rows } = await User.findAndCountAll({
+        limit: pageSize,
+        offset: offset
+      });
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+      } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+      }
     } else {
-      return res
-        .status(404)
-        .json({ error: 'details not found' });
+      const { count, rows } = await User.findAndCountAll();
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+      } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+      }
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error retrieving data:', err);
+    return res.status(apiStatus.internalServerError).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -156,7 +169,7 @@ module.exports.userCreateByAdmin = async function (req, res) {
   try {
     const { email, name, city, country_code, mobile_number, username, is_active, roles } = req.body;
     if(!roles){
-      return res.status(400).json({ error: 'Role Not Given'});
+      return res.status(serviceResponse.badRequest).json({ error: 'Role Not Given'});
     }
     const rolesRecord = await Role.findAll({
       where: {
@@ -166,7 +179,7 @@ module.exports.userCreateByAdmin = async function (req, res) {
       },
     });
     if(rolesRecord.length===0){
-      return res.status(404).json({ error: 'No Roles Found'});
+      return res.status(serviceResponse.notFound).json({ error: 'No Roles Found'});
     }
     const user = await User.create({
       email: email,
@@ -184,19 +197,19 @@ module.exports.userCreateByAdmin = async function (req, res) {
       for (let i = 0; i < userRoles.length; i++) {
         authorities.push('ROLE_' + userRoles[i].name.toUpperCase());
       }
-      return res.status(201).json({ message:'User Created By Admin', user:user, roles:authorities });
+      return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage , user:user, roles:authorities });
     }else{
-      return res.status(400).json({ error: 'Error in creating user by admin'});
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorCreatingRecord});
     }
 
   } catch (err) {
     logErrorToFile.logErrorToFile(err, 'user.controller', 'createAdminUser');
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.errors[0].message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message+" "+err.errors[0].message});
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
-}
+};
 
 /**
  * Update User By admin 
@@ -210,7 +223,7 @@ module.exports.updateUserByAdminById = async function(req,res){
     const id = req.params.id;
     const user = await User.findByPk(id);
     if(!user){
-      return res.status(404).json({ error:' No user with this id'})
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound})
     }
     const { email, name, city, country_code, mobile_number, username, is_active, roles } = req.body;
     let rolesRecord =  await user.getRoles();
@@ -223,7 +236,7 @@ module.exports.updateUserByAdminById = async function(req,res){
         },
       });
       if (rolesRecord.length === 0) {
-        return res.status(404).json({ error: 'No Roles Found' });
+        return res.status(serviceResponse.notFound).json({ error: 'No Roles Found' });
       }
     }    
     const [row, record] = await User.update({
@@ -247,17 +260,17 @@ module.exports.updateUserByAdminById = async function(req,res){
       for (let i = 0; i < userRoles.length; i++) {
         authorities.push('ROLE_' + userRoles[i].name.toUpperCase());
       }
-      return res.status(200).json({ message:'User Updated By Admin', user:record[0], roles:authorities });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, user:record[0], roles:authorities });
     }else{
-      return res.status(404).json({ error: 'No User Found with provide id'})
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound })
     }
 
   } catch (err) {
     logErrorToFile.logErrorToFile(err, 'user.controller', 'updateUserByAdminById');
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.errors[0].message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message+" "+err.errors[0].message});
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 }
 
@@ -278,15 +291,15 @@ module.exports.deleteUserByAdminById = async function(req,res){
       }
     });
     if(row){
-      return res.status(200).json({ message:'User Deleted by Admin',user: userToDelete});
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage , user: userToDelete });
     }else{
-      return res.status(400).json({ error: 'No User with the id present'})
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     logErrorToFile.logErrorToFile(err, 'user.controller', 'updateUserByAdminById');
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.errors[0].message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message+" "+err.errors[0].message});
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: 'Internal Server Error' });
   }
-}
+};

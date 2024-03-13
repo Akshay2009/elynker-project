@@ -2,6 +2,7 @@ const db = require('../models');
 const Role = db.role;
 const Sequelize = db.Sequelize;
 const logErrorToFile = require('../logger');
+const serviceResponse = require('../config/serviceResponse');
 
 /**
  * Save Role details in the database.
@@ -20,16 +21,16 @@ module.exports.saveRole = async function(req, res) {
             permissions: permissions,
         });
         if (record) {
-            return res.status(201).json({ message: 'Role Record Created Successfully', data: record });
+            return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage, data: record });
         } else {
-            return res.status(400).json({ error: 'Role Record not Created' });
+            return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorCreatingRecord });
         }
     } catch (err) {
-        logErrorToFile.logErrorToFile(err, 'route.controller', 'saveRole');
+        logErrorToFile.logErrorToFile(err, 'role.controller', 'saveRole');
         if (err instanceof Sequelize.Error) {
-            return res.status(400).json({ error: err.message });
+            return res.status(serviceResponse.badRequest).json({ error: err.message });
         }
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     }
 };
 
@@ -54,16 +55,16 @@ module.exports.updateRole = async function(req, res) {
             returning: true,
         });
         if (row > 0) {
-            return res.status(200).json({ message: 'Role Record Updated', data: record[0] });
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, data: record[0] });
         } else {
-            return res.status(404).json({ error: 'Role Record not found with the id provided' });
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
     } catch (err) {
-        logErrorToFile.logErrorToFile(err, 'route.controller', 'updateRole');
+        logErrorToFile.logErrorToFile(err, 'role.controller', 'updateRole');
         if (err instanceof Sequelize.Error) {
-            return res.status(400).json({ error: err.message });
+            return res.status(serviceResponse.badRequest).json({ error: err.message });
         }
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     }
 };
 
@@ -79,7 +80,7 @@ module.exports.deleteRole = async function(req, res) {
         const id = req.params.id;
         const recordToDelete = await Role.findOne({ where: { id: id } });
         if (!recordToDelete) {
-            return res.status(404).json({ error: 'No Role Record found with the id provided' });
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
         const deletedRecord = await Role.destroy({
             where: {
@@ -87,16 +88,16 @@ module.exports.deleteRole = async function(req, res) {
             },
         });
         if (deletedRecord > 0) {
-            return res.status(200).json({ message: 'Role Deleted Successfully with the id provided', data: recordToDelete });
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage, data: recordToDelete });
         } else {
-            return res.status(400).json({ error: 'Could not delete Role Record with the id provided' });
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
     } catch (err) {
-        logErrorToFile.logErrorToFile(err, 'route.controller', 'deleteRole');
+        logErrorToFile.logErrorToFile(err, 'role.controller', 'deleteRole');
         if (err instanceof Sequelize.Error) {
-            return res.status(400).json({ error: err.message });
+            return res.status(serviceResponse.badRequest).json({ error: err.message });
         }
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     }
 };
 
@@ -109,20 +110,37 @@ module.exports.deleteRole = async function(req, res) {
  */
 module.exports.getAll = async function(req, res) {
     try {
-        const records = await Role.findAll({});
-        if (records.length > 0) {
-            return res.status(200).json({ message: 'Fetched Records', data: records });
+        const { page, pageSize } = req.body;
+        if (page && pageSize) {
+            const offset = (page - 1) * pageSize;
+
+            const { count, rows } = await Role.findAndCountAll({
+                limit: pageSize,
+                offset: offset
+            });
+            if (count > 0) {
+                return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+            } else {
+                return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+            }
         } else {
-            return res.status(400).json({ error: 'No Record Found' });
+            const { count, rows } = await Role.findAndCountAll();
+
+            if (count > 0) {
+                return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+            } else {
+                return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+            }
         }
     } catch (err) {
-        logErrorToFile.logErrorToFile(err, 'route.controller', 'getAll');
+        logErrorToFile.logErrorToFile(err, 'role.controller', 'getAll');
         if (err instanceof Sequelize.Error) {
-            return res.status(400).json({ error: err.message });
+            return res.status(serviceResponse.badRequest).json({ error: err.message });
         }
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     }
 };
+
 
 /**
  * Search Role details by ID from the database.
@@ -140,16 +158,16 @@ module.exports.getRoleById = async function(req, res) {
             },
         });
         if (record) {
-            return res.status(200).json({ message: 'Fetched Record', data: record });
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: record });
         } else {
-            return res.status(400).json({ error: 'No Role Record found with the id provided' });
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
     } catch (err) {
-        logErrorToFile.logErrorToFile(err, 'route.controller', 'getRoleById');
+        logErrorToFile.logErrorToFile(err, 'role.controller', 'getRoleById');
         if (err instanceof Sequelize.Error) {
-            return res.status(400).json({ error: err.message });
+            return res.status(serviceResponse.badRequest).json({ error: err.message });
         }
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     }
 };
 
@@ -165,7 +183,7 @@ module.exports.search = async function(req, res) {
     try {
         const { fieldName, fieldValue } = req.params;
         if (!Role.rawAttributes[fieldName]) {
-            return res.status(400).json({ error: 'Invalid field name' });
+            return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
         }
         const records = await Role.findAll({
             where: {
@@ -173,15 +191,15 @@ module.exports.search = async function(req, res) {
             },
         });
         if (records.length > 0) {
-            return res.status(200).json({ message: 'Fetched Records', data: records });
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
         } else {
-            return res.status(404).json({ error: 'No record found' });
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
     } catch (err) {
-        logErrorToFile.logErrorToFile(err, 'route.controller', 'search');
+        logErrorToFile.logErrorToFile(err, 'role.controller', 'search');
         if (err instanceof Sequelize.Error) {
-            return res.status(400).json({ error: err.message });
+            return res.status(serviceResponse.badRequest).json({ error: err.message });
         }
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     }
 };

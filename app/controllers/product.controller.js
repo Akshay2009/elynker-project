@@ -10,7 +10,7 @@ const axios = require('axios');
 const { Op } = require('sequelize');
 require('dotenv').config();
 const PRODUCT_IMAGE_PATH = path.join(process.env.PRODUCT_IMAGE_PATH);
-
+const serviceResponse = require('../config/serviceResponse');
 
 /**
  method to generate unique SKU in form SKU_****
@@ -48,17 +48,32 @@ async function downloadImage(imageUrl, imageName) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getAllProducts = async function(req, res) {
+module.exports.getAllProducts = async function (req, res) {
   try {
-    const products = await Product.findAll({});
-    if (products.length>0) {
-      return res.status(200).json(products);
+    const { page, pageSize } = req.body;
+    if (page && pageSize) {
+      const offset = (page - 1) * pageSize;
+
+      const { count, rows } = await Product.findAndCountAll({
+        limit: pageSize,
+        offset: offset
+      });
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+      } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+      }
     } else {
-      return res.status(400).json({ error: 'No Product Found' });
+      const { count, rows } = await Product.findAndCountAll();
+
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+      } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+      }
     }
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error ' + error.message });
+  } catch (err) {
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -77,13 +92,12 @@ module.exports.getProductBySKU = async function(req, res) {
       },
     });
     if (products) {
-      return res.status(200).json(products);
+      return res.status(serviceResponse.ok).json(products);
     } else {
-      return res.status(400).json({ error: 'No Product Found' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
     }
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error ' + error.message });
+    return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -98,13 +112,13 @@ module.exports.createProduct = async function(req, res) {
   try {
     const { type, registrationId } = req.body;
     if (!req.files['csvFilePath']) {
-      return res.status(400).json({ error: 'Please Provide CSV' });
+      return res.status(serviceResponse.badRequest).json({ error: 'Please Provide CSV' });
     }
     if (!registrationId) {
-      return res.status(400).json({ error: 'Registration ID Not provided' });
+      return res.status(serviceResponse.badRequest).json({ error: 'Registration ID Not provided' });
     }
     if (!type) {
-      return res.status(400).json({ error: 'Type not Provided - Product/Service' });
+      return res.status(serviceResponse.badRequest).json({ error: 'Type not Provided - Product/Service' });
     }
 
     let categoryIds;
@@ -175,13 +189,13 @@ module.exports.createProduct = async function(req, res) {
         }
       }
 
-      return res.status(200).json({ message: 'Products Data inserted successfully using CSV' });
+      return res.status(serviceResponse.saveSuccess).json({ message: 'Products Data inserted successfully using CSV' });
     } else {
-      return res.status(500).json({ message: 'CSV file not provided' });
+      return res.status(serviceResponse.badRequest).json({ message: 'CSV file not provided' });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Internal server error ' + error.message });
+    return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -210,22 +224,22 @@ module.exports.createProductsSingleRecord = async function(req, res) {
     const { type, registrationId, title, description, budget, moq, category_id, unit, year_of_exp,
       portfolio_link } = req.body;
     if (!req.files['images']) {
-      return res.status(400).json({ error: 'Please Provide Product Images' });
+      return res.status(serviceResponse.badRequest).json({ error: 'Please Provide Product Images' });
     }
     if (!registrationId) {
-      return res.status(400).json({ error: 'Registration ID Not provided' });
+      return res.status(serviceResponse.badRequest).json({ error: 'Registration ID Not provided' });
     }
     if (!category_id) {
-      return res.status(400).json({ error: 'No category Provided' });
+      return res.status(serviceResponse.badRequest).json({ error: 'No category Provided' });
     }
     if (!type) {
-      return res.status(400).json({ error: 'Type not Provided - Product/Service' });
+      return res.status(serviceResponse.badRequest).json({ error: 'Type not Provided - Product/Service' });
     }
     const regRecord = await Registration.findOne({
       where: { id: registrationId },
     });
     if (!regRecord) {
-      return res.status(404).json({ error: 'Registration Doesnot Exist' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.registrationNotFound });
     }
     const imageFileNames = req.files['images'].map((file) => path.basename(file.path));
     const sku = generateUniqueSKU();
@@ -238,7 +252,7 @@ module.exports.createProductsSingleRecord = async function(req, res) {
       },
     });
     if (categories.length == 0) {
-      return res.status(400).json({ error: 'No category with this id' });
+      return res.status(serviceResponse.badRequest).json({ error: 'No category with this id' });
     }
 
     const catArray = [];
@@ -263,13 +277,12 @@ module.exports.createProductsSingleRecord = async function(req, res) {
     if (product) {
       // Associate the product with categories
       await product.addCategories(categories);
-      return res.status(201).json(product);
+      return res.status(serviceResponse.saveSuccess).json(product);
     } else {
-      return res.status(400).json({ error: 'Product not inserted' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorCreatingRecord });
     }
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error ' + error.message });
+    return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -284,19 +297,19 @@ module.exports.updateProducts = async function(req, res) {
     const sku = req.params.sku;
     const { title, type, description, budget, moq, category_id, registrationId, unit, year_of_exp, portfolio_link } = req.body;
     if (!registrationId) {
-      return res.status(400).json({ error: 'Registration ID Not provided' });
+      return res.status(serviceResponse.badRequest).json({ error: 'Registration ID Not provided' });
     }
     if (!category_id) {
-      return res.status(400).json({ error: 'No category Provided' });
+      return res.status(serviceResponse.badRequest).json({ error: 'No category Provided' });
     }
     if (type !=1 && type != 2) {
-      return res.status(400).json({ error: 'Type must be either 1 or 2' });
+      return res.status(serviceResponse.badRequest).json({ error: 'Type must be either 1 or 2' });
     }
     const regRecord = await Registration.findOne({
       where: { id: registrationId },
     });
     if (!regRecord) {
-      return res.status(404).json({ error: 'Registration Does not Exist' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.registrationNotFound });
     }
     // Split comma-separated category IDs into an array
     const categoryIdsArray = category_id.split(',');
@@ -306,7 +319,7 @@ module.exports.updateProducts = async function(req, res) {
       },
     });
     if (categories.length == 0) {
-      return res.status(400).json({ error: 'No category with this id' });
+      return res.status(serviceResponse.badRequest).json({ error: 'No category with this id' });
     }
 
     const catArray = [];
@@ -331,7 +344,7 @@ module.exports.updateProducts = async function(req, res) {
     };
     const existingProduct = await Product.findOne({ where: { sku: sku } });
     if (!existingProduct) {
-      return res.status(404).json({ error: 'No Product found with this sku' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
     const existingProductImages = existingProduct.product_images.split(',');
     let existingProductImagesString;
@@ -372,12 +385,12 @@ module.exports.updateProducts = async function(req, res) {
     if (rowUpdated > 0) {
       // Update associations
       await productUpdated[0].setCategories(categories);
-      return res.status(200).json(productUpdated[0]);
+      return res.status(serviceResponse.ok).json(productUpdated[0]);
     } else {
-      return res.status(404).json({ error: 'No Product found with this sku' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error ' + err.message });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -390,13 +403,12 @@ module.exports.getProductByRegistrationId = async function(req, res) {
       },
     });
     if (products.length > 0) {
-      return res.status(200).json(products);
+      return res.status(serviceResponse.ok).json(products);
     } else {
-      return res.status(404).json({ error: 'No Product Found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Internal server error ' + error.message });
+    return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -409,7 +421,7 @@ module.exports.deleteProductBySku = async function(req, res) {
       },
     });
     if (!productToDelete) {
-      return res.status(404).json({ error: 'No Product found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
     if (productToDelete) {
       const existingProductImages = productToDelete.product_images.split(',');
@@ -425,12 +437,12 @@ module.exports.deleteProductBySku = async function(req, res) {
       raw: true,
     });
     if (deletedProduct) {
-      return res.status(200).json({ message: 'Product Deleted Successfully', product: productToDelete });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage, product: productToDelete });
     } else {
-      return res.status(400).json({ error: 'No Product Deleted' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error ' + err.message });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -440,7 +452,7 @@ module.exports.delProductImages=async function(req, res) {
     const { image_name }=req.body;
     const product = await Product.findByPk(product_id);
     if (!product) {
-      return res.status(404).json({ error: 'product id not found kindly check!' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
     const productArray=product.product_images.split(',');
     const productArrayUpdated = productArray.filter((product) => product!== image_name);
@@ -459,12 +471,12 @@ module.exports.delProductImages=async function(req, res) {
     });
     if (rowUpdated>0) {
       fs.unlinkSync(path.join(__dirname, '../..', PRODUCT_IMAGE_PATH, '/', image_name));
-      return res.status(200).json({ message: 'Product updated', product: productUpdated[0] });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, product: productUpdated[0] });
     } else {
-      return res.status(400).json({ error: 'Error in deleting Product Images' });
+      return res.status(serviceResponse.badRequest).json({ error: 'Error in deleting Product Images' });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error ' + err.message });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -516,12 +528,12 @@ module.exports.getParentCategory = async function(req, res) {
           },
         },
       });
-      return res.status(200).json({ message: 'Parent Categories', data: firstLevelCat });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: firstLevelCat });
     } else {
-      return res.status(404).json({ error: 'No Product Found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -538,7 +550,7 @@ module.exports.search = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!Product.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const records = await Product.findAll({
       where: {
@@ -546,14 +558,14 @@ module.exports.search = async function(req, res) {
       },
     });
     if (records.length > 0) {
-      return res.status(200).json({ message: 'Fetched Records', data: records });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };

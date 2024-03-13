@@ -6,6 +6,7 @@ const fs = require('fs');
 
 require('dotenv').config();
 const USERS_BANNER_PATH = path.join(process.env.USERS_BANNER_PATH);
+const serviceResponse = require('../config/serviceResponse');
 
 
 /**
@@ -20,7 +21,7 @@ module.exports.createUsersBanner = async function(req, res) {
     if (req.files['images']) {
       fs.unlinkSync(path.join(__dirname, '../..', USERS_BANNER_PATH, '/', req.files['images'][0].filename));
     }
-    return res.status(404).json({ error: 'Registration not exist or Registration is not freelancer type' });
+    return res.status(apiStatus.badRequest).json({ error: 'Registration not exist or Registration is not freelancer type' });
   }
   const { banner_name } = req.body;
   if (!banner_name) {
@@ -39,12 +40,12 @@ module.exports.createUsersBanner = async function(req, res) {
       registrationId: registrationId,
     });
     if (userBanner) {
-      return res.status(201).json({ message: 'Banner Record Created', data: userBanner });
+      return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage, data: userBanner });
     } else {
-      return res.status(400).json({ error: 'Banner Record not created' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorCreatingRecord });
     }
   } else {
-    return res.status(400).json({ error: 'Banner Image not provided' });
+    return res.status(serviceResponse.badRequest).json({ error: 'Banner Image not provided' });
   }
 };
 
@@ -58,7 +59,7 @@ module.exports.updateUsersBanner = async function(req, res) {
   const userBannerId = req.params.userBannerId;
   const userBanner = await FreelancerBannerProject.findByPk(userBannerId);
   if (!userBanner) {
-    return res.status(404).json({ error: 'No record found with provided userBannerId' });
+    return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
   }
   const { banner_name, registrationId } = req.body;
   let reg_id = userBanner.registrationId;
@@ -70,7 +71,7 @@ module.exports.updateUsersBanner = async function(req, res) {
     if (req.files['images']) {
       fs.unlinkSync(path.join(__dirname, '../..', USERS_BANNER_PATH, '/', req.files['images'][0].filename));
     }
-    return res.status(404).json({ error: 'Registration not exist or Registration is not freelancer type' });
+    return res.status(serviceResponse.badRequest).json({ error: 'Registration not exist or Registration is not freelancer type' });
   }
 
   let bannerImages;
@@ -92,9 +93,9 @@ module.exports.updateUsersBanner = async function(req, res) {
       returning: true,
     });
     if (row>0) {
-      return res.status(200).json({ message: 'UserBanner Updated Successfully', data: bannerRecord[0] });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, data: bannerRecord[0] });
     } else {
-      return res.status(400).json({ error: 'Record not updated' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
     }
   } else {
     const [row, bannerRecord] = await FreelancerBannerProject.update({
@@ -107,9 +108,9 @@ module.exports.updateUsersBanner = async function(req, res) {
       returning: true,
     });
     if (row>0) {
-      return res.status(200).json({ message: 'UserBanner Updated Successfully', data: bannerRecord[0] });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, data: bannerRecord[0] });
     } else {
-      return res.status(400).json({ error: 'Record not updated' });
+      return res.status(400).json({ error: serviceResponse.errorNotFound });
     }
   }
 };
@@ -127,9 +128,9 @@ module.exports.getUsersBannerById = async function(req, res) {
     },
   });
   if (bannerUserRecord) {
-    return res.status(200).json({ message: 'Fetched Record', data: bannerUserRecord });
+    return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: bannerUserRecord });
   } else {
-    return res.status(400).json({ error: 'No UserBanner Record with id Present' });
+    return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -146,9 +147,9 @@ module.exports.getUsersBannerByRegistrationId = async function(req, res) {
     },
   });
   if (bannerUserRecord) {
-    return res.status(200).json({ message: 'UsersBanner Record with Registration Id', data: bannerUserRecord });
+    return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: bannerUserRecord });
   } else {
-    return res.status(400).json({ error: 'No UserBanner Record with Registration id Present' });
+    return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -165,7 +166,7 @@ module.exports.deleteUsersBanner = async function(req, res) {
     },
   });
   if (!userBannerToDelete) {
-    return res.status(404).json({ error: 'No Product found' });
+    return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
   }
   if (userBannerToDelete.banner_image) {
     fs.unlinkSync(path.join(__dirname, '../..', USERS_BANNER_PATH, '/', userBannerToDelete.banner_image));
@@ -178,9 +179,9 @@ module.exports.deleteUsersBanner = async function(req, res) {
     raw: true,
   });
   if (deletedUserBanner) {
-    return res.status(200).json({ message: 'UserBanner Deleted Successfully', data: userBannerToDelete });
+    return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage, data: userBannerToDelete });
   } else {
-    return res.status(401).json({ error: 'No UserBanner Deleted' });
+    return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound});
   }
 };
 
@@ -196,7 +197,7 @@ module.exports.search = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!FreelancerBannerProject.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const records = await FreelancerBannerProject.findAll({
       where: {
@@ -204,15 +205,15 @@ module.exports.search = async function(req, res) {
       },
     });
     if (records.length > 0) {
-      return res.status(200).json({ message: 'Fetched Records', data: records });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage});
   }
 };
 
@@ -225,15 +226,33 @@ module.exports.search = async function(req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.getAll = async function(req, res) {
+module.exports.getAll= async function (req, res) {
   try {
-    const records = await FreelancerBannerProject.findAll({});
-    if (records.length > 0) {
-      return res.status(200).json({ message: 'Details fetched successfully', data: records });
-    } else {
-      return res.status(404).json({ error: 'details not found' });
-    }
+      const { page, pageSize } = req.body;
+      if (page && pageSize) {
+          const offset = (page - 1) * pageSize;
+
+          const { count, rows } = await FreelancerBannerProject.findAndCountAll({
+              limit: pageSize,
+              offset: offset
+          });
+          if (count > 0) {
+              return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+          } else {
+              return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+          }
+      } else {
+          const { count, rows } = await FreelancerBannerProject.findAndCountAll();
+
+          if (count > 0) {
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+        } else {
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
+      }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error retrieving data:', err);
+      return res.status(apiStatus.internalServerError).json({ error: 'Internal Server Error' });
   }
 };
+

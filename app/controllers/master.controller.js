@@ -12,6 +12,7 @@ const SOCIAL_MEDIA_MASTER_PATH = path.join(
     process.env.SOCIAL_MEDIA_MASTER_PATH,
 );
 const { Sequelize } = require('sequelize');
+const serviceResponse = require('../config/serviceResponse');
 
 /**
  * Controller function to save City Master details---
@@ -25,8 +26,8 @@ module.exports.saveCityMaster = async function(req, res) {
     name: name,
   });
   return res
-      .status(201)
-      .json({ message: 'City Record saved Succesfully', data: cityRecord });
+      .status(serviceResponse.saveSuccess)
+      .json({ message: serviceResponse.createdMessage , data: cityRecord });
 };
 
 /**
@@ -35,9 +36,34 @@ module.exports.saveCityMaster = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getAllCityMasters = async function(req, res) {
-  const allCityRecords = await CityMaster.findAll();
-  return res.status(200).json({ message: 'Details fetched successfully', data: allCityRecords });
+module.exports.getAllCityMasters = async function (req, res) {
+  try {
+    const { page, pageSize } = req.body;
+    if (page && pageSize) {
+      const offset = (page - 1) * pageSize;
+
+      const { count, rows } = await CityMaster.findAndCountAll({
+        limit: pageSize,
+        offset: offset
+      });
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+    } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+    } else {
+      const { count, rows } = await CityMaster.findAndCountAll();
+
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+    } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+    }
+  } catch (err) {
+    console.error('Error retrieving data:', err);
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
+  }
 };
 
 // city master controller getting data by ID from database---
@@ -47,9 +73,9 @@ module.exports.getCityMasters = async function(req, res) {
   if (id) {
     const cityRecord = await CityMaster.findByPk(id);
     if (!cityRecord) {
-      return res.status(404).json({ error: 'City not found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
-    return res.status(200).json({ message: 'Details fetched successfully', data: cityRecord });
+    return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage , data: cityRecord });
   }
 };
 
@@ -66,15 +92,15 @@ module.exports.updateCityMasterById = async function(req, res) {
   if (updatedRows > 0) {
     const updatedMaster = await CityMaster.findByPk(id);
     if (updatedMaster) {
-      return res.status(200).json({
-        message: 'city updated successfully',
+      return res.status(serviceResponse.ok).json({
+        message: serviceResponse.updatedMessage ,
         data: updatedMaster.toJSON(),
       });
     } else {
-      return res.status(404).json({ error: 'city not found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } else {
-    return res.status(404).json({ error: 'city not found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -87,9 +113,9 @@ module.exports.delCityMaster = async function(req, res) {
   const { city_id } = req.params;
   const delCity = await CityMaster.destroy({ where: { id: city_id } });
   if (delCity == 0) {
-    return res.status(404).json({ error: 'city not found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
-  return res.status(200).json({ message: 'City deleted successfully' });
+  return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage });
 };
 
 /**
@@ -98,9 +124,34 @@ module.exports.delCityMaster = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getAllcurrencyMaster = async function(req, res) {
-  const allCurrencyRecords = await CurrencyMaster.findAll();
-  return res.status(200).json({ message: 'Details Fetched successfully', data: allCurrencyRecords });
+module.exports.getAllcurrencyMaster = async function (req, res) {
+  try {
+    const { page, pageSize } = req.body;
+    if (page && pageSize) {
+      const offset = (page - 1) * pageSize;
+
+      const { count, rows } = await CurrencyMaster.findAndCountAll({
+        limit: pageSize,
+        offset: offset
+      });
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+    } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+    } else {
+      const { count, rows } = await CurrencyMaster.findAndCountAll();
+
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+    } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+    }
+  } catch (err) {
+    console.error('Error retrieving data:', err);
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
+  }
 };
 /**
  * Controller function to Get currency Master details by ID--
@@ -111,9 +162,9 @@ module.exports.getcurrencyMasterById = async function(req, res) {
   const id = req.params.id;
   const currency = await CurrencyMaster.findByPk(id);
   if (currency) {
-    return res.status(200).json({ message: 'Details Fetched successfully', data: currency });
+    return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: currency });
   } else {
-    return res.status(404).json({ error: 'Currency Record not found' });
+    return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -131,8 +182,8 @@ module.exports.createCurrencyMaster = async function(req, res) {
     prefix_sign,
     country_name,
   });
-  return res.status(201).json({
-    message: 'Currency record created successfully',
+  return res.status(serviceResponse.saveSuccess).json({
+    message: serviceResponse.createdMessage,
     data: newCurrencyRecord,
   });
 };
@@ -147,7 +198,7 @@ module.exports.updateCurrencyMasterById = async function(req, res) {
   const { name, prefix, prefix_sign, country_name } = req.body;
   const existingCurrencyRecord = await CurrencyMaster.findByPk(id);
   if (!existingCurrencyRecord) {
-    return res.status(404).json({ error: 'Currency Record not found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
   await existingCurrencyRecord.update({
     name,
@@ -155,8 +206,8 @@ module.exports.updateCurrencyMasterById = async function(req, res) {
     prefix_sign,
     country_name,
   });
-  return res.status(200).json({
-    message: 'Currency record updated successfully',
+  return res.status(serviceResponse.ok).json({
+    message: serviceResponse.updatedMessage,
     data: existingCurrencyRecord,
   });
 };
@@ -172,8 +223,8 @@ module.exports.createStateMaster = async function(req, res) {
   const newStateRecord = await StateMaster.create({
     name,
   });
-  return res.status(201).json({
-    message: 'State record created successfully',
+  return res.status(serviceResponse.saveSuccess).json({
+    message: serviceResponse.createdMessage ,
     data: newStateRecord,
   });
 };
@@ -183,14 +234,35 @@ module.exports.createStateMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getAllStateMaster = async function(req, res) {
-  const getStateRecords = await StateMaster.findAll();
-  if (getStateRecords.length > 0) {
-    return res.status(200).json({ message: 'Details fetched successfully', data: getStateRecords });
-  } else {
-    return res.status(404).json({ error: 'state master record not found' });
+module.exports.getAllStateMaster = async function (req, res) {
+  try {
+    const { page, pageSize } = req.body;
+    if (page && pageSize) {
+      const offset = (page - 1) * pageSize;
+
+      const { count, rows } = await StateMaster.findAndCountAll({
+        limit: pageSize,
+        offset: offset
+      });
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+    } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+    } else {
+      const { count, rows } = await StateMaster.findAndCountAll();
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+    } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+    }
+  } catch (err) {
+    console.error('Error retrieving data:', err);
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
+
 
 /**
  * Controller function to get State Master details by Id--
@@ -201,9 +273,9 @@ module.exports.getStateMasterById = async function(req, res) {
   const { id } = req.params;
   const getStateRecords = await StateMaster.findByPk(id);
   if (getStateRecords) {
-    return res.status(200).json({ message: 'Details Fetched successfully', data: getStateRecords });
+    return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: getStateRecords });
   } else {
-    return res.status(404).json({ error: 'no state master record found with this state Id' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -218,13 +290,13 @@ module.exports.updateStateMaster = async function(req, res) {
   const { name } = req.body;
   const existingStateRecord = await StateMaster.findByPk(id);
   if (!existingStateRecord) {
-    return res.status(404).json({ error: 'State not found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
   await existingStateRecord.update({
     name,
   });
-  return res.status(200).json({
-    message: 'State record updated successfully',
+  return res.status(serviceResponse.ok).json({
+    message: serviceResponse.updatedMessage,
     data: existingStateRecord,
   });
 };
@@ -250,8 +322,8 @@ module.exports.saveRegistrationTypeMaster = async function(req, res) {
     name: 'freelancer',
   });
 
-  return res.status(201).json({
-    message: 'Registration types records created successfully',
+  return res.status(serviceResponse.saveSuccess).json({
+    message: serviceResponse.createdMessage,
   });
 };
 
@@ -266,9 +338,9 @@ module.exports.delCurrencyMaster = async function(req, res) {
     where: { id: currency_id },
   });
   if (delCurrency == 0) {
-    return res.status(404).json({ error: 'Currency Record not found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
-  return res.status(200).json({ message: 'Currency deleted successfully' });
+  return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage });
 };
 
 /**
@@ -282,9 +354,9 @@ module.exports.delStateMaster = async function(req, res) {
     where: { id: state_id },
   });
   if (delState == 0) {
-    return res.status(404).json({ error: 'State not found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
-  return res.status(200).json({ message: 'State deleted successfully' });
+  return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage });
 };
 
 /**
@@ -297,11 +369,11 @@ module.exports.saveUnitMaster = async function(req, res) {
     const { name, description } = req.body;
     const saveUnit = await UnitMaster.create({ name, description });
     return res
-        .status(201)
-        .json({ success: 'unit saved sucessfully', data: saveUnit });
+        .status(serviceResponse.saveSuccess)
+        .json({ success: serviceResponse.createdMessage, data: saveUnit });
   } catch (error) {
     console.error('Error creating Unit Master:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -323,24 +395,24 @@ module.exports.updateUnitMaster = async function(req, res) {
       unit_id === 'undefined'
     ) {
       return res
-          .status(404)
+          .status(serviceResponse.badRequest)
           .json({ error: 'Please provide valid UnitMaster Id to Update' });
     }
     if (!existingUnitRecord) {
-      return res.status(404).json({ error: 'UnitMaster not found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
 
     await existingUnitRecord.update({
       name,
       description,
     });
-    return res.status(200).json({
-      message: 'UnitMaster record updated successfully',
+    return res.status(serviceResponse.ok).json({
+      message: serviceResponse.updatedMessage,
       data: existingUnitRecord,
     });
   } catch (error) {
     console.error('Error updating Unit Master:', error);
-    return res.status(500).json({ message: 'internal server error' });
+    return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -349,13 +421,33 @@ module.exports.updateUnitMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getUnitMaster = async function(req, res) {
+module.exports.getUnitMaster = async function (req, res) {
   try {
-    const getUnitmaster = await UnitMaster.findAll();
-    return res.status(200).json({ message: 'Details fetched successfully', data: getUnitmaster });
-  } catch (error) {
-    console.error('Error Getting Unit Master:', error);
-    return res.status(500).json({ message: 'internal server error' });
+    const { page, pageSize } = req.body;
+    if (page && pageSize) {
+      const offset = (page - 1) * pageSize;
+
+      const { count, rows } = await UnitMaster.findAndCountAll({
+        limit: pageSize,
+        offset: offset
+      });
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+    } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+    } else {
+      const { count, rows } = await UnitMaster.findAndCountAll();
+
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+    } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+    }
+  } catch (err) {
+    console.error('Error retrieving data:', err);
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -375,18 +467,18 @@ module.exports.getUnitmasterById = async function(req, res) {
       unit_id === 'undefined'
     ) {
       return res
-          .status(404)
+          .status(serviceResponse.badRequest)
           .json({ error: 'Please provide valid Unit Master Id to get' });
     }
     const getUnitbyId = await UnitMaster.findByPk(unit_id);
     if (getUnitbyId) {
-      return res.status(200).json({ message: 'Details fetched successfully', data: getUnitbyId });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: getUnitbyId });
     } else {
-      return res.status(404).json({ error: 'Unit Master details not found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (error) {
     console.error('Error Getting Unit Master:', error);
-    return res.status(500).json({ message: 'internal server error' });
+    return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -406,20 +498,20 @@ module.exports.delUnitmasterByid = async function(req, res) {
       unit_id === 'undefined'
     ) {
       return res
-          .status(404)
+          .status(serviceResponse.badRequest)
           .json({ error: 'Please provide valid Unit Master Id to Delete' });
     }
     const delUnit = await db.unitMaster.destroy({ where: { id: unit_id } });
     if (delUnit) {
       return res
-          .status(200)
-          .json({ success: 'Unit Master deleted successfully' });
+          .status(serviceResponse.ok)
+          .json({ success: serviceResponse.deletedMessage });
     } else {
-      return res.status(404).json({ error: 'Unit Master details not found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound});
     }
   } catch (error) {
     console.error('Error deleting Unit Master:', error);
-    return res.status(500).json({ message: 'internal server error' });
+    return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage});
   }
 };
 
@@ -445,7 +537,7 @@ module.exports.saveSocialMedia = async function(req, res) {
             ),
         );
         return res
-            .status(400)
+            .status(serviceResponse.badRequest)
             .json({ message: 'Kindly Provide media_name and is_active' });
       }
       const socialmedia = await SocialMediaMaster.create({
@@ -455,8 +547,8 @@ module.exports.saveSocialMedia = async function(req, res) {
       });
       if (socialmedia) {
         return res
-            .status(201)
-            .json({ message: 'Social Media Master Saved', data: socialmedia });
+            .status(serviceResponse.saveSuccess)
+            .json({ message: serviceResponse.createdMessage, data: socialmedia });
       } else {
         fs.unlinkSync(
             path.join(
@@ -468,12 +560,12 @@ module.exports.saveSocialMedia = async function(req, res) {
             ),
         );
         return res
-            .status(400)
-            .json({ error: 'Error in creating Social Media Master' });
+            .status(serviceResponse.badRequest)
+            .json({ error: serviceResponse.errorCreatingRecord });
       }
     } else {
       return res
-          .status(400)
+          .status(serviceResponse.badRequest)
           .json({ error: 'Please Upload Social Media Image' });
     }
   } catch (err) {
@@ -487,9 +579,9 @@ module.exports.saveSocialMedia = async function(req, res) {
               req.files['image'][0].filename,
           ),
       );
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -520,10 +612,10 @@ module.exports.updateSocialMedia = async function(req, res) {
             ),
         );
         return res
-            .status(400)
+            .status(serviceResponse.notFound)
             .json({
               message:
-              'Social Media Master Record not exist for the provided id',
+              serviceResponse.errorNotFound,
             });
       }
       const dummypath = socialMediaMasterRecord.media_image_path;
@@ -552,9 +644,9 @@ module.exports.updateSocialMedia = async function(req, res) {
             ),
         );
         return res
-            .status(200)
+            .status(serviceResponse.ok)
             .json({
-              message: 'Social Media Master Updated',
+              message: serviceResponse.updatedMessage,
               data: socialmedia[0],
             });
       } else {
@@ -568,13 +660,13 @@ module.exports.updateSocialMedia = async function(req, res) {
             ),
         );
         return res
-            .status(400)
+            .status(serviceResponse.badRequest)
             .json({ error: 'Error in Updating Social Media Master' });
       }
     } else {
       const socialMediaMasterRecord = await SocialMediaMaster.findByPk(socialMediaMasterId);
       if (!socialMediaMasterRecord) {
-        return res.status(400).json({ error: ' Social Media Master Record not exist for the provided id ' });
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
       }
       const [rowUpdated, socialmedia] = await SocialMediaMaster.update(
           {
@@ -589,16 +681,16 @@ module.exports.updateSocialMedia = async function(req, res) {
           },
       );
       if (rowUpdated>0) {
-        return res.status(200).json({ message: 'Social Media Master Updated', data: socialmedia[0] });
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, data: socialmedia[0] });
       } else {
-        return res.status(400).json({ error: 'Error in Updating Social Media Master' });
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
       }
     }
   } catch (err) {
     if (err instanceof Sequelize.ValidationError) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error'+err.message });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -608,22 +700,36 @@ module.exports.updateSocialMedia = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getSocialMedia = async function(req, res) {
+module.exports.getSocialMedia= async function (req, res) {
   try {
-    const Records = await SocialMediaMaster.findAll();
-    if (Records) {
-      return res
-          .status(200)
-          .json({ message: 'details fetched successfully', data: Records });
-    } else {
-      return res
-          .status(404)
-          .json({ message: 'details not found' });
-    }
+      const { page, pageSize } = req.body;
+      if (page && pageSize) {
+          const offset = (page - 1) * pageSize;
+
+          const { count, rows } = await SocialMediaMaster.findAndCountAll({
+              limit: pageSize,
+              offset: offset
+          });
+          if (count > 0) {
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+        } else {
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
+      } else {
+          const { count, rows } = await SocialMediaMaster.findAndCountAll();
+
+          if (count > 0) {
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+        } else {
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
+      }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error retrieving data:', err);
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
+
 
 
 /**
@@ -637,7 +743,7 @@ module.exports.delSocialMediaMaster = async function(req, res) {
     const socialMediaMasterId = req.params.socialMediaMasterId;
     const delrecord = await SocialMediaMaster.findByPk(socialMediaMasterId);
     if (!delrecord) {
-      return res.status(404).json({ message: 'Record not found with this Id.' });
+      return res.status(serviceResponse.badRequest).json({ message: serviceResponse.errorNotFound });
     }
     if (delrecord) {
       if (delrecord.media_image_path) {
@@ -654,12 +760,12 @@ module.exports.delSocialMediaMaster = async function(req, res) {
     }
     const recordtodel = await SocialMediaMaster.destroy({ where: { id: socialMediaMasterId } });
     if (recordtodel > 0) {
-      return res.status(200).json({ message: 'Social Media Master Record Deleted Successfully', data: delrecord });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage, data: delrecord });
     } else {
-      return res.status(404).json({ message: 'Record not found with this Id.' });
+      return res.status(serviceResponse.notFound).json({ message: serviceResponse.errorNotFound });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -676,18 +782,18 @@ module.exports.getSocialMediaById = async function(req, res) {
     const Records = await SocialMediaMaster.findByPk(social_id);
     if (Records) {
       return res
-          .status(200)
-          .json({ message: 'details fetched successfully', data: Records });
+          .status(serviceResponse.ok)
+          .json({ message: serviceResponse.getMessage, data: Records });
     } else {
       return res
-          .status(404)
-          .json({ message: 'details not found with this Social Media Id' });
+          .status(serviceResponse.notFound)
+          .json({ message: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -704,7 +810,7 @@ module.exports.searchSocialMediaMaster = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!SocialMediaMaster.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const records = await SocialMediaMaster.findAll({
       where: {
@@ -712,15 +818,15 @@ module.exports.searchSocialMediaMaster = async function(req, res) {
       },
     });
     if (records.length > 0) {
-      return res.status(200).json({ message: 'Records Fetched', data: records });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound});
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -734,7 +840,7 @@ module.exports.searchCityMaster = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!CityMaster.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const records = await CityMaster.findAll({
       where: {
@@ -742,15 +848,15 @@ module.exports.searchCityMaster = async function(req, res) {
       },
     });
     if (records.length > 0) {
-      return res.status(200).json({ message: 'Records Fetched', data: records });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -764,7 +870,7 @@ module.exports.searchCurrencyMaster = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!CurrencyMaster.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const records = await CurrencyMaster.findAll({
       where: {
@@ -772,15 +878,15 @@ module.exports.searchCurrencyMaster = async function(req, res) {
       },
     });
     if (records.length > 0) {
-      return res.status(200).json({ message: 'Records Fetched', data: records });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -795,7 +901,7 @@ module.exports.searchStateMaster = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!StateMaster.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const records = await StateMaster.findAll({
       where: {
@@ -803,15 +909,15 @@ module.exports.searchStateMaster = async function(req, res) {
       },
     });
     if (records.length > 0) {
-      return res.status(200).json({ message: 'Records Fetched', data: records });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -825,7 +931,7 @@ module.exports.searchUnitMaster = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!UnitMaster.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const records = await UnitMaster.findAll({
       where: {
@@ -833,15 +939,15 @@ module.exports.searchUnitMaster = async function(req, res) {
       },
     });
     if (records.length > 0) {
-      return res.status(200).json({ message: 'Fetched Records', data: records });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 

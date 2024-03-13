@@ -6,6 +6,8 @@ const path = require('path');
 const fs = require('fs');
 // const { log } = require('console');
 const FREELANCER_RESUME_PATH = path.join(process.env.FREELANCER_RESUME_PATH);
+const serviceResponse = require('../config/serviceResponse');
+
 /**
  * Controller function to Upload resume with provided RegistrationId
  * @param {Object} req - Express request object.
@@ -15,7 +17,7 @@ const FREELANCER_RESUME_PATH = path.join(process.env.FREELANCER_RESUME_PATH);
 module.exports.uploadFreelancerResume = async (req, res) => {
   try {
     if (req.fileValidationError) {
-      return res.status(400).json({ error: req.fileValidationError });
+      return res.status(serviceResponse.badRequest).json({ error: req.fileValidationError });
     }
     const { registrationId } = req.params;
     const resume = req.files['resume'];
@@ -31,8 +33,8 @@ module.exports.uploadFreelancerResume = async (req, res) => {
           ),
       );
       return res
-          .status(404)
-          .json({ error: 'Registration not found with this id' });
+          .status(serviceResponse.notFound)
+          .json({ error: serviceResponse.registrationNotFound });
     }
     if (existingRegistration.registration_type !== 3) {
       fs.unlinkSync(
@@ -45,7 +47,7 @@ module.exports.uploadFreelancerResume = async (req, res) => {
           ),
       );
       return res
-          .status(404)
+          .status(serviceResponse.notFound)
           .json({ error: 'Registration is not of freelancer type' });
     }
     if (resume && resume.length > 0) {
@@ -76,8 +78,8 @@ module.exports.uploadFreelancerResume = async (req, res) => {
         registrationId: registrationId,
       });
       if (uploadResume) {
-        return res.status(201).json({
-          message: 'Resume Uploaded Successfully',
+        return res.status(serviceResponse.saveSuccess).json({
+          message: serviceResponse.createdMessage,
           data: uploadResume,
         });
       }
@@ -91,11 +93,10 @@ module.exports.uploadFreelancerResume = async (req, res) => {
               resume[0].filename,
           ),
       );
-      return res.status(400).json({ error: 'resume not uploaded' });
+      return res.status(serviceResponse.badRequest).json({ error: 'resume not uploaded' });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -112,17 +113,17 @@ module.exports.getFreelancerResumes = async function(req, res) {
       where: { registrationId: registrationId },
     });
     if (freelancer_resume.length > 0) {
-      return res.status(200).json({
-        success: 'resume details fetched successfully',
+      return res.status(serviceResponse.ok).json({
+        success: serviceResponse.getMessage,
         data: freelancer_resume,
       });
     } else {
       return res
-          .status(404)
-          .json({ error: 'No Resume found with this Registration ID' });
+          .status(serviceResponse.badRequest)
+          .json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -139,8 +140,8 @@ module.exports.delFreelancerResumeById = async function(req, res) {
       where: { id: resume_id },
     });
     if (!recordToDelete) {
-      return res.status(404).json({
-        error: 'Requested Resume Id not found kindly provide valid resume id !',
+      return res.status(serviceResponse.notFound).json({
+        error: serviceResponse.errorNotFound,
       });
     }
     if (recordToDelete) {
@@ -161,16 +162,16 @@ module.exports.delFreelancerResumeById = async function(req, res) {
     });
     if (deletedResume > 0) {
       return res
-          .status(200)
+          .status(serviceResponse.ok)
           .json({
-            success: 'Resume deleted successfully!',
+            success: serviceResponse.deletedMessage,
             data: recordToDelete,
           });
     } else {
-      return res.status(404).json({ error: 'Resume not found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error in delete' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 /**
@@ -179,23 +180,36 @@ module.exports.delFreelancerResumeById = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getAllFreelancerResumes = async function(req, res) {
+module.exports.getAllFreelancerResumes = async function (req, res) {
   try {
-    const freelancer_resume = await freelancerResume.findAll({});
-    if (freelancer_resume.length>0) {
-      return res.status(200).json({
-        message: 'resume details fetched successfully',
-        data: freelancer_resume,
-      });
-    } else {
-      return res
-          .status(404)
-          .json({ error: 'No Resumes found ' });
-    }
+      const { page, pageSize } = req.body;
+      if (page && pageSize) {
+          const offset = (page - 1) * pageSize;
+
+          const { count, rows } = await freelancerResume.findAndCountAll({
+              limit: pageSize,
+              offset: offset
+          });
+          if (count > 0) {
+              return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+          } else {
+              return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+          }
+      } else {
+          const { count, rows } = await freelancerResume.findAndCountAll();
+
+          if (count > 0) {
+              return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+          } else {
+              return res.status(apiStatus.notFound).json({ error: serviceResponse.errorNotFound });
+          }
+      }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error retrieving data:', err);
+      return res.status(apiStatus.internalServerError).json({ error: 'Internal Server Error' });
   }
 };
+
 
 
 /**
@@ -209,17 +223,17 @@ module.exports.getFreelancerResumesById = async function(req, res) {
     const id = req.params.resume_id;
     const freelancer_resume = await freelancerResume.findOne({ where: { id: id } });
     if (freelancer_resume) {
-      return res.status(200).json({
-        message: 'resume details fetched successfully',
+      return res.status(serviceResponse.ok).json({
+        message: serviceResponse.getMessage,
         data: freelancer_resume,
       });
     } else {
       return res
-          .status(404)
-          .json({ error: 'No Resumes found with this ID' });
+          .status(serviceResponse.notFound)
+          .json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error ' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -236,7 +250,7 @@ module.exports.search = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!freelancerResume.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const records = await freelancerResume.findAll({
       where: {
@@ -244,15 +258,15 @@ module.exports.search = async function(req, res) {
       },
     });
     if (records.length > 0) {
-      return res.status(200).json({ message: 'Fetched Records', data: records });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 

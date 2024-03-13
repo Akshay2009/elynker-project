@@ -3,6 +3,7 @@ const config = require('../config/auth.config');
 const User = db.user;
 const Role = db.role;
 const Registration = db.registration;
+const serviceResponse = require('../config/serviceResponse')
 
 
 const Op = db.Sequelize.Op;
@@ -65,7 +66,7 @@ exports.signup = async (req, res) => {
                 {
                   algorithm: 'HS256',
                   allowInsecureKeySizes: true,
-                  expiresIn: 3*86400, // 3 days
+                  expiresIn: 259200, // 3 days
                 });
             }
 
@@ -74,7 +75,7 @@ exports.signup = async (req, res) => {
       for (let i = 0; i < roles.length; i++) {
         authorities.push('ROLE_' + roles[i].name.toUpperCase());
       }
-      return res.status(200).send({
+      return res.status(serviceResponse.saveSuccess).send({
         user: user,
         roles: authorities,
         accessToken: token,
@@ -82,7 +83,7 @@ exports.signup = async (req, res) => {
       });
     });
   } else {
-    return res.status(500).send({ message: 'Error in creating user' });
+    return res.status(serviceResponse.badRequest).send({ message: serviceResponse.errorCreatingRecord });
   }
 };
 
@@ -100,7 +101,7 @@ exports.signin = async (req, res) => {
   })
       .then(async (user) => {
         if (!user) {
-          return res.status(404).send({ message: 'User Not found.' });
+          return res.status(serviceResponse.badRequest).send({ message: serviceResponse.errorNotFound });
         }
 
         const result = await Registration.findOne({
@@ -125,7 +126,7 @@ exports.signin = async (req, res) => {
                 {
                   algorithm: 'HS256',
                   allowInsecureKeySizes: true,
-                  expiresIn: 3*86400, // 3 days
+                  expiresIn: 259200, // 3 days
                 });
             }
 
@@ -134,7 +135,7 @@ exports.signin = async (req, res) => {
           for (let i = 0; i < roles.length; i++) {
             authorities.push('ROLE_' + roles[i].name.toUpperCase());
           }
-          return res.status(200).send({
+          return res.status(serviceResponse.ok).send({
             user: user,
             roles: authorities,
             accessToken: token,
@@ -143,6 +144,6 @@ exports.signin = async (req, res) => {
         });
       })
       .catch((err) => {
-        return res.status(500).send({ message: err.message });
+        return res.status(serviceResponse.internalServerError).send({ message: serviceResponse.internalServerErrorMessage });
       });
 };

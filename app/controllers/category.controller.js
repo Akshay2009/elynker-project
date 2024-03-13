@@ -6,23 +6,39 @@ const path = require('path');
 const Product = db.product;
 require('dotenv').config();
 const CATEGORY_LOGO_PATH = path.join(process.env.CATEGORY_LOGO_PATH);
+const serviceResponse = require('../config/serviceResponse');
 
 /**
  * Controller function to get all the Category record .
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getAllCategory = async function(req, res) {
+module.exports.getAllCategory = async function (req, res) {
   try {
-    const categories = await Category.findAll({
-    });
-    if (categories.length>0) {
-      return res.status(200).json(categories);
+    const { page, pageSize } = req.body;
+    if (page && pageSize) {
+      const offset = (page - 1) * pageSize;
+
+      const { count, rows } = await Category.findAndCountAll({
+        limit: pageSize,
+        offset: offset
+      });
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+      } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+      }
     } else {
-      return res.status(404).json({ error: 'No Category Found' });
+      const { count, rows } = await Category.findAndCountAll();
+
+      if (count > 0) {
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+      } else {
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+      }
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error ' + err.message });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -61,9 +77,9 @@ module.exports.createCategory = async function(req, res) {
         });
 
         if (category) {
-          return res.status(200).json(category);
+          return res.status(serviceResponse.saveSuccess).json(category);
         } else {
-          return res.status(404).json({ error: 'No Category created' });
+          return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorCreatingRecord });
         }
       } else {
         if (imagePath) {
@@ -75,7 +91,7 @@ module.exports.createCategory = async function(req, res) {
         if (iconPath) {
           fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', iconPath));
         }
-        return res.status(404).json({ error: 'No Category found exist with this parent_id' });
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.noCategoryParentMessage });
       }
     } else {
       const newCategory = await Category.create({
@@ -89,13 +105,13 @@ module.exports.createCategory = async function(req, res) {
       });
 
       if (newCategory) {
-        return res.status(201).json(newCategory);
+        return res.status(serviceResponse.saveSuccess).json(newCategory);
       } else {
-        return res.status(404).json({ error: 'Category not created' });
+        return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorCreatingRecord });
       }
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal ServerError ' + err.message });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -114,12 +130,12 @@ module.exports.getCategoryById = async function(req, res) {
       },
     });
     if (categories) {
-      return res.status(200).json(categories);
+      return res.status(serviceResponse.ok).json(categories);
     } else {
-      return res.status(404).json({ error: 'No Category Returned' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error' + err.message });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -163,7 +179,7 @@ module.exports.updateCategory = async function(req, res) {
           if (iconPath) {
             fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', iconPath));
           }
-          return res.status(404).json({ error: 'No Category Record with this categoryId' });
+          return res.status(serviceResponse.notFound).json({ error: 'No Category Record with this categoryId' });
         }
         if (existingCategory) {
           if (imagePath) {
@@ -215,9 +231,9 @@ module.exports.updateCategory = async function(req, res) {
         });
 
         if (rowCount > 0) {
-          return res.status(200).json(updatedCategory[0]);
+          return res.status(serviceResponse.ok).json(updatedCategory[0]);
         } else {
-          return res.status(404).json({ error: 'No Category found' });
+          return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
       } else {
         if (imagePath) {
@@ -229,7 +245,7 @@ module.exports.updateCategory = async function(req, res) {
         if(iconPath){
           fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', iconPath));
         }
-        return res.status(404).json({ error: 'No Category found exist with this parent_id' });
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.noCategoryParentMessage });
       }
     } else {
       const existingCategory = await Category.findByPk(categoryId);
@@ -243,7 +259,7 @@ module.exports.updateCategory = async function(req, res) {
         if (iconPath) {
           fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', iconPath));
         }
-        return res.status(404).json({ error: 'No Category Record with this categoryId' });
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
       }
       if (existingCategory) {
         if (imagePath) {
@@ -292,13 +308,13 @@ module.exports.updateCategory = async function(req, res) {
         returning: true,
       });
       if (rowCount > 0) {
-        return res.status(200).json(updatedCategory[0]);
+        return res.status(serviceResponse.ok).json(updatedCategory[0]);
       } else {
-        return res.status(404).json({ error: 'No Category found' });
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
       }
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error ' + err.message });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -315,7 +331,7 @@ module.exports.createMultipleCategory = async function(req, res) {
     const parent_id = req.params.parent_id;
     const arr = req.body;
     if (!arr.length) {
-      return res.status(400).json({ error: 'Please provide your category data in json array[]!' });
+      return res.status(serviceResponse.badRequest).json({ error: 'Please provide your category data in json array[]!' });
     }
     if (parent_id) {
       const record = await Category.findOne({ where: { id: parent_id } });
@@ -334,16 +350,16 @@ module.exports.createMultipleCategory = async function(req, res) {
             },
         );
         if (result) {
-          return res.status(200).json({ message: 'Sub Categories Created', data: result });
+          return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage, data: result });
         } else {
-          return res.status(400).json({ error: 'No Sub Category created' });
+          return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorCreatingRecord });
         }
       } else {
-        return res.status(404).json({ error: 'No Parent Category exist with this parent_id' });
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
       }
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal ServerError ' + err.message });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -362,7 +378,7 @@ module.exports.getSubcategories = async function(req, res) {
       },
     });
     if (categories.length > 0) { // if subcategories exist then simply return sub-categories
-      return res.status(200).json({ message: 'Sub Category Exist', subCategories: categories, products: [] });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage , subCategories: categories, products: [] });
     } else {// if no subcategories then return Product having this id as category_id
       const products = await Product.findAll({
         where: {
@@ -371,10 +387,10 @@ module.exports.getSubcategories = async function(req, res) {
           },
         },
       });
-      return res.status(200).json({ message: 'No Sub Category Exist', subCategories: [], products: products });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.errorNotFound , subCategories: [], products: products });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error' + err.message });
+    return res.status(500).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 /**
@@ -388,7 +404,7 @@ module.exports.delcategories = async function(req, res) {
     const category_id = req.params.category_id;
     const categoryToDelete = await Category.findByPk(category_id);
     if (!categoryToDelete) {
-      return res.status(404).json({ error: 'No Category found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
     if (categoryToDelete) {
       if (categoryToDelete.image_path) {
@@ -407,12 +423,12 @@ module.exports.delcategories = async function(req, res) {
       },
     });
     if (!categories) {
-      return res.status(404).json({ error: 'category not found' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
     } else {
-      return res.status(200).json({ message: 'category deleted successfully', data: categoryToDelete });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage, data: categoryToDelete });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error' + err.message });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -428,7 +444,7 @@ module.exports.search = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!Category.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const categories = await Category.findAll({
       where: {
@@ -436,14 +452,14 @@ module.exports.search = async function(req, res) {
       },
     });
     if (categories.length > 0) {
-      return res.status(200).json({ message: 'Fetched Records', data: categories });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage , data: categories });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };

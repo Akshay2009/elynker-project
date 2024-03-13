@@ -7,6 +7,7 @@ const COVER_IMAGE_PATH = path.join(process.env.COVER_IMAGE_PATH);
 const Registration = db.registration;
 const BusinessDetail = db.businessDetail;
 const Category = db.category;
+const serviceResponse = require('../config/serviceResponse');
 
 /**
  * Controller function to update company logo .
@@ -35,15 +36,15 @@ module.exports.updateCompanyLogo = async function(req, res) {
       }
       registration.image_path = companyLogo[0].filename;
       await registration.save();
-      return res.status(200).json({
+      return res.status(serviceResponse.ok).json({
         success: 'Company Logo Updated Successfully',
         registration: registration,
       });
     } else {
-      return res.status(400).json({ error: 'Please Provide company Logo Image' });
+      return res.status(serviceResponse.badRequest).json({ error: 'Please Provide company Logo Image' });
     }
   } catch (err) {
-    return res.status(500).json({ error: 'error in updating  Company Logo' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -73,12 +74,12 @@ module.exports.updateCoverImage = async function(req, res) {
     }
     registration.cover_image = coverImages[0].filename;
     await registration.save();
-    return res.status(200).json({
+    return res.status(serviceResponse.ok).json({
       success: 'Cover Image Updated Successfully',
       registration: registration,
     });
   } else {
-    return res.status(400).json({ error: 'Please Provide company Logo Image' });
+    return res.status(serviceResponse.badRequest).json({ error: 'Please Provide company Logo Image' });
   }
 };
 
@@ -88,14 +89,14 @@ module.exports.saveBusinessDetail = async function(req, res) {
 
   if (!existingRegistration) {
     return res
-      .status(404)
-      .json({ error: 'Provided registration Id does not exists!' });
+      .status(serviceResponse.notFound)
+      .json({ error: serviceResponse.registrationNotFound });
   }
 
   const arr = req.body;
 
   if (!arr.length) {
-    return res.status(400).json({
+    return res.status(serviceResponse.badRequest).json({
       error: 'Please provide your business data in json array[]!',
     });
   }
@@ -118,7 +119,7 @@ module.exports.saveBusinessDetail = async function(req, res) {
   }
   if (validationFlag === false) {
     return res
-      .status(400)
+      .status(serviceResponse.badRequest)
       .json({ error: 'Please provide a reason when is_provided is false or not provided' });
   }
   const result = await BusinessDetail.bulkCreate(updatedArr, {
@@ -142,8 +143,8 @@ module.exports.saveBusinessDetail = async function(req, res) {
     { where: { id: reg_Id } },
   );
   if (result) {
-    return res.status(200).json({
-      success: 'BusinessDetails Successfully inserted',
+    return res.status(serviceResponse.saveSuccess).json({
+      success: serviceResponse.createdMessage,
       data: result,
     });
   }
@@ -162,8 +163,8 @@ module.exports.getBusinessDetail = async function(req, res) {
 
   if (!existingRegistration) {
     return res
-      .status(404)
-      .json({ message: 'Provided registration Id does not exists!' });
+      .status(serviceResponse.notFound)
+      .json({ message: serviceResponse.registrationNotFound });
   }
 
   const businessDetails = await BusinessDetail.findAll({
@@ -172,9 +173,9 @@ module.exports.getBusinessDetail = async function(req, res) {
 
   if (businessDetails) {
     // Return the details in the response
-    return res.status(200).json(businessDetails);
+    return res.status(serviceResponse.ok).json(businessDetails);
   } else {
-    return res.status(404).json({ error: 'details not found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 // registration post request---------------
@@ -212,7 +213,7 @@ module.exports.putRegDetail = async function(req, res) {
   const existingRegistration = await Registration.findByPk(registrationId);
 
   if (!existingRegistration) {
-    return res.status(404).json({ error: 'Registration record not found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.registrationNotFound });
   } else if (existingRegistration) {
     const [row, record] = await Registration.update(
       {
@@ -250,13 +251,13 @@ module.exports.putRegDetail = async function(req, res) {
       },
     );
     if (row > 0) {
-      return res.status(200).json({
-        message: 'Registration record updated successfully',
+      return res.status(serviceResponse.ok).json({
+        message: serviceResponse.updatedMessage,
         updatedRegistration: record[0],
       });
     }
   } else {
-    return res.status(400).json({ error: 'Error in updating Registration' });
+    return res.status(serviceResponse.badRequest).json({ error: 'Error in updating Registration' });
   }
 };
 
@@ -265,13 +266,13 @@ module.exports.updateCategoryIds = async function(req, res) {
   const { category_ids } = req.body;
   if (!category_ids) {
     return res
-      .status(400)
+      .status(serviceResponse.badRequest)
       .json({ error: 'Category Ids for Registration Not Provided' });
   }
   const existingRegistration = await Registration.findByPk(registrationId);
 
   if (!existingRegistration) {
-    return res.status(404).json({ error: 'Registration record not found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 
   // Split comma-separated category IDs into an array
@@ -283,7 +284,7 @@ module.exports.updateCategoryIds = async function(req, res) {
   });
   if (categories.length == 0) {
     return res
-      .status(400)
+      .status(serviceResponse.badRequest)
       .json({ error: 'No category with provided Category Ids Present' });
   }
   const catArray = [];
@@ -303,9 +304,9 @@ module.exports.updateCategoryIds = async function(req, res) {
     },
   );
   if (rowUpdated > 0) {
-    return res.status(200).json(registrationUpdated[0]);
+    return res.status(serviceResponse.ok).json(registrationUpdated[0]);
   } else {
-    return res.status(400).json({ error: 'Registration record not updated' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -315,20 +316,19 @@ module.exports.getRegById = async function(req, res) {
     const { user_id } = req.params;
     if (user_id == 0 || user_id === 'null') {
       return res
-        .status(400)
+        .status(serviceResponse.badRequest)
         .json({ error: 'Unable to find User Id kindly provide Valid User Id' });
     }
     const getRegById = await Registration.findOne({ where: { userId: user_id } });
     if (getRegById) {
       return res
-        .status(200)
-        .json({ message: 'details successfully fetched', data: getRegById });
+        .status(serviceResponse.ok)
+        .json({ message: serviceResponse.getMessage, data: getRegById });
     } else {
-      return res.status(404).json({ error: 'Registration Not Found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -344,7 +344,7 @@ module.exports.search = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!Registration.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const records = await Registration.findAll({
       where: {
@@ -352,15 +352,15 @@ module.exports.search = async function(req, res) {
       },
     });
     if (records.length > 0) {
-      return res.status(200).json({ message: 'Fetched Records', data: records });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -373,16 +373,33 @@ module.exports.search = async function(req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.getAll = async function(req, res) {
+module.exports.getAll= async function (req, res) {
   try {
-    const records = await Registration.findAll({});
-    if (records.length > 0) {
-      return res.status(200).json({ message: 'Details fetched successfully', data: records });
-    } else {
-      return res.status(404).json({ error: 'details not found' });
-    }
+      const { page, pageSize } = req.body;
+      if (page && pageSize) {
+          const offset = (page - 1) * pageSize;
+
+          const { count, rows } = await Registration.findAndCountAll({
+              limit: pageSize,
+              offset: offset
+          });
+          if (count > 0) {
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+        } else {
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
+      } else {
+          const { count, rows } = await Registration.findAndCountAll();
+
+          if (count > 0) {
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+        } else {
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
+      }
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error retrieving data:', err);
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -398,7 +415,7 @@ module.exports.searchBusiness = async function(req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!BusinessDetail.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const records = await BusinessDetail.findAll({
       where: {
@@ -406,14 +423,14 @@ module.exports.searchBusiness = async function(req, res) {
       },
     });
     if (records.length > 0) {
-      return res.status(200).json({ message: 'Fetched Records', data: records });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };

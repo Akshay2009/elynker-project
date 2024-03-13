@@ -1,6 +1,7 @@
 const db = require('../models');
 const Certificate = db.certificate;
 const Registration = db.registration;
+const serviceResponse = require('../config/serviceResponse');
 
 // creating certificate---
 module.exports.createCertificate = async function(req, res) {
@@ -12,7 +13,7 @@ module.exports.createCertificate = async function(req, res) {
   } = req.body;
   const regRecord = await Registration.findByPk(registrationId);
   if (!regRecord) {
-    return res.status(404).json({ error: 'Registration not found with this id' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.registrationNotFound });
   }
   const newCertificate = await Certificate.create({
     name,
@@ -21,25 +22,47 @@ module.exports.createCertificate = async function(req, res) {
     registrationId,
   });
   if (newCertificate) {
-    return res.status(200).json({
-      message: 'Certificate created successfully',
+    return res.status(serviceResponse.saveSuccess).json({
+      message: serviceResponse.createdMessage,
       data: newCertificate,
     });
   } else {
-    return res.status(400).json({ error: 'No Record created' });
+    return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorCreatingRecord });
   }
 };
 
 // /getting certificate data--
 
-module.exports.getCertificate = async function(req, res) {
-  const certificate = await Certificate.findAll({});
-  if (certificate.length>0) {
-    return res.status(200).json({ message: 'Existing Certificate Records', data: certificate });
-  } else {
-    return res.status(404).json({ error: 'No certificate Returned' });
+module.exports.getCertificate = async function (req, res) {
+  try {
+      const { page, pageSize } = req.body;
+      if (page && pageSize) {
+          const offset = (page - 1) * pageSize;
+
+          const { count, rows } = await Certificate.findAndCountAll({
+              limit: pageSize,
+              offset: offset
+          });
+          if (count > 0) {
+              return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+          } else {
+              return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+          }
+      } else {
+          const { count, rows } = await Certificate.findAndCountAll();
+
+          if (count > 0) {
+              return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+          } else {
+              return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+          }
+      }
+  } catch (err) {
+      console.error('Error retrieving data:', err);
+      return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
+
 
 // getting data by id--
 
@@ -50,9 +73,9 @@ module.exports.getCertificateById = async function(req, res) {
   });
 
   if (CertificateDetails) {
-    return res.status(200).json({ message: 'Existing Certificate Records', data: CertificateDetails });
+    return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: CertificateDetails });
   } else {
-    return res.status(404).json({ error: 'Details not found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 // putting data as per id--
@@ -66,7 +89,7 @@ module.exports.updateCertificateById = async function(req, res) {
   } = req.body;
   const regRecord = await Registration.findByPk(registrationId);
   if (!regRecord) {
-    return res.status(404).json({ ërror: 'Registration not found with this id' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.registrationNotFound });
   }
 
   const [row, updatedRecord]=await Certificate.update({
@@ -81,12 +104,12 @@ module.exports.updateCertificateById = async function(req, res) {
     returning: true,
   });
   if (row>0) {
-    return res.status(200).json({
-      message: 'Certificate record updated successfully',
+    return res.status(serviceResponse.ok).json({
+      message: serviceResponse.updatedMessage,
       data: updatedRecord[0],
     });
   } else {
-    return res.status(404).json({ error: 'Certificate not found with this id' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -99,15 +122,18 @@ module.exports.updateCertificateById = async function(req, res) {
 module.exports.delCertificate = async function(req, res) {
   const { certificate_id } = req.params;
   const certificateToDelete = await Certificate.findByPk(certificate_id);
+  if(!certificateToDelete){
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+  }
   const delCertificate = await Certificate.destroy({
     where: { id: certificate_id },
     returning: true,
     raw: true,
   });
   if (delCertificate > 0) {
-    return res.status(200).json({ message: 'certificate deleted successfully', data: certificateToDelete });
+    return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage, data: certificateToDelete });
   } else {
-    return res.status(404).json({ error: 'certificate not found' });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -123,7 +149,7 @@ module.exports.search = async function(req, res) {
   try {
     const { fieldName, fieldValue }= req.params;
     if (!Certificate.rawAttributes[fieldName]) {
-      return res.status(400).json({ error: 'Invalid field name' });
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
     const records = await Certificate.findAll({
       where: {
@@ -131,14 +157,14 @@ module.exports.search = async function(req, res) {
       },
     });
     if (records.length>0) {
-      return res.status(200).json({ message: 'Fetched Records', data: records });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(404).json({ error: 'No record found' });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
-      return res.status(400).json({ error: err.message });
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };

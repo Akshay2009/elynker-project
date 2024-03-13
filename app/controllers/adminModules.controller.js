@@ -1,6 +1,7 @@
 const db = require('../models');
 const AdminModules = db.adminModules;
 const { Op } = require('sequelize');
+const serviceResponse = require('../config/serviceResponse');
 
 /**
  * Controller function to create a admin module record .
@@ -14,34 +15,44 @@ module.exports.createAdminModule = async function (req, res) {
         description,
         is_active
     });
-    return res.status(201).json({
-        message: 'Admin Module created successfully',
+    return res.status(serviceResponse.saveSuccess).json({
+        message: serviceResponse.createdMessage,
         data: newAdminRecord,
     });
 };
-
 /**
  * Controller function to get all admin module record .
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-
 module.exports.getAdminModule = async function (req, res) {
     try {
-        const AdminModuleRecords = await AdminModules.findAll({});
-        if (AdminModuleRecords.length > 0) {
-            return res
-                .status(200)
-                .json({ message: 'Details fetched successfully', data: AdminModuleRecords });
+        const { page, pageSize } = req.body;
+        if (page && pageSize) {
+            const offset = (page - 1) * pageSize;
+
+            const { count, rows } = await AdminModules.findAndCountAll({
+                limit: pageSize,
+                offset: offset
+            });
+            if (count > 0) {
+                return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+            } else {
+                return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+            }
         } else {
-            return res
-                .status(404)
-                .json({ error: 'details not found' });
+            const { count, rows } = await AdminModules.findAndCountAll();
+
+            if (count > 0) {
+                return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
+            } else {
+                return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+            }
         }
     } catch (err) {
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     }
-}
+};
 
 /**
  * Controller function to get admin module record by Id.
@@ -55,9 +66,9 @@ module.exports.getAdminModuleById = async function (req, res) {
     });
 
     if (AdminModulesById) {
-        return res.status(200).json({ message: 'Admin Modules Details Fetched Successfully', data: AdminModulesById });
+        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: AdminModulesById });
     } else {
-        return res.status(404).json({ error: 'Admin Modules Details not found' });
+        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
 };
 
@@ -71,16 +82,16 @@ module.exports.updateAdminModuleById = async function (req, res) {
     const { name, description, is_active } = req.body;
     const existingAdminRecord = await AdminModules.findByPk(adminId);
     if (!adminId || adminId == 0) {
-        return res.status(404).json({ error: "Kindly provide valid Admin ID" });
+        return res.status(serviceResponse.notFound).json({ error: "Kindly provide valid Admin ID" });
     }
     if (!existingAdminRecord) {
-        return res.status(404).json({ error: 'Admin Module not found with this id' });
+        return res.status(serviceResponse.notFound).json({ error: 'Admin Module not found with this id' });
     }
     await existingAdminRecord.update({
         name, description, is_active
     });
-    return res.status(200).json({
-        message: 'Admin Module record updated successfully',
+    return res.status(serviceResponse.ok).json({
+        message: serviceResponse.updatedMessage,
         data: existingAdminRecord,
     });
 };
@@ -95,16 +106,16 @@ module.exports.deleteAdminModuleById = async function (req, res) {
     const { adminId } = req.params;
     const existingAdminRecord = await AdminModules.findByPk(adminId);
     if (!adminId || adminId == 0) {
-        return res.status(404).json({ error: "Kindly provide valid Admin ID" });
+        return res.status(serviceResponse.notFound).json({ error: "Kindly provide valid Admin ID" });
     }
     if (!existingAdminRecord) {
-        return res.status(404).json({ error: 'Admin Module not found with this id' });
+        return res.status(serviceResponse.notFound).json({ error: 'Admin Module not found with this id' });
     }
     await existingAdminRecord.destroy({
         where: { id: adminId }
     });
-    return res.status(200).json({
-        message: 'Admin Module record Delete successfully',
+    return res.status(serviceResponse.ok).json({
+        message: serviceResponse.deletedMessage,
         data: existingAdminRecord,
     });
 };
@@ -115,26 +126,26 @@ module.exports.deleteAdminModuleById = async function (req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.searchAdminModules = async function(req, res) {
+module.exports.searchAdminModules = async function (req, res) {
     try {
-      const { fieldName, fieldValue } = req.params;
-      if (!AdminModules.rawAttributes[fieldName]) {
-        return res.status(400).json({ error: 'Invalid field name' });
-      }
-      const records = await AdminModules.findAll({
-        where: {
-          [fieldName]: fieldValue,
-        },
-      });
-      if (records.length > 0) {
-        return res.status(200).json({ message: 'Fetched Records', data: records });
-      } else {
-        return res.status(404).json({ error: 'No record found' });
-      }
+        const { fieldName, fieldValue } = req.params;
+        if (!AdminModules.rawAttributes[fieldName]) {
+            return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
+        }
+        const records = await AdminModules.findAll({
+            where: {
+                [fieldName]: fieldValue,
+            },
+        });
+        if (records.length > 0) {
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
+        } else {
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
     } catch (err) {
-      if (err instanceof Sequelize.Error) {
-        return res.status(400).json({ error: err.message });
-      }
-      return res.status(500).json({ error: 'Internal Server Error' });
+        if (err instanceof Sequelize.Error) {
+            return res.status(serviceResponse.badRequest).json({ error: err.message });
+        }
+        return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     }
-  };
+};
