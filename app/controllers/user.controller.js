@@ -47,7 +47,14 @@ module.exports.updateUser = async function(req, res) {
 
 module.exports.getUserById = async function(req, res) {
   const userId = req.params.id;
-  const user = await User.findByPk(userId);
+  const user = await User.findOne({
+    where: { id: userId },
+    include: [{
+      model: Role, //  Role is the name of your Roles model
+      through: 'user_roles', //  through table name
+      as: 'roles' // This alias will be used to access the roles associated with the user
+    }]
+  });
   if (user) {
     return res.status(serviceResponse.ok).json(user);
   } else {
@@ -129,32 +136,36 @@ module.exports.search = async function(req, res) {
  */
 
 
-module.exports.getAllUser = async function (req, res) {
+module.exports.getAllUser = async function(req, res) {
   try {
-    const { page, pageSize } = req.body;
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
     if (page && pageSize) {
-      const offset = (page - 1) * pageSize;
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
+    }
 
-      const { count, rows } = await User.findAndCountAll({
-        limit: pageSize,
-        offset: offset
-      });
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-      } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-      }
+    const { count, rows } = await User.findAndCountAll({
+      distinct: true,
+      limit: pageSize,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+      include: [{
+        model: Role, //  Role is the name of your Roles model
+        through: 'user_roles', // through table name
+        as: 'roles', // This alias will be used to access the roles associated with users
+      }],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
     } else {
-      const { count, rows } = await User.findAndCountAll();
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-      } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-      }
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     console.error('Error retrieving data:', err);
-    return res.status(apiStatus.internalServerError).json({ error: 'Internal Server Error' });
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
