@@ -430,7 +430,7 @@ module.exports.delcategories = async function(req, res) {
       },
     });
     if (!categories) {
-      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     } else {
       return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage, data: categoryToDelete });
     }
