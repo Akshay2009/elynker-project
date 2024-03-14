@@ -110,29 +110,26 @@ module.exports.deleteRole = async function(req, res) {
  */
 module.exports.getAll = async function(req, res) {
     try {
-        const { page, pageSize } = req.body;
+        const maxLimit = 50;
+        let { page, pageSize } = req.query;
+        page = page ? page : 1;
+        let offset = 0;
         if (page && pageSize) {
-            const offset = (page - 1) * pageSize;
-
-            const { count, rows } = await Role.findAndCountAll({
-                limit: pageSize,
-                offset: offset
-            });
-            if (count > 0) {
-                return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-            } else {
-                return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-            }
-        } else {
-            const { count, rows } = await Role.findAndCountAll();
-
-            if (count > 0) {
-                return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-            } else {
-                return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-            }
+          pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+          offset = (page - 1) * pageSize;
         }
-    } catch (err) {
+    
+        const { count, rows } = await Role.findAndCountAll({
+          limit: pageSize,
+          offset: offset,
+          order: [['createdAt', 'ASC']],
+        });
+        if (count > 0) {
+          return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
+        } else {
+          return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
+      } catch (err) {
         logErrorToFile.logErrorToFile(err, 'role.controller', 'getAll');
         if (err instanceof Sequelize.Error) {
             return res.status(serviceResponse.badRequest).json({ error: err.message });

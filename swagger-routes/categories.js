@@ -13,6 +13,23 @@
  *     tags: [Categories]
  *     security:
  *       - jwt: []
+ *     parameters:
+ *         - name: x-access-token
+ *           in: header
+ *           description: Access token for authentication
+ *           required: true
+ *           schema:
+ *             type: string
+ *         - name: page
+ *           in: query
+ *           description: Page for Pagination
+ *           schema:
+ *             type: integer
+ *         - name: pageSize
+ *           in: query
+ *           description: Page Size to show records on the Page for Pagination
+ *           schema:
+ *             type: integer
  *     responses:
  *       200:
  *         description: List of all categories

@@ -253,5 +253,60 @@
  *         '500':
  *           description: Internal Server Error
  *
+ *   /api/registration:
+ *     get:
+ *       summary: Get All Registration
+ *       tags: [Registration]
+ *       parameters:
+ *         - name: x-access-token
+ *           in: header
+ *           description: Access token for authentication
+ *           required: true
+ *           schema:
+ *             type: string
+ *         - name: page
+ *           in: query
+ *           description: Page for Pagination
+ *           schema:
+ *             type: integer
+ *         - name: pageSize
+ *           in: query
+ *           description: Page Size to show records on the Page for Pagination
+ *           schema:
+ *             type: integer
+ *       security:
+ *         - api_key: []
+ *       responses:
+ *         '200':
+ *           description: Registration record updated successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Registration record updated successfully
+ *                 updatedRegistration:
+ *                   id: '123'
+ *                   ip_address: '127.0.0.1'
+ *                   registration_type: 'user'
+ *                   dob: '1990-01-01'
+ *                   latitude: 40.7128
+ *                   longitude: -74.0060
+ *                   steps_completed: 3
+ *                   active_steps: 2
+ *                   address1: '123 Main St'
+ *                   address2: 'Apt 4'
+ *                   city: 'City'
+ *                   state: 'State'
+ *                   country: 'Country'
+ *                   education: 'Graduate'
+ *                   available_hrs_per_week: 40
+ *                   hourly_rate: 25.5
+ *                   service_fee: 5.0
+ *                   currency_id: 1
+ *                   created_by: 'user123'
+ *                   updated_by: 'user456'
+ *         '404':
+ *           description: Registration record not found
+ *         '500':
+ *           description: Internal Server Error
  */
 

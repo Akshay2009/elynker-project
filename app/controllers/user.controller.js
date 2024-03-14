@@ -87,7 +87,7 @@ module.exports.delUserById = async function(req, res) {
   if (deletedUser) {
     return res
       .status(serviceResponse.ok)
-      .json({ message: 'User deleted successfully', userToDelete });
+      .json({ message: serviceResponse.deletedMessage, userToDelete });
   } else {
     return res.status(serviceResponse.notFound).json({ message: serviceResponse.errorNotFound });
   }
@@ -174,13 +174,13 @@ module.exports.getAllUser = async function(req, res) {
  *
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
- * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
+ * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
-module.exports.userCreateByAdmin = async function (req, res) {
+module.exports.userCreateByAdmin = async function(req, res) {
   try {
     const { email, name, city, country_code, mobile_number, username, is_active, roles } = req.body;
-    if(!roles){
-      return res.status(serviceResponse.badRequest).json({ error: 'Role Not Given'});
+    if(!roles) {
+      return res.status(serviceResponse.badRequest).json({ error: 'Role Not Given' });
     }
     const rolesRecord = await Role.findAll({
       where: {
@@ -189,8 +189,8 @@ module.exports.userCreateByAdmin = async function (req, res) {
         },
       },
     });
-    if(rolesRecord.length===0){
-      return res.status(serviceResponse.notFound).json({ error: 'No Roles Found'});
+    if(rolesRecord.length===0) {
+      return res.status(serviceResponse.notFound).json({ error: 'No Roles Found' });
     }
     const user = await User.create({
       email: email,
@@ -199,24 +199,23 @@ module.exports.userCreateByAdmin = async function (req, res) {
       country_code: country_code,
       mobile_number: mobile_number,
       username: username,
-      is_active: is_active
+      is_active: is_active,
     });
-    if(user){
+    if(user) {
       await user.setRoles(rolesRecord);
       const authorities = [];
       const userRoles = await user.getRoles();
       for (let i = 0; i < userRoles.length; i++) {
         authorities.push('ROLE_' + userRoles[i].name.toUpperCase());
       }
-      return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage , user:user, roles:authorities });
+      return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage, user: user, roles: authorities });
     }else{
-      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorCreatingRecord});
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorCreatingRecord });
     }
-
   } catch (err) {
     logErrorToFile.logErrorToFile(err, 'user.controller', 'createAdminUser');
     if (err instanceof Sequelize.Error) {
-      return res.status(serviceResponse.badRequest).json({ error: err.message+" "+err.errors[0].message});
+      return res.status(serviceResponse.badRequest).json({ error: err.message+' '+err.errors[0].message });
     }
     return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
@@ -227,17 +226,17 @@ module.exports.userCreateByAdmin = async function (req, res) {
  *
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
- * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
+ * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
-module.exports.updateUserByAdminById = async function(req,res){
+module.exports.updateUserByAdminById = async function(req, res) {
   try {
     const id = req.params.id;
     const user = await User.findByPk(id);
-    if(!user){
-      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound})
+    if(!user) {
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
     const { email, name, city, country_code, mobile_number, username, is_active, roles } = req.body;
-    let rolesRecord =  await user.getRoles();
+    let rolesRecord = await user.getRoles();
     if (roles) {
       rolesRecord = await Role.findAll({
         where: {
@@ -257,59 +256,58 @@ module.exports.updateUserByAdminById = async function(req,res){
       country_code,
       mobile_number: mobile_number,
       username: username,
-      is_active: is_active
+      is_active: is_active,
     }, {
       where: {
         id: id,
       },
       returning: true,
     });
-    if(row){
+    if(row) {
       await record[0].setRoles(rolesRecord);
       const authorities = [];
       const userRoles = await record[0].getRoles();
       for (let i = 0; i < userRoles.length; i++) {
         authorities.push('ROLE_' + userRoles[i].name.toUpperCase());
       }
-      return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, user:record[0], roles:authorities });
-    }else{
-      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound })
-    }
-
-  } catch (err) {
-    logErrorToFile.logErrorToFile(err, 'user.controller', 'updateUserByAdminById');
-    if (err instanceof Sequelize.Error) {
-      return res.status(serviceResponse.badRequest).json({ error: err.message+" "+err.errors[0].message});
-    }
-    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
-  }
-}
-
-/**
- * Delete User By admin 
- *
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
- */
-module.exports.deleteUserByAdminById = async function(req,res){
-  try{
-    const id = req.params.id;
-    const userToDelete = await User.findByPk(id);
-    const row = await User.destroy({
-      where: {
-        id:id
-      }
-    });
-    if(row){
-      return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage , user: userToDelete });
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, user: record[0], roles: authorities });
     }else{
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     logErrorToFile.logErrorToFile(err, 'user.controller', 'updateUserByAdminById');
     if (err instanceof Sequelize.Error) {
-      return res.status(serviceResponse.badRequest).json({ error: err.message+" "+err.errors[0].message});
+      return res.status(serviceResponse.badRequest).json({ error: err.message+' '+err.errors[0].message });
+    }
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
+  }
+};
+
+/**
+ * Delete User By admin 
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
+module.exports.deleteUserByAdminById = async function(req, res) {
+  try{
+    const id = req.params.id;
+    const userToDelete = await User.findByPk(id);
+    const row = await User.destroy({
+      where: {
+        id: id,
+      },
+    });
+    if(row) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage, user: userToDelete });
+    }else{
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+  } catch (err) {
+    logErrorToFile.logErrorToFile(err, 'user.controller', 'updateUserByAdminById');
+    if (err instanceof Sequelize.Error) {
+      return res.status(serviceResponse.badRequest).json({ error: err.message+' '+err.errors[0].message });
     }
     return res.status(serviceResponse.internalServerError).json({ error: 'Internal Server Error' });
   }

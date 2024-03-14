@@ -1,4 +1,4 @@
-const { serve } = require('swagger-ui-express');
+
 const db = require('../models');
 const Sociallinks = db.sociallinks;
 const Registration = db.registration;
@@ -73,7 +73,7 @@ module.exports.createSociallinks = async function(req, res) {
     });
   }
   if (!registrationId || registrationId === '') {
-    return res.status(serviceResponse.notFound).json({
+    return res.status(serviceResponse.badRequest).json({
       error:
         'registration id not found,kindly provide correct registration id',
     });
@@ -106,32 +106,30 @@ module.exports.createSociallinks = async function(req, res) {
 };
 
 // /getting all sociallinks --
-module.exports.getSociallinks = async function (req, res) {
+module.exports.getSociallinks = async function(req, res) {
   try {
-      const { page, pageSize } = req.body;
-      if (page && pageSize) {
-          const offset = (page - 1) * pageSize;
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
+    if (page && pageSize) {
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
+    }
 
-          const { count, rows } = await Sociallinks.findAndCountAll({
-              limit: pageSize,
-              offset: offset
-          });
-          if (count > 0) {
-            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-        } else {
-            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-        }
-      } else {
-          const { count, rows } = await Sociallinks.findAndCountAll();
-          if (count > 0) {
-            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-        } else {
-            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-        }
-      }
+    const { count, rows } = await Sociallinks.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
+    } else {
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
   } catch (err) {
-      console.error('Error retrieving data:', err);
-      return res.status(apiStatus.internalServerError).json({ error: 'Internal Server Error' });
+    console.error('Error retrieving data:', err);
+    return res.status(serviceResponse.internalServerError).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -175,7 +173,7 @@ module.exports.updateSociallinksById = async function(req, res) {
     });
   }
   if (!registrationId || registrationId === '') {
-    return res.status(serviceResponse.notFound).json({ error: 'registrationId  is not provided' });
+    return res.status(serviceResponse.badRequest).json({ error: 'registrationId  is not provided' });
   }
   const regRecord = await Registration.findByPk(registrationId);
   if (!regRecord) {

@@ -21,7 +21,7 @@ module.exports.createUsersBanner = async function(req, res) {
     if (req.files['images']) {
       fs.unlinkSync(path.join(__dirname, '../..', USERS_BANNER_PATH, '/', req.files['images'][0].filename));
     }
-    return res.status(apiStatus.badRequest).json({ error: 'Registration not exist or Registration is not freelancer type' });
+    return res.status(serviceResponse.badRequest).json({ error: 'Registration not exist or Registration is not freelancer type' });
   }
   const { banner_name } = req.body;
   if (!banner_name) {
@@ -59,11 +59,11 @@ module.exports.updateUsersBanner = async function(req, res) {
   const userBannerId = req.params.userBannerId;
   const userBanner = await FreelancerBannerProject.findByPk(userBannerId);
   if (!userBanner) {
-    return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
   const { banner_name, registrationId } = req.body;
   let reg_id = userBanner.registrationId;
-  if(registrationId){
+  if(registrationId) {
     reg_id = registrationId;
   }
   const registrationRecord = await Registration.findByPk(reg_id);
@@ -95,7 +95,7 @@ module.exports.updateUsersBanner = async function(req, res) {
     if (row>0) {
       return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, data: bannerRecord[0] });
     } else {
-      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } else {
     const [row, bannerRecord] = await FreelancerBannerProject.update({
@@ -110,7 +110,7 @@ module.exports.updateUsersBanner = async function(req, res) {
     if (row>0) {
       return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, data: bannerRecord[0] });
     } else {
-      return res.status(400).json({ error: serviceResponse.errorNotFound });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   }
 };
@@ -130,7 +130,7 @@ module.exports.getUsersBannerById = async function(req, res) {
   if (bannerUserRecord) {
     return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: bannerUserRecord });
   } else {
-    return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -149,7 +149,7 @@ module.exports.getUsersBannerByRegistrationId = async function(req, res) {
   if (bannerUserRecord) {
     return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: bannerUserRecord });
   } else {
-    return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -166,7 +166,7 @@ module.exports.deleteUsersBanner = async function(req, res) {
     },
   });
   if (!userBannerToDelete) {
-    return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
   if (userBannerToDelete.banner_image) {
     fs.unlinkSync(path.join(__dirname, '../..', USERS_BANNER_PATH, '/', userBannerToDelete.banner_image));
@@ -181,7 +181,7 @@ module.exports.deleteUsersBanner = async function(req, res) {
   if (deletedUserBanner) {
     return res.status(serviceResponse.ok).json({ message: serviceResponse.deletedMessage, data: userBannerToDelete });
   } else {
-    return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound});
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -207,13 +207,13 @@ module.exports.search = async function(req, res) {
     if (records.length > 0) {
       return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
-      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
       return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
-    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage});
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 
@@ -226,33 +226,30 @@ module.exports.search = async function(req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.getAll= async function (req, res) {
+module.exports.getAll = async function(req, res) {
   try {
-      const { page, pageSize } = req.body;
-      if (page && pageSize) {
-          const offset = (page - 1) * pageSize;
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
+    if (page && pageSize) {
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
+    }
 
-          const { count, rows } = await FreelancerBannerProject.findAndCountAll({
-              limit: pageSize,
-              offset: offset
-          });
-          if (count > 0) {
-              return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-          } else {
-              return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-          }
-      } else {
-          const { count, rows } = await FreelancerBannerProject.findAndCountAll();
-
-          if (count > 0) {
-            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-        } else {
-            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-        }
-      }
+    const { count, rows } = await FreelancerBannerProject.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
+    } else {
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
   } catch (err) {
-      console.error('Error retrieving data:', err);
-      return res.status(apiStatus.internalServerError).json({ error: 'Internal Server Error' });
+    console.error('Error retrieving data:', err);
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
 

@@ -48,29 +48,26 @@ async function downloadImage(imageUrl, imageName) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getAllProducts = async function (req, res) {
+module.exports.getAllProducts = async function(req, res) {
   try {
-    const { page, pageSize } = req.body;
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
     if (page && pageSize) {
-      const offset = (page - 1) * pageSize;
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
+    }
 
-      const { count, rows } = await Product.findAndCountAll({
-        limit: pageSize,
-        offset: offset
-      });
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-      } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-      }
+    const { count, rows } = await Product.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
     } else {
-      const { count, rows } = await Product.findAndCountAll();
-
-      if (count > 0) {
-        return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: rows, total: count });
-      } else {
-        return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-      }
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
@@ -94,7 +91,7 @@ module.exports.getProductBySKU = async function(req, res) {
     if (products) {
       return res.status(serviceResponse.ok).json(products);
     } else {
-      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (error) {
     return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });
