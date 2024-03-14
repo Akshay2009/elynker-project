@@ -80,7 +80,7 @@ module.exports.delUserById = async function(req, res) {
   if (deletedUser) {
     return res
       .status(serviceResponse.ok)
-      .json({ message: 'User deleted successfully', userToDelete });
+      .json({ message: serviceResponse.deletedMessage, userToDelete });
   } else {
     return res.status(serviceResponse.notFound).json({ message: serviceResponse.errorNotFound });
   }

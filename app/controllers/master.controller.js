@@ -158,7 +158,7 @@ module.exports.getcurrencyMasterById = async function(req, res) {
   if (currency) {
     return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: currency });
   } else {
-    return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
+    return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
 };
 
@@ -728,7 +728,7 @@ module.exports.delSocialMediaMaster = async function(req, res) {
     const socialMediaMasterId = req.params.socialMediaMasterId;
     const delrecord = await SocialMediaMaster.findByPk(socialMediaMasterId);
     if (!delrecord) {
-      return res.status(serviceResponse.badRequest).json({ message: serviceResponse.errorNotFound });
+      return res.status(serviceResponse.notFound).json({ message: serviceResponse.errorNotFound });
     }
     if (delrecord) {
       if (delrecord.media_image_path) {

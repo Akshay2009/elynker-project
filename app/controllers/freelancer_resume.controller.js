@@ -47,7 +47,7 @@ module.exports.uploadFreelancerResume = async (req, res) => {
           ),
       );
       return res
-          .status(serviceResponse.notFound)
+          .status(serviceResponse.badRequest)
           .json({ error: 'Registration is not of freelancer type' });
     }
     if (resume && resume.length > 0) {
@@ -119,7 +119,7 @@ module.exports.getFreelancerResumes = async function(req, res) {
       });
     } else {
       return res
-          .status(serviceResponse.badRequest)
+          .status(serviceResponse.notFound)
           .json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {

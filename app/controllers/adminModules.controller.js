@@ -79,7 +79,7 @@ module.exports.updateAdminModuleById = async function(req, res) {
     const { name, description, is_active } = req.body;
     const existingAdminRecord = await AdminModules.findByPk(adminId);
     if (!adminId || adminId == 0) {
-        return res.status(serviceResponse.notFound).json({ error: 'Kindly provide valid Admin ID' });
+        return res.status(serviceResponse.badRequest).json({ error: 'Kindly provide valid Admin ID' });
     }
     if (!existingAdminRecord) {
         return res.status(serviceResponse.notFound).json({ error: 'Admin Module not found with this id' });
@@ -103,7 +103,7 @@ module.exports.deleteAdminModuleById = async function(req, res) {
     const { adminId } = req.params;
     const existingAdminRecord = await AdminModules.findByPk(adminId);
     if (!adminId || adminId == 0) {
-        return res.status(serviceResponse.notFound).json({ error: 'Kindly provide valid Admin ID' });
+        return res.status(serviceResponse.badRequest).json({ error: 'Kindly provide valid Admin ID' });
     }
     if (!existingAdminRecord) {
         return res.status(serviceResponse.notFound).json({ error: 'Admin Module not found with this id' });

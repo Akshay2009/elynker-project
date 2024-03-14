@@ -91,7 +91,7 @@ module.exports.getProductBySKU = async function(req, res) {
     if (products) {
       return res.status(serviceResponse.ok).json(products);
     } else {
-      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.errorNotFound });
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (error) {
     return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });

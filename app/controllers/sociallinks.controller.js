@@ -73,7 +73,7 @@ module.exports.createSociallinks = async function(req, res) {
     });
   }
   if (!registrationId || registrationId === '') {
-    return res.status(serviceResponse.notFound).json({
+    return res.status(serviceResponse.badRequest).json({
       error:
         'registration id not found,kindly provide correct registration id',
     });
@@ -173,7 +173,7 @@ module.exports.updateSociallinksById = async function(req, res) {
     });
   }
   if (!registrationId || registrationId === '') {
-    return res.status(serviceResponse.notFound).json({ error: 'registrationId  is not provided' });
+    return res.status(serviceResponse.badRequest).json({ error: 'registrationId  is not provided' });
   }
   const regRecord = await Registration.findByPk(registrationId);
   if (!regRecord) {
