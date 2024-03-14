@@ -172,6 +172,15 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING(500),
       allowNull: true,
     },
+    whatsapp_number: {
+      type: Sequelize.STRING(10),
+      validate: {
+        len: {
+          args: [10, 10],
+          msg: 'Whatsapp Number Must Be Of 10 Characters',
+        },
+      },
+    },
     created_by: {
       type: Sequelize.NUMERIC,
     },

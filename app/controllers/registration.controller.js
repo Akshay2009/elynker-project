@@ -205,6 +205,7 @@ module.exports.putRegDetail = async function(req, res) {
     language,
     currency_id,
     about_company,
+    whatsapp_number,
     created_by,
     updated_by,
   } = req.body;
@@ -240,6 +241,7 @@ module.exports.putRegDetail = async function(req, res) {
         language,
         about_company,
         currency_id,
+        whatsapp_number,
         created_by,
         updated_by,
       },
