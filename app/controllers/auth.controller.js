@@ -83,7 +83,7 @@ exports.signup = async (req, res) => {
       });
     });
   } else {
-    return res.status(serviceResponse.notFound).send({ message: serviceResponse.errorCreatingRecord });
+    return res.status(serviceResponse.badRequest).send({ message: serviceResponse.errorCreatingRecord });
   }
 };
 
