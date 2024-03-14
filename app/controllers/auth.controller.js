@@ -83,7 +83,7 @@ exports.signup = async (req, res) => {
       });
     });
   } else {
-    return res.status(serviceResponse.badRequest).send({ message: serviceResponse.errorCreatingRecord });
+    return res.status(serviceResponse.notFound).send({ message: serviceResponse.errorCreatingRecord });
   }
 };
 
@@ -101,7 +101,7 @@ exports.signin = async (req, res) => {
   })
       .then(async (user) => {
         if (!user) {
-          return res.status(serviceResponse.badRequest).send({ message: serviceResponse.errorNotFound });
+          return res.status(serviceResponse.notFound).send({ message: serviceResponse.errorNotFound });
         }
 
         const result = await Registration.findOne({
