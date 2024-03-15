@@ -39,6 +39,7 @@ db.unitMaster = require('../models/unitMaster.model.js')(sequelize, Sequelize);
 db.freelancerResume=require('../models/freelancer_resume.model.js')(sequelize, Sequelize);
 db.socialMediaMaster=require('../models/socialMediaMaster.model.js')(sequelize, Sequelize);
 db.adminModules=require('../models/adminModules.model.js')(sequelize, Sequelize);
+db.enquiry = require('../models/enquiry.model.js')(sequelize, Sequelize);
 
 
 db.role.belongsToMany(db.user, {

@@ -13,6 +13,8 @@ const socialmediaMasterRoutes=require('../routes/socialmediaMaster.routes');
 const adminModulesRoutes=require('../routes/adminModules.routes');
 const rolesRoutes = require('../routes/role.routes');
 const filterVendors=require('../routes/miscellaneous.routes')
+const enquiryRoutes = require('../routes/enquiry.routes');
+
 module.exports = function initializeRoutes(app) {
   authRoutes(app);
   userRoutes(app);
@@ -28,4 +30,5 @@ module.exports = function initializeRoutes(app) {
   adminModulesRoutes(app);
   rolesRoutes(app);
   filterVendors(app);
+  enquiryRoutes(app);
 };
