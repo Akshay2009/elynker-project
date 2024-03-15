@@ -14,7 +14,7 @@ const serviceResponse = require('../config/serviceResponse');
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.updateCompanyLogo = async function(req, res) {
+module.exports.updateCompanyLogo = async function (req, res) {
   try {
     const registration = await Registration.findByPk(req.params.id);
     let companyLogo;
@@ -53,7 +53,7 @@ module.exports.updateCompanyLogo = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.updateCoverImage = async function(req, res) {
+module.exports.updateCoverImage = async function (req, res) {
   const registration = await Registration.findByPk(req.params.registrationId);
   let coverImages;
   if (req.files['images']) {
@@ -83,7 +83,7 @@ module.exports.updateCoverImage = async function(req, res) {
   }
 };
 
-module.exports.saveBusinessDetail = async function(req, res) {
+module.exports.saveBusinessDetail = async function (req, res) {
   const reg_Id = req.params.reg_id;
   const existingRegistration = await Registration.findByPk(reg_Id);
 
@@ -156,7 +156,7 @@ module.exports.saveBusinessDetail = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getBusinessDetail = async function(req, res) {
+module.exports.getBusinessDetail = async function (req, res) {
   const { reg_id } = req.params;
   // Fetch the details by ID
   const existingRegistration = await Registration.findByPk(reg_id);
@@ -180,7 +180,7 @@ module.exports.getBusinessDetail = async function(req, res) {
 };
 // registration post request---------------
 
-module.exports.putRegDetail = async function(req, res) {
+module.exports.putRegDetail = async function (req, res) {
   const {
     name,
     business_type,
@@ -263,7 +263,7 @@ module.exports.putRegDetail = async function(req, res) {
   }
 };
 
-module.exports.updateCategoryIds = async function(req, res) {
+module.exports.updateCategoryIds = async function (req, res) {
   const registrationId = req.params.registrationId;
   const { category_ids } = req.body;
   if (!category_ids) {
@@ -313,7 +313,7 @@ module.exports.updateCategoryIds = async function(req, res) {
 };
 
 // API TO GET REGISTRATION DETAILS BY USER ID:
-module.exports.getRegById = async function(req, res) {
+module.exports.getRegById = async function (req, res) {
   try {
     const { user_id } = req.params;
     if (user_id == 0 || user_id === 'null') {
@@ -342,7 +342,7 @@ module.exports.getRegById = async function(req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.search = async function(req, res) {
+module.exports.search = async function (req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!Registration.rawAttributes[fieldName]) {
@@ -410,7 +410,7 @@ module.exports.getAll= async function(req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.searchBusiness = async function(req, res) {
+module.exports.searchBusiness = async function (req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!BusinessDetail.rawAttributes[fieldName]) {

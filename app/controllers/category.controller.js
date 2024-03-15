@@ -44,9 +44,9 @@ module.exports.getAllCategory = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.createCategory = async function(req, res) {
+module.exports.createCategory = async function (req, res) {
   try {
-    const { title, description, parent_id, category_type, rank } = req.body;
+    const { title, description, parent_id, category_type, created_by, updated_by } = req.body;
     let imagePath;
     let bannerImage;
     let iconPath;
@@ -71,7 +71,8 @@ module.exports.createCategory = async function(req, res) {
           image_path: imagePath,
           banner_image: bannerImage,
           icon_path: iconPath,
-          rank: rank,
+          created_by: created_by,
+          updated_by: updated_by,
         });
 
         if (category) {
@@ -100,7 +101,8 @@ module.exports.createCategory = async function(req, res) {
         image_path: imagePath,
         banner_image: bannerImage,
         icon_path: iconPath,
-        rank: rank,
+        created_by: created_by,
+        updated_by: updated_by,
       });
 
       if (newCategory) {
@@ -123,7 +125,7 @@ module.exports.createCategory = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getCategoryById = async function(req, res) {
+module.exports.getCategoryById = async function (req, res) {
   try {
     const categoryId = req.params.categoryId;
     const categories = await Category.findOne({
@@ -149,10 +151,10 @@ module.exports.getCategoryById = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.updateCategory = async function(req, res) {
+module.exports.updateCategory = async function (req, res) {
   try {
     const categoryId = req.params.categoryId;
-    const { title, description, parent_id, category_type, rank } = req.body;
+    const { title, description, parent_id, category_type, created_by, updated_by } = req.body;
     let imagePath;
     let bannerImage;
     let iconPath;
@@ -192,7 +194,7 @@ module.exports.updateCategory = async function(req, res) {
             // if (existingCategory.image_path) {
             //     fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH,'/',existingCategory.image_path));
             // }
-            imagePath=existingCategory.image_path;
+            imagePath = existingCategory.image_path;
           }
           if (bannerImage) {
             if (existingCategory.banner_image) {
@@ -202,7 +204,7 @@ module.exports.updateCategory = async function(req, res) {
             // if (existingCategory.banner_image) {
             //     fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH,'/',existingCategory.banner_image));
             // }
-            bannerImage=existingCategory.banner_image;
+            bannerImage = existingCategory.banner_image;
           }
           if (iconPath) {
             if (existingCategory.icon_path) {
@@ -212,7 +214,7 @@ module.exports.updateCategory = async function(req, res) {
             // if (existingCategory.banner_image) {
             //     fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH,'/',existingCategory.banner_image));
             // }
-            iconPath=existingCategory.icon_path;
+            iconPath = existingCategory.icon_path;
           }
         }
 
@@ -225,7 +227,8 @@ module.exports.updateCategory = async function(req, res) {
           image_path: imagePath,
           banner_image: bannerImage,
           icon_path: iconPath,
-          rank: rank,
+          created_by: created_by,
+          updated_by: updated_by,
         }, {
           where: {
             id: categoryId,
@@ -245,7 +248,7 @@ module.exports.updateCategory = async function(req, res) {
         if (bannerImage) {
           fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', bannerImage));
         }
-        if(iconPath) {
+        if (iconPath) {
           fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', iconPath));
         }
         return res.status(serviceResponse.notFound).json({ error: serviceResponse.noCategoryParentMessage });
@@ -273,7 +276,7 @@ module.exports.updateCategory = async function(req, res) {
           // if (existingCategory.image_path) {
           //     fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', existingCategory.image_path));
           // }
-          imagePath=existingCategory.image_path;
+          imagePath = existingCategory.image_path;
         }
         if (bannerImage) {
           if (existingCategory.banner_image) {
@@ -283,7 +286,7 @@ module.exports.updateCategory = async function(req, res) {
           // if (existingCategory.banner_image) {
           //     fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', existingCategory.banner_image));
           // }
-          bannerImage=existingCategory.banner_image;
+          bannerImage = existingCategory.banner_image;
         }
         if (iconPath) {
           if (existingCategory.icon_path) {
@@ -293,7 +296,7 @@ module.exports.updateCategory = async function(req, res) {
           // if (existingCategory.banner_image) {
           //     fs.unlinkSync(path.join(__dirname, '../..', CATEGORY_LOGO_PATH, '/', existingCategory.banner_image));
           // }
-          iconPath=existingCategory.icon_path;
+          iconPath = existingCategory.icon_path;
         }
       }
 
@@ -304,7 +307,8 @@ module.exports.updateCategory = async function(req, res) {
         image_path: imagePath,
         banner_image: bannerImage,
         icon_path: iconPath,
-        rank: rank,
+        created_by: created_by,
+        updated_by: updated_by,
       }, {
         where: {
           id: categoryId,
@@ -333,7 +337,7 @@ module.exports.updateCategory = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.createMultipleCategory = async function(req, res) {
+module.exports.createMultipleCategory = async function (req, res) {
   try {
     const parent_id = req.params.parent_id;
     const arr = req.body;
@@ -342,7 +346,7 @@ module.exports.createMultipleCategory = async function(req, res) {
     }
     if (parent_id) {
       const record = await Category.findOne({ where: { id: parent_id } });
-      
+
       if (record) {
         const updatedArr = arr.map((item) => {
           return {
@@ -351,10 +355,10 @@ module.exports.createMultipleCategory = async function(req, res) {
           };
         });
         const result = await Category.bulkCreate(
-            updatedArr,
-            {
-              updateOnDuplicate: ['title', 'description', 'parent_id', 'category_type', 'rank'],
-            },
+          updatedArr,
+          {
+            updateOnDuplicate: ['title', 'description', 'parent_id', 'category_type'],
+          },
         );
         if (result) {
           return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage, data: result });
@@ -376,7 +380,7 @@ module.exports.createMultipleCategory = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getSubcategories = async function(req, res) {
+module.exports.getSubcategories = async function (req, res) {
   try {
     const parent_id = req.params.parent_id;
     const categories = await Category.findAll({
@@ -406,7 +410,7 @@ module.exports.getSubcategories = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.delcategories = async function(req, res) {
+module.exports.delcategories = async function (req, res) {
   try {
     const category_id = req.params.category_id;
     const categoryToDelete = await Category.findByPk(category_id);
@@ -447,7 +451,7 @@ module.exports.delcategories = async function(req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.search = async function(req, res) {
+module.exports.search = async function (req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!Category.rawAttributes[fieldName]) {

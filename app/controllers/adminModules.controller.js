@@ -9,11 +9,14 @@ const serviceResponse = require('../config/serviceResponse');
  * @param {Object} res - Express response object.
  */
 module.exports.createAdminModule = async function(req, res) {
-    const { name, description, is_active } = req.body;
+    const { name, description, is_active,  created_by, updated_by } = req.body;
     const newAdminRecord = await AdminModules.create({
         name,
         description,
         is_active,
+        created_by,
+        updated_by
+
     });
     return res.status(serviceResponse.saveSuccess).json({
         message: serviceResponse.createdMessage,
@@ -76,7 +79,8 @@ module.exports.getAdminModuleById = async function(req, res) {
  */
 module.exports.updateAdminModuleById = async function(req, res) {
     const { adminId } = req.params;
-    const { name, description, is_active } = req.body;
+    const { name, description, is_active, created_by,
+        updated_by } = req.body;
     const existingAdminRecord = await AdminModules.findByPk(adminId);
     if (!adminId || adminId == 0) {
         return res.status(serviceResponse.badRequest).json({ error: 'Kindly provide valid Admin ID' });
@@ -85,7 +89,8 @@ module.exports.updateAdminModuleById = async function(req, res) {
         return res.status(serviceResponse.notFound).json({ error: 'Admin Module not found with this id' });
     }
     await existingAdminRecord.update({
-        name, description, is_active,
+        name, description, is_active, created_by,
+        updated_by
     });
     return res.status(serviceResponse.ok).json({
         message: serviceResponse.updatedMessage,

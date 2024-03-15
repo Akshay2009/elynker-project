@@ -15,6 +15,12 @@ module.exports = (sequelize, Sequelize) => {
     is_active: {
       type: Sequelize.BOOLEAN,
     },
+    created_by: {
+      type: Sequelize.NUMERIC,
+    },
+    updated_by: {
+      type: Sequelize.NUMERIC,
+    },
   });
   return socialMediaMaster;
 };

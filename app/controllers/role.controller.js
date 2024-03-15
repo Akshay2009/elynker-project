@@ -11,14 +11,16 @@ const serviceResponse = require('../config/serviceResponse');
  * @param {Object} res - Express response object.
  * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
-module.exports.saveRole = async function(req, res) {
+module.exports.saveRole = async function (req, res) {
     try {
         const allRecords = await Role.findAll({});
-        const { name, permissions } = req.body;
+        const { name, permissions, created_by, updated_by } = req.body;
         const record = await Role.create({
             id: allRecords[allRecords.length - 1].id + 1, // get the last record id and do +1 to id 
             name: name,
             permissions: permissions,
+            created_by: created_by,
+            updated_by: updated_by,
         });
         if (record) {
             return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage, data: record });
@@ -41,13 +43,15 @@ module.exports.saveRole = async function(req, res) {
  * @param {Object} res - Express response object.
  * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
-module.exports.updateRole = async function(req, res) {
+module.exports.updateRole = async function (req, res) {
     try {
         const id = req.params.id;
-        const { name, permissions } = req.body;
+        const { name, permissions, created_by, updated_by } = req.body;
         const [row, record] = await Role.update({
             name: name,
             permissions: permissions,
+            created_by: created_by,
+            updated_by: updated_by
         }, {
             where: {
                 id: id,
@@ -75,7 +79,7 @@ module.exports.updateRole = async function(req, res) {
  * @param {Object} res - Express response object.
  * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
-module.exports.deleteRole = async function(req, res) {
+module.exports.deleteRole = async function (req, res) {
     try {
         const id = req.params.id;
         const recordToDelete = await Role.findOne({ where: { id: id } });
@@ -103,12 +107,11 @@ module.exports.deleteRole = async function(req, res) {
 
 /**
  * Search All Role details from the database.
- *
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
-module.exports.getAll = async function(req, res) {
+module.exports.getAll = async function (req, res) {
     try {
         const maxLimit = 50;
         let { page, pageSize } = req.query;
@@ -146,7 +149,7 @@ module.exports.getAll = async function(req, res) {
  * @param {Object} res - Express response object.
  * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
-module.exports.getRoleById = async function(req, res) {
+module.exports.getRoleById = async function (req, res) {
     try {
         const id = req.params.id;
         const record = await Role.findOne({
@@ -176,7 +179,7 @@ module.exports.getRoleById = async function(req, res) {
  * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.search = async function(req, res) {
+module.exports.search = async function (req, res) {
     try {
         const { fieldName, fieldValue } = req.params;
         if (!Role.rawAttributes[fieldName]) {

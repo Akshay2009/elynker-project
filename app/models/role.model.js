@@ -13,6 +13,12 @@ module.exports = (sequelize, Sequelize) => {
     permissions: {
       type: Sequelize.STRING(500),
     },
+    created_by: {
+      type: Sequelize.NUMERIC,
+    },
+    updated_by: {
+      type: Sequelize.NUMERIC,
+    },
   }, {
     indexes: [
       {

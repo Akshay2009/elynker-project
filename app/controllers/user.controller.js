@@ -17,9 +17,9 @@ const serviceResponse = require('../config/serviceResponse');
 
 module.exports.updateUser = async function(req, res) {
   const userId = req.params.id;
-  const { name, email, city, mobile_number, country_code } = req.body;
+  const { name, email, city, mobile_number, country_code, created_by, updated_by} = req.body;
   const [numberOfUpdatedRows, updatedRecords] = await User.update(
-    { name, email, mobile_number, city, country_code },
+    { name, email, mobile_number, city, country_code, created_by, updated_by },
     { where: { id: userId }, returning: true,
   });
   await Registration.update(
@@ -104,7 +104,7 @@ module.exports.delUserById = async function(req, res) {
 module.exports.search = async function(req, res) {
   try {
     console.log(req.params);
-    const { fieldName, fieldValue } = req.params;
+    const { fieldName, fieldValue,} = req.params;
     if (!User.rawAttributes[fieldName]) {
       return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
     }
@@ -178,9 +178,9 @@ module.exports.getAllUser = async function(req, res) {
  */
 module.exports.userCreateByAdmin = async function(req, res) {
   try {
-    const { email, name, city, country_code, mobile_number, username, is_active, roles } = req.body;
-    if(!roles) {
-      return res.status(serviceResponse.badRequest).json({ error: 'Role Not Given' });
+    const { email, name, city, country_code, mobile_number, username, is_active, roles, created_by, updated_by } = req.body;
+    if(!roles){
+      return res.status(serviceResponse.badRequest).json({ error: 'Role Not Given'});
     }
     const rolesRecord = await Role.findAll({
       where: {
@@ -200,6 +200,8 @@ module.exports.userCreateByAdmin = async function(req, res) {
       mobile_number: mobile_number,
       username: username,
       is_active: is_active,
+      created_by:created_by,
+      updated_by:updated_by
     });
     if(user) {
       await user.setRoles(rolesRecord);
@@ -235,8 +237,8 @@ module.exports.updateUserByAdminById = async function(req, res) {
     if(!user) {
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
-    const { email, name, city, country_code, mobile_number, username, is_active, roles } = req.body;
-    let rolesRecord = await user.getRoles();
+    const { email, name, city, country_code, mobile_number, username, is_active, roles, created_by, updated_by} = req.body;
+    let rolesRecord =  await user.getRoles();
     if (roles) {
       rolesRecord = await Role.findAll({
         where: {
@@ -257,6 +259,8 @@ module.exports.updateUserByAdminById = async function(req, res) {
       mobile_number: mobile_number,
       username: username,
       is_active: is_active,
+      created_by:created_by,
+      updated_by:updated_by
     }, {
       where: {
         id: id,

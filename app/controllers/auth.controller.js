@@ -25,6 +25,8 @@ exports.signup = async (req, res) => {
     country_code: req.body.country_code,
     mobile_number: req.body.mobile_number,
     city: req.body.city,
+    created_by: req.body.created_by,
+    updated_by: req.body.updated_by,
     // password: bcrypt.hashSync(req.body.password, 8)
   });
   if (user) {
@@ -34,6 +36,8 @@ exports.signup = async (req, res) => {
       isActive: true,
       registration_type: req.body.registration_type || 1,
       userId: user.id,
+      created_by: req.body.created_by,
+      updated_by: req.body.updated_by,
     });
 
     if (req.body.roles) {
@@ -130,20 +134,20 @@ exports.signin = async (req, res) => {
                 });
             }
 
-        const authorities = [];
-        user.getRoles().then((roles) => {
-          for (let i = 0; i < roles.length; i++) {
-            authorities.push('ROLE_' + roles[i].name.toUpperCase());
-          }
-          return res.status(serviceResponse.ok).send({
-            user: user,
-            roles: authorities,
-            accessToken: token,
-            registration: result,
-          });
+      const authorities = [];
+      user.getRoles().then((roles) => {
+        for (let i = 0; i < roles.length; i++) {
+          authorities.push('ROLE_' + roles[i].name.toUpperCase());
+        }
+        return res.status(serviceResponse.ok).send({
+          user: user,
+          roles: authorities,
+          accessToken: token,
+          registration: result,
         });
-      })
-      .catch((err) => {
-        return res.status(serviceResponse.internalServerError).send({ message: serviceResponse.internalServerErrorMessage });
       });
+    })
+    .catch((err) => {
+      return res.status(serviceResponse.internalServerError).send({ message: serviceResponse.internalServerErrorMessage });
+    });
 };

@@ -19,6 +19,12 @@ module.exports = (sequelize, Sequelize) => {
         },
       },
     },
+    created_by: {
+      type: Sequelize.NUMERIC,
+    },
+    updated_by: {
+      type: Sequelize.NUMERIC,
+    },
   });
 
   return UnitMaster;

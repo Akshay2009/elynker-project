@@ -80,7 +80,7 @@ module.exports.getAllProducts = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getProductBySKU = async function(req, res) {
+module.exports.getProductBySKU = async function (req, res) {
   const sku = req.params.sku;
   try {
     const products = await Product.findOne({
@@ -105,9 +105,9 @@ module.exports.getProductBySKU = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.createProduct = async function(req, res) {
+module.exports.createProduct = async function (req, res) {
   try {
-    const { type, registrationId } = req.body;
+    const { type, registrationId, created_by, updated_by, } = req.body;
     if (!req.files['csvFilePath']) {
       return res.status(serviceResponse.badRequest).json({ error: 'Please Provide CSV' });
     }
@@ -126,11 +126,11 @@ module.exports.createProduct = async function(req, res) {
       for (const row of csvData) {
         const productImages = row.product_images ? row.product_images.split(',') : [];
         const productArray = [];
-        for (let j=0; j<productImages.length; j++) {
+        for (let j = 0; j < productImages.length; j++) {
           const imageUrl = productImages[j];
           // let imageName = registrationId+row.title+'image'+j; // Replace with the desired image name
           // imageName = imageName+imageUrl.substring(imageUrl.lastIndexOf("."));
-          const imageName = imageUrl.substring(imageUrl.lastIndexOf('/')+1);
+          const imageName = imageUrl.substring(imageUrl.lastIndexOf('/') + 1);
           productArray.push(imageName);
           downloadImage(imageUrl, imageName);
         }
@@ -157,6 +157,8 @@ module.exports.createProduct = async function(req, res) {
               category_id: categoryIds,
               default_image: productArray[0],
               product_images: productArray.join(','),
+              created_by,
+              updated_by,
             },
           });
 
@@ -172,6 +174,8 @@ module.exports.createProduct = async function(req, res) {
               category_id: categoryIds,
               default_image: productArray[0],
               product_images: productArray.join(','),
+              created_by,
+              updated_by,
             });
           }
           // Find categories by IDs
@@ -201,7 +205,7 @@ module.exports.createProduct = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.createProductsImages = async function(req, res) {
+module.exports.createProductsImages = async function (req, res) {
   try {
     return res.status(200).json({ message: 'Images Uploaded Successfully' });
   } catch (error) {
@@ -216,10 +220,10 @@ module.exports.createProductsImages = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.createProductsSingleRecord = async function(req, res) {
+module.exports.createProductsSingleRecord = async function (req, res) {
   try {
     const { type, registrationId, title, description, budget, moq, category_id, unit, year_of_exp,
-      portfolio_link } = req.body;
+      portfolio_link, created_by, updated_by, } = req.body;
     if (!req.files['images']) {
       return res.status(serviceResponse.badRequest).json({ error: 'Please Provide Product Images' });
     }
@@ -270,6 +274,8 @@ module.exports.createProductsSingleRecord = async function(req, res) {
       unit: unit,
       default_image: imageFileNames[0],
       product_images: productImagesString,
+      created_by,
+      updated_by,
     });
     if (product) {
       // Associate the product with categories
@@ -289,17 +295,17 @@ module.exports.createProductsSingleRecord = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.updateProducts = async function(req, res) {
+module.exports.updateProducts = async function (req, res) {
   try {
     const sku = req.params.sku;
-    const { title, type, description, budget, moq, category_id, registrationId, unit, year_of_exp, portfolio_link } = req.body;
+    const { title, type, description, budget, moq, category_id, registrationId, unit, year_of_exp, portfolio_link, created_by, updated_by } = req.body;
     if (!registrationId) {
       return res.status(serviceResponse.badRequest).json({ error: 'Registration ID Not provided' });
     }
     if (!category_id) {
       return res.status(serviceResponse.badRequest).json({ error: 'No category Provided' });
     }
-    if (type !=1 && type != 2) {
+    if (type != 1 && type != 2) {
       return res.status(serviceResponse.badRequest).json({ error: 'Type must be either 1 or 2' });
     }
     const regRecord = await Registration.findOne({
@@ -338,6 +344,8 @@ module.exports.updateProducts = async function(req, res) {
       unit: unit,
       category_id: catArray.join(','),
       registrationId: registrationId,
+      created_by,
+      updated_by,
     };
     const existingProduct = await Product.findOne({ where: { sku: sku } });
     if (!existingProduct) {
@@ -345,22 +353,22 @@ module.exports.updateProducts = async function(req, res) {
     }
     const existingProductImages = existingProduct.product_images.split(',');
     let existingProductImagesString;
-    if (existingProductImages.join(',').length ==0) {
+    if (existingProductImages.join(',').length == 0) {
       existingProductImagesString = '';
     } else {
       existingProductImagesString = existingProductImages.join(',');
     }
 
 
-    if (req.files['images'] ) { // if images are uploaded then then update product_images and default_image field
+    if (req.files['images']) { // if images are uploaded then then update product_images and default_image field
       imageFileNames = req.files['images'].map((file) => path.basename(file.path));
       productImagesString = imageFileNames.join(',');
-      if (existingProductImages.join(',').length===0) {
+      if (existingProductImages.join(',').length === 0) {
         product_details.default_image = imageFileNames[0];
         product_details.product_images = productImagesString;
       } else {
         product_details.default_image = existingProductImages[0];
-        product_details.product_images = existingProductImagesString+','+productImagesString;
+        product_details.product_images = existingProductImagesString + ',' + productImagesString;
       }
     }
     // else{
@@ -391,7 +399,7 @@ module.exports.updateProducts = async function(req, res) {
   }
 };
 
-module.exports.getProductByRegistrationId = async function(req, res) {
+module.exports.getProductByRegistrationId = async function (req, res) {
   const registrationId = req.params.registrationId;
   try {
     const products = await Product.findAll({
@@ -409,7 +417,7 @@ module.exports.getProductByRegistrationId = async function(req, res) {
   }
 };
 
-module.exports.deleteProductBySku = async function(req, res) {
+module.exports.deleteProductBySku = async function (req, res) {
   try {
     const sku = req.params.sku;
     const productToDelete = await Product.findOne({
@@ -422,7 +430,7 @@ module.exports.deleteProductBySku = async function(req, res) {
     }
     if (productToDelete) {
       const existingProductImages = productToDelete.product_images.split(',');
-      for ( let i=0; i<existingProductImages.length; i++) {
+      for (let i = 0; i < existingProductImages.length; i++) {
         fs.unlinkSync(path.join(__dirname, '../..', PRODUCT_IMAGE_PATH, '/', existingProductImages[i]));
       }
     }
@@ -443,16 +451,16 @@ module.exports.deleteProductBySku = async function(req, res) {
   }
 };
 
-module.exports.delProductImages=async function(req, res) {
+module.exports.delProductImages = async function (req, res) {
   try {
-    const { product_id }=req.params;
-    const { image_name }=req.body;
+    const { product_id } = req.params;
+    const { image_name } = req.body;
     const product = await Product.findByPk(product_id);
     if (!product) {
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
-    const productArray=product.product_images.split(',');
-    const productArrayUpdated = productArray.filter((product) => product!== image_name);
+    const productArray = product.product_images.split(',');
+    const productArrayUpdated = productArray.filter((product) => product !== image_name);
 
     if (productArray.length === productArrayUpdated.length) {
       return res.status(400).json({ error: 'Image name provided not present on this Product' });
@@ -466,7 +474,7 @@ module.exports.delProductImages=async function(req, res) {
       },
       returning: true,
     });
-    if (rowUpdated>0) {
+    if (rowUpdated > 0) {
       fs.unlinkSync(path.join(__dirname, '../..', PRODUCT_IMAGE_PATH, '/', image_name));
       return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, product: productUpdated[0] });
     } else {
@@ -477,11 +485,11 @@ module.exports.delProductImages=async function(req, res) {
   }
 };
 
-module.exports.getParentCategory = async function(req, res) {
+module.exports.getParentCategory = async function (req, res) {
   try {
-    const thirdLevel=[];
-    const secondLevel=[];
-    const firstLevel=[];
+    const thirdLevel = [];
+    const secondLevel = [];
+    const firstLevel = [];
     const registrationId = req.params.registrationId;
     console.log('///', registrationId);
     const products = await Product.findAll({
@@ -491,7 +499,7 @@ module.exports.getParentCategory = async function(req, res) {
     });
 
     if (products.length > 0) {
-      products.forEach((item)=>{
+      products.forEach((item) => {
         console.log(item.category_id);
         thirdLevel.push(parseInt(item.category_id));
       });
@@ -503,7 +511,7 @@ module.exports.getParentCategory = async function(req, res) {
           },
         },
       });
-      thirdLevelCat.forEach((item)=>{
+      thirdLevelCat.forEach((item) => {
         secondLevel.push(item.parent_id);
       });
 
@@ -514,7 +522,7 @@ module.exports.getParentCategory = async function(req, res) {
           },
         },
       });
-      secondLevelCat.forEach((item)=>{
+      secondLevelCat.forEach((item) => {
         firstLevel.push(item.parent_id);
       });
 
@@ -543,7 +551,7 @@ module.exports.getParentCategory = async function(req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.search = async function(req, res) {
+module.exports.search = async function (req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!Product.rawAttributes[fieldName]) {

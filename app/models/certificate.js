@@ -12,7 +12,7 @@ module.exports = (sequelize, Sequelize) => {
     created_by: {
       type: Sequelize.NUMERIC,
     },
-    modified_by: {
+    updated_by: {
       type: Sequelize.NUMERIC,
     },
   });

@@ -9,10 +9,12 @@ const certificateRoutes = require('../routes/certificate.routes');
 const sociallinksRoutes = require('../routes/sociallinks.routes');
 const freelancerBannerProjectRoutes = require('../routes/freelancerBannerProject.routes');
 const freelancerResumeRoutes = require('../routes/freelancer_resume.routes');
-const socialmediaMasterRoutes=require('../routes/socialmediaMaster.routes');
-const adminModulesRoutes=require('../routes/adminModules.routes');
+const socialmediaMasterRoutes = require('../routes/socialmediaMaster.routes');
+const adminModulesRoutes = require('../routes/adminModules.routes');
 const rolesRoutes = require('../routes/role.routes');
-const filterVendors=require('../routes/miscellaneous.routes')
+const filterVendors = require('../routes/miscellaneous.routes')
+const languageMaster = require('../routes/master.routes')
+const educationMaster = require('../routes/master.routes')
 module.exports = function initializeRoutes(app) {
   authRoutes(app);
   userRoutes(app);
@@ -28,4 +30,6 @@ module.exports = function initializeRoutes(app) {
   adminModulesRoutes(app);
   rolesRoutes(app);
   filterVendors(app);
+  languageMaster(app);
+  educationMaster(app);
 };

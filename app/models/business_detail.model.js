@@ -33,6 +33,12 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING(500),
       allowNull: true,
     },
+    created_by: {
+      type: Sequelize.NUMERIC,
+    },
+    updated_by: {
+      type: Sequelize.NUMERIC,
+    },
   }, {
     indexes: [
       {

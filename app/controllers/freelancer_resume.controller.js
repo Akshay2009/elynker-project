@@ -21,30 +21,31 @@ module.exports.uploadFreelancerResume = async (req, res) => {
     }
     const { registrationId } = req.params;
     const resume = req.files['resume'];
+    const { created_by, updated_by } = req.body;
     const existingRegistration = await Registration.findByPk(registrationId);
     if (!existingRegistration) {
       fs.unlinkSync(
-          path.join(
-              __dirname,
-              '../..',
-              FREELANCER_RESUME_PATH,
-              '/',
-              req.files['resume'][0].filename,
-          ),
+        path.join(
+          __dirname,
+          '../..',
+          FREELANCER_RESUME_PATH,
+          '/',
+          req.files['resume'][0].filename,
+        ),
       );
       return res
-          .status(serviceResponse.notFound)
-          .json({ error: serviceResponse.registrationNotFound });
+        .status(serviceResponse.notFound)
+        .json({ error: serviceResponse.registrationNotFound });
     }
     if (existingRegistration.registration_type !== 3) {
       fs.unlinkSync(
-          path.join(
-              __dirname,
-              '../..',
-              FREELANCER_RESUME_PATH,
-              '/',
-              req.files['resume'][0].filename,
-          ),
+        path.join(
+          __dirname,
+          '../..',
+          FREELANCER_RESUME_PATH,
+          '/',
+          req.files['resume'][0].filename,
+        ),
       );
       return res
           .status(serviceResponse.badRequest)
@@ -57,13 +58,13 @@ module.exports.uploadFreelancerResume = async (req, res) => {
       if (existingResume) {
         for (let i = 0; i < existingResume.length; i++) {
           fs.unlinkSync(
-              path.join(
-                  __dirname,
-                  '../..',
-                  FREELANCER_RESUME_PATH,
-                  '/',
-                  existingResume[i].freelancer_resume,
-              ),
+            path.join(
+              __dirname,
+              '../..',
+              FREELANCER_RESUME_PATH,
+              '/',
+              existingResume[i].freelancer_resume,
+            ),
           );
         }
       }
@@ -76,6 +77,8 @@ module.exports.uploadFreelancerResume = async (req, res) => {
       const uploadResume = await freelancerResume.create({
         freelancer_resume: resume[0].filename,
         registrationId: registrationId,
+        created_by: created_by,
+        updated_by: updated_by,
       });
       if (uploadResume) {
         return res.status(serviceResponse.saveSuccess).json({
@@ -85,13 +88,13 @@ module.exports.uploadFreelancerResume = async (req, res) => {
       }
     } else {
       fs.unlinkSync(
-          path.join(
-              __dirname,
-              '../..',
-              FREELANCER_RESUME_PATH,
-              '/',
-              resume[0].filename,
-          ),
+        path.join(
+          __dirname,
+          '../..',
+          FREELANCER_RESUME_PATH,
+          '/',
+          resume[0].filename,
+        ),
       );
       return res.status(serviceResponse.badRequest).json({ error: 'resume not uploaded' });
     }
@@ -106,7 +109,7 @@ module.exports.uploadFreelancerResume = async (req, res) => {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getFreelancerResumes = async function(req, res) {
+module.exports.getFreelancerResumes = async function (req, res) {
   try {
     const registrationId = req.params.registrationId;
     const freelancer_resume = await freelancerResume.findAll({
@@ -133,7 +136,7 @@ module.exports.getFreelancerResumes = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.delFreelancerResumeById = async function(req, res) {
+module.exports.delFreelancerResumeById = async function (req, res) {
   try {
     const resume_id = req.params.resume_id;
     const recordToDelete = await freelancerResume.findOne({
@@ -147,13 +150,13 @@ module.exports.delFreelancerResumeById = async function(req, res) {
     if (recordToDelete) {
       if (recordToDelete.freelancer_resume) {
         fs.unlinkSync(
-            path.join(
-                __dirname,
-                '../..',
-                FREELANCER_RESUME_PATH,
-                '/',
-                recordToDelete.freelancer_resume,
-            ),
+          path.join(
+            __dirname,
+            '../..',
+            FREELANCER_RESUME_PATH,
+            '/',
+            recordToDelete.freelancer_resume,
+          ),
         );
       }
     }
@@ -162,11 +165,11 @@ module.exports.delFreelancerResumeById = async function(req, res) {
     });
     if (deletedResume > 0) {
       return res
-          .status(serviceResponse.ok)
-          .json({
-            success: serviceResponse.deletedMessage,
-            data: recordToDelete,
-          });
+        .status(serviceResponse.ok)
+        .json({
+          success: serviceResponse.deletedMessage,
+          data: recordToDelete,
+        });
     } else {
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
@@ -214,7 +217,7 @@ module.exports.getAllFreelancerResumes = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getFreelancerResumesById = async function(req, res) {
+module.exports.getFreelancerResumesById = async function (req, res) {
   try {
     const id = req.params.resume_id;
     const freelancer_resume = await freelancerResume.findOne({ where: { id: id } });
@@ -225,8 +228,8 @@ module.exports.getFreelancerResumesById = async function(req, res) {
       });
     } else {
       return res
-          .status(serviceResponse.notFound)
-          .json({ error: serviceResponse.errorNotFound });
+        .status(serviceResponse.notFound)
+        .json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
     return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
@@ -242,7 +245,7 @@ module.exports.getFreelancerResumesById = async function(req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.search = async function(req, res) {
+module.exports.search = async function (req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!freelancerResume.rawAttributes[fieldName]) {

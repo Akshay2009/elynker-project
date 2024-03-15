@@ -14,7 +14,7 @@ const serviceResponse = require('../config/serviceResponse');
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.createUsersBanner = async function(req, res) {
+module.exports.createUsersBanner = async function (req, res) {
   const registrationId = req.params.registrationId;
   const registrationRecord = await Registration.findByPk(registrationId);
   if (!registrationRecord || registrationRecord.registration_type !== 3) {
@@ -23,7 +23,7 @@ module.exports.createUsersBanner = async function(req, res) {
     }
     return res.status(serviceResponse.badRequest).json({ error: 'Registration not exist or Registration is not freelancer type' });
   }
-  const { banner_name } = req.body;
+  const { banner_name, created_by, updated_by} = req.body;
   if (!banner_name) {
     fs.unlinkSync(path.join(__dirname, '../..', USERS_BANNER_PATH, '/', req.files['images'][0].filename));
     return res.status(400).json({ error: 'Please Provide Banner Name' });
@@ -38,6 +38,8 @@ module.exports.createUsersBanner = async function(req, res) {
       banner_name: banner_name,
       banner_image: bannerImages[0].filename,
       registrationId: registrationId,
+      created_by:created_by,
+      updated_by:updated_by,
     });
     if (userBanner) {
       return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage, data: userBanner });
@@ -55,13 +57,13 @@ module.exports.createUsersBanner = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.updateUsersBanner = async function(req, res) {
+module.exports.updateUsersBanner = async function (req, res) {
   const userBannerId = req.params.userBannerId;
   const userBanner = await FreelancerBannerProject.findByPk(userBannerId);
   if (!userBanner) {
     return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
-  const { banner_name, registrationId } = req.body;
+  const { banner_name, registrationId, created_by, updated_by } = req.body;
   let reg_id = userBanner.registrationId;
   if(registrationId) {
     reg_id = registrationId;
@@ -86,13 +88,15 @@ module.exports.updateUsersBanner = async function(req, res) {
       banner_image: bannerImages[0].filename,
       banner_name: banner_name,
       registrationId: reg_id,
+      created_by: created_by,
+      updated_by: updated_by,
     }, {
       where: {
         id: userBannerId,
       },
       returning: true,
     });
-    if (row>0) {
+    if (row > 0) {
       return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, data: bannerRecord[0] });
     } else {
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
@@ -101,13 +105,15 @@ module.exports.updateUsersBanner = async function(req, res) {
     const [row, bannerRecord] = await FreelancerBannerProject.update({
       banner_name: banner_name,
       registrationId: reg_id,
+      created_by: created_by,
+      updated_by: updated_by,
     }, {
       where: {
         id: userBannerId,
       },
       returning: true,
     });
-    if (row>0) {
+    if (row > 0) {
       return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, data: bannerRecord[0] });
     } else {
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
@@ -120,7 +126,7 @@ module.exports.updateUsersBanner = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getUsersBannerById = async function(req, res) {
+module.exports.getUsersBannerById = async function (req, res) {
   const userBannerId = req.params.userBannerId;
   const bannerUserRecord = await FreelancerBannerProject.findOne({
     where: {
@@ -139,7 +145,7 @@ module.exports.getUsersBannerById = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getUsersBannerByRegistrationId = async function(req, res) {
+module.exports.getUsersBannerByRegistrationId = async function (req, res) {
   const registrationId = req.params.registrationId;
   const bannerUserRecord = await FreelancerBannerProject.findAll({
     where: {
@@ -158,7 +164,7 @@ module.exports.getUsersBannerByRegistrationId = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.deleteUsersBanner = async function(req, res) {
+module.exports.deleteUsersBanner = async function (req, res) {
   const userBannerId = req.params.userBannerId;
   const userBannerToDelete = await FreelancerBannerProject.findOne({
     where: {
@@ -193,7 +199,7 @@ module.exports.deleteUsersBanner = async function(req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.search = async function(req, res) {
+module.exports.search = async function (req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!FreelancerBannerProject.rawAttributes[fieldName]) {
@@ -213,6 +219,7 @@ module.exports.search = async function(req, res) {
     if (err instanceof Sequelize.Error) {
       return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };

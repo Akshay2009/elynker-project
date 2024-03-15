@@ -5,11 +5,13 @@ const StateMaster = db.stateMaster;
 const RegistrationTypesMaster = db.registrationTypesMaster;
 const UnitMaster = db.unitMaster;
 const SocialMediaMaster = db.socialMediaMaster;
+const LanguageMaster = db.languageMaster;
+const EducationMaster=db.educationMaster;
 require('dotenv').config();
 const path = require('path');
 const fs = require('fs');
 const SOCIAL_MEDIA_MASTER_PATH = path.join(
-    process.env.SOCIAL_MEDIA_MASTER_PATH,
+  process.env.SOCIAL_MEDIA_MASTER_PATH,
 );
 const { Sequelize } = require('sequelize');
 const serviceResponse = require('../config/serviceResponse');
@@ -20,14 +22,16 @@ const serviceResponse = require('../config/serviceResponse');
  * @param {Object} res - Express response object.
  */
 
-module.exports.saveCityMaster = async function(req, res) {
-  const { name } = req.body;
+module.exports.saveCityMaster = async function (req, res) {
+  const { name, created_by, updated_by } = req.body;
   const cityRecord = await CityMaster.create({
     name: name,
+    created_by,
+    updated_by,
   });
   return res
-      .status(serviceResponse.saveSuccess)
-      .json({ message: serviceResponse.createdMessage, data: cityRecord });
+    .status(serviceResponse.saveSuccess)
+    .json({ message: serviceResponse.createdMessage, data: cityRecord });
 };
 
 /**
@@ -36,7 +40,7 @@ module.exports.saveCityMaster = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getAllCityMasters = async function(req, res) {
+module.exports.getAllCityMasters = async function (req, res) {
   try {
     const maxLimit = 50;
     let { page, pageSize } = req.query;
@@ -65,13 +69,14 @@ module.exports.getAllCityMasters = async function(req, res) {
 
 // city master controller getting data by ID from database---
 
-module.exports.getCityMasters = async function(req, res) {
+module.exports.getCityMasters = async function (req, res) {
   const { id } = req.params;
   if (id) {
     const cityRecord = await CityMaster.findByPk(id);
     if (!cityRecord) {
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
+    return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: cityRecord });
     return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: cityRecord });
   }
 };
@@ -82,14 +87,15 @@ module.exports.getCityMasters = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.updateCityMasterById = async function(req, res) {
+module.exports.updateCityMasterById = async function (req, res) {
   const { id } = req.params;
-  const { name } = req.body;
-  const [updatedRows] = await CityMaster.update({ name }, { where: { id } });
+  const { name, created_by, updated_by } = req.body;
+  const [updatedRows] = await CityMaster.update({ name, created_by, updated_by }, { where: { id } });
   if (updatedRows > 0) {
     const updatedMaster = await CityMaster.findByPk(id);
     if (updatedMaster) {
       return res.status(serviceResponse.ok).json({
+        message: serviceResponse.updatedMessage,
         message: serviceResponse.updatedMessage,
         data: updatedMaster.toJSON(),
       });
@@ -106,7 +112,7 @@ module.exports.updateCityMasterById = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.delCityMaster = async function(req, res) {
+module.exports.delCityMaster = async function (req, res) {
   const { city_id } = req.params;
   const delCity = await CityMaster.destroy({ where: { id: city_id } });
   if (delCity == 0) {
@@ -121,7 +127,7 @@ module.exports.delCityMaster = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getAllcurrencyMaster = async function(req, res) {
+module.exports.getAllcurrencyMaster = async function (req, res) {
   try {
     const maxLimit = 50;
     let { page, pageSize } = req.query;
@@ -152,7 +158,7 @@ module.exports.getAllcurrencyMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getcurrencyMasterById = async function(req, res) {
+module.exports.getcurrencyMasterById = async function (req, res) {
   const id = req.params.id;
   const currency = await CurrencyMaster.findByPk(id);
   if (currency) {
@@ -168,13 +174,15 @@ module.exports.getcurrencyMasterById = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.createCurrencyMaster = async function(req, res) {
-  const { name, prefix, prefix_sign, country_name } = req.body;
+module.exports.createCurrencyMaster = async function (req, res) {
+  const { name, prefix, prefix_sign, country_name, created_by, updated_by } = req.body;
   const newCurrencyRecord = await CurrencyMaster.create({
     name,
     prefix,
     prefix_sign,
     country_name,
+    created_by,
+    updated_by,
   });
   return res.status(serviceResponse.saveSuccess).json({
     message: serviceResponse.createdMessage,
@@ -187,9 +195,9 @@ module.exports.createCurrencyMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.updateCurrencyMasterById = async function(req, res) {
+module.exports.updateCurrencyMasterById = async function (req, res) {
   const { id } = req.params;
-  const { name, prefix, prefix_sign, country_name } = req.body;
+  const { name, prefix, prefix_sign, country_name, created_by, updated_by } = req.body;
   const existingCurrencyRecord = await CurrencyMaster.findByPk(id);
   if (!existingCurrencyRecord) {
     return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
@@ -199,6 +207,8 @@ module.exports.updateCurrencyMasterById = async function(req, res) {
     prefix,
     prefix_sign,
     country_name,
+    created_by,
+    updated_by,
   });
   return res.status(serviceResponse.ok).json({
     message: serviceResponse.updatedMessage,
@@ -212,12 +222,15 @@ module.exports.updateCurrencyMasterById = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.createStateMaster = async function(req, res) {
-  const { name } = req.body;
+module.exports.createStateMaster = async function (req, res) {
+  const { name, created_by, updated_by } = req.body;
   const newStateRecord = await StateMaster.create({
     name,
+    created_by,
+    updated_by,
   });
   return res.status(serviceResponse.saveSuccess).json({
+    message: serviceResponse.createdMessage,
     message: serviceResponse.createdMessage,
     data: newStateRecord,
   });
@@ -228,7 +241,7 @@ module.exports.createStateMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getAllStateMaster = async function(req, res) {
+module.exports.getAllStateMaster = async function (req, res) {
   try {
     const maxLimit = 50;
     let { page, pageSize } = req.query;
@@ -261,7 +274,7 @@ module.exports.getAllStateMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getStateMasterById = async function(req, res) {
+module.exports.getStateMasterById = async function (req, res) {
   const { id } = req.params;
   const getStateRecords = await StateMaster.findByPk(id);
   if (getStateRecords) {
@@ -277,15 +290,17 @@ module.exports.getStateMasterById = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.updateStateMaster = async function(req, res) {
+module.exports.updateStateMaster = async function (req, res) {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, created_by, updated_by } = req.body;
   const existingStateRecord = await StateMaster.findByPk(id);
   if (!existingStateRecord) {
     return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
   }
   await existingStateRecord.update({
     name,
+    created_by,
+    updated_by,
   });
   return res.status(serviceResponse.ok).json({
     message: serviceResponse.updatedMessage,
@@ -298,7 +313,7 @@ module.exports.updateStateMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.saveRegistrationTypeMaster = async function(req, res) {
+module.exports.saveRegistrationTypeMaster = async function (req, res) {
   await RegistrationTypesMaster.create({
     id: 1,
     name: 'user',
@@ -324,7 +339,7 @@ module.exports.saveRegistrationTypeMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.delCurrencyMaster = async function(req, res) {
+module.exports.delCurrencyMaster = async function (req, res) {
   const { currency_id } = req.params;
   const delCurrency = await CurrencyMaster.destroy({
     where: { id: currency_id },
@@ -340,7 +355,7 @@ module.exports.delCurrencyMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.delStateMaster = async function(req, res) {
+module.exports.delStateMaster = async function (req, res) {
   const { state_id } = req.params;
   const delState = await StateMaster.destroy({
     where: { id: state_id },
@@ -356,13 +371,13 @@ module.exports.delStateMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.saveUnitMaster = async function(req, res) {
+module.exports.saveUnitMaster = async function (req, res) {
   try {
-    const { name, description } = req.body;
-    const saveUnit = await UnitMaster.create({ name, description });
+    const { name, description, created_by, updated_by } = req.body;
+    const saveUnit = await UnitMaster.create({ name, description, created_by, updated_by });
     return res
-        .status(serviceResponse.saveSuccess)
-        .json({ success: serviceResponse.createdMessage, data: saveUnit });
+      .status(serviceResponse.saveSuccess)
+      .json({ success: serviceResponse.createdMessage, data: saveUnit });
   } catch (error) {
     console.error('Error creating Unit Master:', error);
     return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
@@ -374,10 +389,10 @@ module.exports.saveUnitMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.updateUnitMaster = async function(req, res) {
+module.exports.updateUnitMaster = async function (req, res) {
   try {
     const { unit_id } = req.params;
-    const { name, description } = req.body;
+    const { name, description, created_by, updated_by } = req.body;
 
     const existingUnitRecord = await UnitMaster.findByPk(unit_id);
     if (
@@ -387,8 +402,8 @@ module.exports.updateUnitMaster = async function(req, res) {
       unit_id === 'undefined'
     ) {
       return res
-          .status(serviceResponse.badRequest)
-          .json({ error: 'Please provide valid UnitMaster Id to Update' });
+        .status(serviceResponse.badRequest)
+        .json({ error: 'Please provide valid UnitMaster Id to Update' });
     }
     if (!existingUnitRecord) {
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
@@ -397,6 +412,8 @@ module.exports.updateUnitMaster = async function(req, res) {
     await existingUnitRecord.update({
       name,
       description,
+      created_by,
+      updated_by,
     });
     return res.status(serviceResponse.ok).json({
       message: serviceResponse.updatedMessage,
@@ -413,7 +430,7 @@ module.exports.updateUnitMaster = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.getUnitMaster = async function(req, res) {
+module.exports.getUnitMaster = async function (req, res) {
   try {
     const maxLimit = 50;
     let { page, pageSize } = req.query;
@@ -446,7 +463,7 @@ module.exports.getUnitMaster = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getUnitmasterById = async function(req, res) {
+module.exports.getUnitmasterById = async function (req, res) {
   try {
     const { unit_id } = req.params;
     if (
@@ -456,8 +473,8 @@ module.exports.getUnitmasterById = async function(req, res) {
       unit_id === 'undefined'
     ) {
       return res
-          .status(serviceResponse.badRequest)
-          .json({ error: 'Please provide valid Unit Master Id to get' });
+        .status(serviceResponse.badRequest)
+        .json({ error: 'Please provide valid Unit Master Id to get' });
     }
     const getUnitbyId = await UnitMaster.findByPk(unit_id);
     if (getUnitbyId) {
@@ -477,7 +494,7 @@ module.exports.getUnitmasterById = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.delUnitmasterByid = async function(req, res) {
+module.exports.delUnitmasterByid = async function (req, res) {
   try {
     const { unit_id } = req.params;
     if (
@@ -487,19 +504,21 @@ module.exports.delUnitmasterByid = async function(req, res) {
       unit_id === 'undefined'
     ) {
       return res
-          .status(serviceResponse.badRequest)
-          .json({ error: 'Please provide valid Unit Master Id to Delete' });
+        .status(serviceResponse.badRequest)
+        .json({ error: 'Please provide valid Unit Master Id to Delete' });
     }
     const delUnit = await db.unitMaster.destroy({ where: { id: unit_id } });
     if (delUnit) {
       return res
-          .status(serviceResponse.ok)
-          .json({ success: serviceResponse.deletedMessage });
+        .status(serviceResponse.ok)
+        .json({ success: serviceResponse.deletedMessage });
     } else {
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (error) {
     console.error('Error deleting Unit Master:', error);
+    return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });
     return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });
   }
 };
@@ -509,64 +528,66 @@ module.exports.delUnitmasterByid = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.saveSocialMedia = async function(req, res) {
+module.exports.saveSocialMedia = async function (req, res) {
   try {
     const image = req.files['image'];
-    const { media_name, is_active } = req.body;
+    const { media_name, is_active, created_by, updated_by } = req.body;
 
     if (image && image.length > 0) {
       if (!media_name || !is_active) {
         fs.unlinkSync(
-            path.join(
-                __dirname,
-                '../..',
-                SOCIAL_MEDIA_MASTER_PATH,
-                '/',
-                image[0].filename,
-            ),
+          path.join(
+            __dirname,
+            '../..',
+            SOCIAL_MEDIA_MASTER_PATH,
+            '/',
+            image[0].filename,
+          ),
         );
         return res
-            .status(serviceResponse.badRequest)
-            .json({ message: 'Kindly Provide media_name and is_active' });
+          .status(serviceResponse.badRequest)
+          .json({ message: 'Kindly Provide media_name and is_active' });
       }
       const socialmedia = await SocialMediaMaster.create({
         media_image_path: image[0].filename,
         media_name: media_name,
         is_active: is_active,
+        created_by: created_by,
+        updated_by: updated_by,
       });
       if (socialmedia) {
         return res
-            .status(serviceResponse.saveSuccess)
-            .json({ message: serviceResponse.createdMessage, data: socialmedia });
+          .status(serviceResponse.saveSuccess)
+          .json({ message: serviceResponse.createdMessage, data: socialmedia });
       } else {
         fs.unlinkSync(
-            path.join(
-                __dirname,
-                '../..',
-                SOCIAL_MEDIA_MASTER_PATH,
-                '/',
-                image[0].filename,
-            ),
+          path.join(
+            __dirname,
+            '../..',
+            SOCIAL_MEDIA_MASTER_PATH,
+            '/',
+            image[0].filename,
+          ),
         );
         return res
-            .status(serviceResponse.badRequest)
-            .json({ error: serviceResponse.errorCreatingRecord });
+          .status(serviceResponse.badRequest)
+          .json({ error: serviceResponse.errorCreatingRecord });
       }
     } else {
       return res
-          .status(serviceResponse.badRequest)
-          .json({ error: 'Please Upload Social Media Image' });
+        .status(serviceResponse.badRequest)
+        .json({ error: 'Please Upload Social Media Image' });
     }
   } catch (err) {
     if (err instanceof Sequelize.ValidationError) {
       fs.unlinkSync(
-          path.join(
-              __dirname,
-              '../..',
-              SOCIAL_MEDIA_MASTER_PATH,
-              '/',
-              req.files['image'][0].filename,
-          ),
+        path.join(
+          __dirname,
+          '../..',
+          SOCIAL_MEDIA_MASTER_PATH,
+          '/',
+          req.files['image'][0].filename,
+        ),
       );
       return res.status(serviceResponse.badRequest).json({ error: err.message });
     }
@@ -579,78 +600,80 @@ module.exports.saveSocialMedia = async function(req, res) {
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  */
-module.exports.updateSocialMedia = async function(req, res) {
+module.exports.updateSocialMedia = async function (req, res) {
   try {
     const socialMediaMasterId = req.params.socialMediaMasterId;
 
-    const { media_name, is_active } = req.body;
+    const { media_name, is_active, created_by, updated_by } = req.body;
 
     if (req.files['image']) {
       const image = req.files['image'];
       const socialMediaMasterRecord = await SocialMediaMaster.findByPk(
-          socialMediaMasterId,
+        socialMediaMasterId,
       );
       if (!socialMediaMasterRecord) {
         fs.unlinkSync(
-            path.join(
-                __dirname,
-                '../..',
-                SOCIAL_MEDIA_MASTER_PATH,
-                '/',
-                image[0].filename,
-            ),
+          path.join(
+            __dirname,
+            '../..',
+            SOCIAL_MEDIA_MASTER_PATH,
+            '/',
+            image[0].filename,
+          ),
         );
         return res
-            .status(serviceResponse.notFound)
-            .json({
-              message:
+          .status(serviceResponse.notFound)
+          .json({
+            message:
               serviceResponse.errorNotFound,
-            });
+          });
       }
       const dummypath = socialMediaMasterRecord.media_image_path;
 
       const [rowUpdated, socialmedia] = await SocialMediaMaster.update(
-          {
-            media_image_path: image[0].filename,
-            media_name: media_name,
-            is_active: is_active,
+        {
+          media_image_path: image[0].filename,
+          media_name: media_name,
+          is_active: is_active,
+          created_by: created_by,
+          updated_by: updated_by,
+        },
+        {
+          where: {
+            id: socialMediaMasterId,
           },
-          {
-            where: {
-              id: socialMediaMasterId,
-            },
-            returning: true,
-          },
+          returning: true,
+        },
       );
       if (rowUpdated > 0) {
         fs.unlinkSync(
-            path.join(
-                __dirname,
-                '../..',
-                SOCIAL_MEDIA_MASTER_PATH,
-                '/',
-                dummypath,
-            ),
+          path.join(
+            __dirname,
+            '../..',
+            SOCIAL_MEDIA_MASTER_PATH,
+            '/',
+            dummypath,
+          ),
         );
         return res
-            .status(serviceResponse.ok)
-            .json({
-              message: serviceResponse.updatedMessage,
-              data: socialmedia[0],
-            });
+          .status(serviceResponse.ok)
+          .json({
+            message: serviceResponse.updatedMessage,
+            data: socialmedia[0],
+          });
       } else {
         fs.unlinkSync(
-            path.join(
-                __dirname,
-                '../..',
-                SOCIAL_MEDIA_MASTER_PATH,
-                '/',
-                image[0].filename,
-            ),
+          path.join(
+            __dirname,
+            '../..',
+            SOCIAL_MEDIA_MASTER_PATH,
+            '/',
+            image[0].filename,
+          ),
         );
         return res
-            .status(serviceResponse.badRequest)
-            .json({ error: 'Error in Updating Social Media Master' });
+          .status(serviceResponse.badRequest)
+          .json({ error: 'Error in Updating Social Media Master' });
       }
     } else {
       const socialMediaMasterRecord = await SocialMediaMaster.findByPk(socialMediaMasterId);
@@ -658,18 +681,20 @@ module.exports.updateSocialMedia = async function(req, res) {
         return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
       }
       const [rowUpdated, socialmedia] = await SocialMediaMaster.update(
-          {
-            media_name: media_name,
-            is_active: is_active,
+        {
+          media_name: media_name,
+          is_active: is_active,
+          created_by: created_by,
+          updated_by: updated_by,
+        },
+        {
+          where: {
+            id: socialMediaMasterId,
           },
-          {
-            where: {
-              id: socialMediaMasterId,
-            },
-            returning: true,
-          },
+          returning: true,
+        },
       );
-      if (rowUpdated>0) {
+      if (rowUpdated > 0) {
         return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, data: socialmedia[0] });
       } else {
         return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
@@ -689,7 +714,7 @@ module.exports.updateSocialMedia = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getSocialMedia= async function(req, res) {
+module.exports.getSocialMedia = async function (req, res) {
   try {
     const maxLimit = 50;
     let { page, pageSize } = req.query;
@@ -723,7 +748,7 @@ module.exports.getSocialMedia= async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.delSocialMediaMaster = async function(req, res) {
+module.exports.delSocialMediaMaster = async function (req, res) {
   try {
     const socialMediaMasterId = req.params.socialMediaMasterId;
     const delrecord = await SocialMediaMaster.findByPk(socialMediaMasterId);
@@ -733,13 +758,13 @@ module.exports.delSocialMediaMaster = async function(req, res) {
     if (delrecord) {
       if (delrecord.media_image_path) {
         fs.unlinkSync(
-            path.join(
-                __dirname,
-                '../..',
-                SOCIAL_MEDIA_MASTER_PATH,
-                '/',
-                delrecord.media_image_path,
-            ),
+          path.join(
+            __dirname,
+            '../..',
+            SOCIAL_MEDIA_MASTER_PATH,
+            '/',
+            delrecord.media_image_path,
+          ),
         );
       }
     }
@@ -760,19 +785,18 @@ module.exports.delSocialMediaMaster = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.getSocialMediaById = async function(req, res) {
+module.exports.getSocialMediaById = async function (req, res) {
   try {
     const { social_id } = req.params;
-    console.log(social_id);
     const Records = await SocialMediaMaster.findByPk(social_id);
     if (Records) {
       return res
-          .status(serviceResponse.ok)
-          .json({ message: serviceResponse.getMessage, data: Records });
+        .status(serviceResponse.ok)
+        .json({ message: serviceResponse.getMessage, data: Records });
     } else {
       return res
-          .status(serviceResponse.notFound)
-          .json({ message: serviceResponse.errorNotFound });
+        .status(serviceResponse.notFound)
+        .json({ message: serviceResponse.errorNotFound });
     }
   } catch (err) {
     if (err instanceof Sequelize.Error) {
@@ -791,7 +815,7 @@ module.exports.getSocialMediaById = async function(req, res) {
  * @returns {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
 
-module.exports.searchSocialMediaMaster = async function(req, res) {
+module.exports.searchSocialMediaMaster = async function (req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!SocialMediaMaster.rawAttributes[fieldName]) {
@@ -805,6 +829,7 @@ module.exports.searchSocialMediaMaster = async function(req, res) {
     if (records.length > 0) {
       return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
     } else {
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
   } catch (err) {
@@ -821,7 +846,7 @@ module.exports.searchSocialMediaMaster = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.searchCityMaster = async function(req, res) {
+module.exports.searchCityMaster = async function (req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!CityMaster.rawAttributes[fieldName]) {
@@ -851,7 +876,7 @@ module.exports.searchCityMaster = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.searchCurrencyMaster = async function(req, res) {
+module.exports.searchCurrencyMaster = async function (req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!CurrencyMaster.rawAttributes[fieldName]) {
@@ -882,7 +907,7 @@ module.exports.searchCurrencyMaster = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.searchStateMaster = async function(req, res) {
+module.exports.searchStateMaster = async function (req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!StateMaster.rawAttributes[fieldName]) {
@@ -912,7 +937,7 @@ module.exports.searchStateMaster = async function(req, res) {
  * @param {Object} res - Express response object.
  */
 
-module.exports.searchUnitMaster = async function(req, res) {
+module.exports.searchUnitMaster = async function (req, res) {
   try {
     const { fieldName, fieldValue } = req.params;
     if (!UnitMaster.rawAttributes[fieldName]) {
@@ -937,3 +962,328 @@ module.exports.searchUnitMaster = async function(req, res) {
 };
 
 
+/**
+ * Controller function to save LanguageMaster details to the database---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.saveLanguageMaster = async function (req, res) {
+  try {
+    const { language, is_active, created_by, updated_by } = req.body;
+    const saveLanguage = await LanguageMaster.create({ language, is_active, created_by, updated_by })
+    if (saveLanguage) {
+      return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage, data: saveLanguage })
+    }
+  } catch {
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage })
+  }
+}
+
+/**
+ * Controller function to get LanguageMaster details from the database---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.getAllLanguageMaster = async function (req, res) {
+  try {
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
+    if (page && pageSize) {
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
+    }
+
+    const { count, rows } = await LanguageMaster.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
+    } else {
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+
+  } catch (err) {
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
+  }
+};
+
+
+/**
+ * Controller function to get LanguageMaster details by ID from the database---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.getByIdLanguageMaster = async function (req, res) {
+  try {
+    const { language_id } = req.params;
+    const Records = await LanguageMaster.findByPk(language_id);
+    if (Records) {
+      return res
+        .status(serviceResponse.ok)
+        .json({ message: serviceResponse.getMessage, data: Records });
+    } else {
+      return res
+        .status(serviceResponse.notFound)
+        .json({ message: serviceResponse.errorNotFound });
+    }
+  } catch {
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage })
+  }
+}
+
+
+/**
+ * Controller function to update LanguageMaster details by ID from the database---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.updateLanguageMaster = async function (req, res) {
+  try {
+    const { language_id } = req.params;
+    const { language, is_active, created_by, updated_by } = req.body;
+    const existingLanguageRecord = await LanguageMaster.findByPk(language_id);
+    if (!existingLanguageRecord) {
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+
+    await existingLanguageRecord.update({
+      language,
+      is_active,
+      created_by,
+      updated_by,
+    });
+    return res.status(serviceResponse.ok).json({
+      message: serviceResponse.updatedMessage,
+      data: existingLanguageRecord,
+    });
+  } catch (error) {
+    return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });
+  }
+};
+
+/**
+ * Controller function to delete LanguageMaster details by ID from the database---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.delLanguageMaster = async function (req, res) {
+  try {
+    const { language_id } = req.params;
+    const Records = await LanguageMaster.findByPk(language_id);
+    if (Records) {
+      const delrecord = await LanguageMaster.destroy({ where: { id: language_id } });
+      if (delrecord) {
+        return res
+          .status(serviceResponse.ok)
+          .json({ message: serviceResponse.deletedMessage, data: Records });
+      }
+    } else {
+      return res
+        .status(serviceResponse.notFound)
+        .json({ message: serviceResponse.errorNotFound });
+    }
+  } catch {
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage })
+  }
+}
+
+/**
+ * Controller function to get LanguageMaster details by fieldName and  fieldValue from the database---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.searchLanguageMaster = async function (req, res) {
+  try {
+    const { fieldName, fieldValue } = req.params;
+    if (!LanguageMaster.rawAttributes[fieldName]) {
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
+    }
+    const records = await LanguageMaster.findAll({
+      where: {
+        [fieldName]: fieldValue,
+      },
+    });
+    if (records.length > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
+    } else {
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+  } catch (err) {
+    if (err instanceof Sequelize.Error) {
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
+    }
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
+  }
+};
+
+/**
+ * Controller function to get education master details from database---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.saveEducationMaster = async function (req, res) {
+  try {
+    const { education, is_active, created_by, updated_by } = req.body;
+    const saveEducation = await EducationMaster.create({ education, is_active, created_by, updated_by })
+    if (saveEducation) {
+      return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage, data: saveEducation })
+    }
+  } catch {
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage })
+  }
+}
+
+/**
+ * Controller function to get Education details from the database---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.getAllEducationMaster = async function (req, res) {
+  try {
+    const maxLimit = 50;
+    let { page, pageSize } = req.query;
+    page = page ? page : 1;
+    let offset = 0;
+    if (page && pageSize) {
+      pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+      offset = (page - 1) * pageSize;
+    }
+
+    const { count, rows } = await EducationMaster.findAndCountAll({
+      limit: pageSize,
+      offset: offset,
+      order: [['createdAt', 'ASC']],
+    });
+    if (count > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
+    } else {
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+
+  } catch (err) {
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
+  }
+};
+
+
+/**
+ * Controller function to get Education details by ID from the database---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.getByIdEducationMaster = async function (req, res) {
+  try {
+    const { education_id } = req.params;
+    const Records = await EducationMaster.findByPk(education_id);
+    if (Records) {
+      return res
+        .status(serviceResponse.ok)
+        .json({ message: serviceResponse.getMessage, data: Records });
+    } else {
+      return res
+        .status(serviceResponse.notFound)
+        .json({ message: serviceResponse.errorNotFound });
+    }
+  } catch {
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage })
+  }
+}
+
+
+/**
+ * Controller function to update Education details by ID from the database---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+module.exports.updateEducationMaster = async function (req, res) {
+  try {
+    const { education_id } = req.params;
+    const { education, is_active, created_by, updated_by } = req.body;
+    const [ row, record] = await EducationMaster.update({
+      education,
+      is_active,
+      created_by,
+      updated_by
+    },{
+      where: {
+        id: education_id,
+      },
+      returning: true,
+    });
+
+    if(row){
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.updatedMessage, data: record[0] });
+    }else{
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+  } catch (error) {
+    return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });
+  }
+};
+
+/**
+ * Controller function to delete Education details by ID from the database---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.delEducationMaster = async function (req, res) {
+  try {
+    const { education_id } = req.params;
+    const Records = await EducationMaster.findByPk(education_id);
+    if (Records) {
+      const delrecord = await EducationMaster.destroy({ where: { id: education_id } });
+      if (delrecord) {
+        return res
+          .status(serviceResponse.ok)
+          .json({ message: serviceResponse.deletedMessage, data: Records });
+      }
+    } else {
+      return res
+        .status(serviceResponse.notFound)
+        .json({ message: serviceResponse.errorNotFound });
+    }
+  } catch {
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage })
+  }
+}
+
+/**
+ * Controller function to get Education details by fieldName and  fieldValue from the database---
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
+
+module.exports.searchEducationMaster = async function (req, res) {
+  try {
+    const { fieldName, fieldValue } = req.params;
+    if (!EducationMaster.rawAttributes[fieldName]) {
+      return res.status(serviceResponse.badRequest).json({ error: serviceResponse.fieldNotExistMessage });
+    }
+    const records = await EducationMaster.findAll({
+      where: {
+        [fieldName]: fieldValue,
+      },
+    });
+    if (records.length > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: records });
+    } else {
+      return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+    }
+  } catch (err) {
+    if (err instanceof Sequelize.Error) {
+      return res.status(serviceResponse.badRequest).json({ error: err.message });
+    }
+    return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
+  }
+};

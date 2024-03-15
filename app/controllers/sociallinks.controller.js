@@ -63,7 +63,7 @@ module.exports.bulkCreateSociallinks = async function(req, res) {
 };
 
 module.exports.createSociallinks = async function(req, res) {
-  const { socialmedia_id, social_name, social_url, created_by, modified_by, registrationId } =
+  const { socialmedia_id, social_name, social_url, created_by, updated_by, registrationId } =
     req.body;
   const socialMediaMasterRecord = await socialMediaMaster.findByPk(socialmedia_id);
   if (!socialMediaMasterRecord) {
@@ -90,7 +90,7 @@ module.exports.createSociallinks = async function(req, res) {
     social_name,
     social_url,
     created_by,
-    modified_by,
+    updated_by,
     registrationId,
   });
   if (newSociallinks) {
@@ -163,7 +163,7 @@ module.exports.getSociallinksById = async function(req, res) {
 
 module.exports.updateSociallinksById = async function(req, res) {
   const { social_id } = req.params;
-  const { socialmedia_id, social_name, social_url, created_by, modified_by, registrationId } =
+  const { socialmedia_id, social_name, social_url, created_by, updated_by, registrationId } =
     req.body;
   const socialMediaMasterRecord = await socialMediaMaster.findByPk(socialmedia_id);
   if (!socialMediaMasterRecord) {
@@ -187,7 +187,7 @@ module.exports.updateSociallinksById = async function(req, res) {
     social_name,
     social_url,
     created_by,
-    modified_by,
+    updated_by,
     registrationId,
   }, {
     where: {
