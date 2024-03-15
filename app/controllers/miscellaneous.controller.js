@@ -9,8 +9,11 @@ module.exports.getVendorsByLocation = async (req, res) => {
         const vendorTypes = await Registration.findAll({
             where: {
                 registration_type: type,
-                city: location
+                city: location,
             },
+            order: [
+                ['createdAt', 'ASC'],
+            ],
         });
         if (vendorTypes.length > 0) {
             return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: vendorTypes });

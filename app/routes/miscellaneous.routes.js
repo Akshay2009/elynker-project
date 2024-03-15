@@ -11,7 +11,7 @@ module.exports = function (app) {
 
     app.get(
         '/api/vendors/:type/:location',
-        // [authJwt.verifyToken],
+        [authJwt.verifyToken],
         filterVendors.getVendorsByLocation,
     );
 }

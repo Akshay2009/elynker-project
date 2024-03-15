@@ -263,4 +263,42 @@
  *           description: No certificate records found
  *         '500':
  *           description: Internal server error
+ *   /api/certificate/record/{certificate_id}:
+ *     get:
+ *       summary: Get certificate record by ID
+ *       tags: [Certificate]
+ *       parameters:
+ *         - in: path
+ *           name: certificate_id
+ *           description: ID of the certificate record to fetch
+ *           required: true
+ *           schema:
+ *             type: integer
+ *         - in: header
+ *           name: x-access-token
+ *           description: Access token for authentication
+ *           required: true
+ *           schema:
+ *             type: string
+ *       responses:
+ *         '200':
+ *           description: Certificate record fetched successfully
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Certificate record fetched successfully
+ *                 data:
+ *                   id: 1
+ *                   name: Certificate Name
+ *                   description: Certificate Description
+ *                   issued_on: '2024-02-28'
+ *                   registrationId: 1
+ *                   createdAt: '2024-02-28T00:00:00.000Z'
+ *                   updatedAt: '2024-02-28T00:00:00.000Z'
+ *         '401':
+ *           description: Unauthorized
+ *         '404':
+ *           description: Certificate record not found
+ *         '500':
+ *           description: Internal server error
  */
