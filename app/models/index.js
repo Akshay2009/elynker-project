@@ -41,6 +41,9 @@ db.socialMediaMaster=require('../models/socialMediaMaster.model.js')(sequelize, 
 db.adminModules=require('../models/adminModules.model.js')(sequelize, Sequelize);
 db.languageMaster=require('../models/languageMaster.model.js')(sequelize, Sequelize);
 db.educationMaster=require('../models/educationMaster.model.js')(sequelize, Sequelize);
+db.enquiry = require('../models/enquiry.model.js')(sequelize, Sequelize);
+
+
 db.role.belongsToMany(db.user, {
   through: 'user_roles',
   onDelete: 'CASCADE',

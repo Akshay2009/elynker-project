@@ -15,6 +15,8 @@ const rolesRoutes = require('../routes/role.routes');
 const filterVendors = require('../routes/miscellaneous.routes')
 const languageMaster = require('../routes/master.routes')
 const educationMaster = require('../routes/master.routes')
+const enquiryRoutes = require('../routes/enquiry.routes');
+
 module.exports = function initializeRoutes(app) {
   authRoutes(app);
   userRoutes(app);
@@ -32,4 +34,5 @@ module.exports = function initializeRoutes(app) {
   filterVendors(app);
   languageMaster(app);
   educationMaster(app);
+  enquiryRoutes(app);
 };
