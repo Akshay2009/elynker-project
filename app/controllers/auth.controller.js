@@ -4,6 +4,7 @@ const User = db.user;
 const Role = db.role;
 const Registration = db.registration;
 const serviceResponse = require('../config/serviceResponse');
+const Category = db.category;
 
 
 const Op = db.Sequelize.Op;
@@ -112,6 +113,13 @@ exports.signin = async (req, res) => {
           where: {
             userId: user.id,
           },
+          include: [
+            {
+              model: Category,
+              attributes: ['id', 'title', 'image_path', 'rank', 'category_type'], 
+              through: { attributes: [], },
+            },
+          ],
         });
         const roleOfUser = await user.getRoles();
         const roleNames = roleOfUser.map((role) => role.dataValues.name);

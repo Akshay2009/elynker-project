@@ -11,6 +11,7 @@ const { Op } = require('sequelize');
 require('dotenv').config();
 const PRODUCT_IMAGE_PATH = path.join(process.env.PRODUCT_IMAGE_PATH);
 const serviceResponse = require('../config/serviceResponse');
+const { log } = require('util');
 
 /**
  method to generate unique SKU in form SKU_****
@@ -278,6 +279,9 @@ module.exports.createProductsSingleRecord = async function (req, res) {
       updated_by,
     });
     if (product) {
+      let topLevelCat = await getCategoryTopLevel(catArray.join(','));
+      // Associate the Registration with top level Category
+      await regRecord.addCategories(topLevelCat);
       // Associate the product with categories
       await product.addCategories(categories);
       return res.status(serviceResponse.saveSuccess).json(product);
@@ -573,4 +577,31 @@ module.exports.search = async function (req, res) {
     }
     return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
+};
+
+
+const getCategoryTopLevel = async (categoryId) => {
+  let category = await Category.findByPk(categoryId);
+
+  if (!category) {
+    throw new Error('Category not found');
+  }
+  
+  const traverseUp = async (category) => {
+    // If the category has no parent, it's the top-level category
+    if (!category.parent_id) {
+      return category;
+    }
+    
+    // Retrieve the parent category
+    const parentCategory = await Category.findByPk(category.parent_id);
+    
+    // If the parent category doesn't exist, return current category
+    if (!parentCategory) {
+      return category;
+    }
+    return traverseUp(parentCategory);
+  };
+  
+  return traverseUp(category);
 };
