@@ -187,6 +187,9 @@ module.exports = (sequelize, Sequelize) => {
     updated_by: {
       type: Sequelize.NUMERIC,
     },
+    last_login: {
+      type: Sequelize.DATE
+    }
   }, {
     indexes: [
       {

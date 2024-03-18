@@ -113,6 +113,8 @@ exports.signin = async (req, res) => {
             userId: user.id,
           },
         });
+        result.last_login = Date.now();
+        await result.save()
         const roleOfUser = await user.getRoles();
         const roleNames = roleOfUser.map((role) => role.dataValues.name);
         let token;
