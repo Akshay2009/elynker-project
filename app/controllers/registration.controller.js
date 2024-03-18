@@ -389,9 +389,17 @@ module.exports.getAll= async function(req, res) {
     }
 
     const { count, rows } = await Registration.findAndCountAll({
+      distinct: true,
       limit: pageSize,
       offset: offset,
       order: [['createdAt', 'ASC']],
+      include: [
+        {
+          model: Category,
+          attributes: ['id', 'title', 'image_path', 'rank', 'category_type'], 
+          through: { attributes: [], },
+        },
+      ],
     });
     if (count > 0) {
       return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });

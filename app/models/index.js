@@ -96,4 +96,14 @@ db.category.hasMany(db.category, { foreignKey: 'parent_id', onDelete: 'CASCADE',
 db.registration.hasMany(db.freelancerBannerProject, { onDelete: 'CASCADE' });
 db.freelancerBannerProject.belongsTo(db.registration);
 
+// associate Registration and Category as m:m
+db.registration.belongsToMany(db.category, {
+  through: 'user_category',
+  onDelete: 'CASCADE',
+});
+db.category.belongsToMany(db.registration, {
+  through: 'user_category',
+  onDelete: 'CASCADE',
+});
+
 module.exports = db;
