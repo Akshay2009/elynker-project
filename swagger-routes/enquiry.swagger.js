@@ -25,6 +25,8 @@
  *           type: number
  *         updated_by:
  *           type: number
+ *         registrationId:
+ *           type: number
  *         createdAt:
  *           type: string
  *           format: date-time

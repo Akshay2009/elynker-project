@@ -106,4 +106,8 @@ db.category.belongsToMany(db.registration, {
   onDelete: 'CASCADE',
 });
 
+// associate Registration and freelancerBannerProject as 1 to m
+db.registration.hasMany(db.enquiry, { onDelete: 'CASCADE' });
+db.enquiry.belongsTo(db.registration);
+
 module.exports = db;

@@ -23,18 +23,44 @@ module.exports.getAllCategory = async function(req, res) {
       pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
       offset = (page - 1) * pageSize;
     }
-
+    
     const { count, rows } = await Category.findAndCountAll({
       limit: pageSize,
       offset: offset,
-      order: [['rank', 'ASC'], ['createdAt', 'ASC']],
+      include: [{
+        model: Category,
+        as: 'children',
+        attributes: [], // Exclude child attributes
+        required: false // Left join to include categories without children
+      }],
+      attributes: [
+        'id',
+        'title',
+        'category_type',
+        'description',
+        'image_path',
+        'banner_image',
+        'icon_path',
+        'parent_id',
+        'rank',
+        'status',
+        'created_by',
+        'updated_by',
+        [db.Sequelize.fn('COUNT', db.Sequelize.col('children.id')), 'children_count']
+      ],
+      raw: true,
+      subQuery: false,
+      group: ['categories.id'],
+      order: [['rank', 'ASC'], ['createdAt', 'ASC']]
     });
-    if (count > 0) {
-      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
+    if (count.length > 0) {
+      return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count.length, data: rows });
     } else {
       return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
     }
+    
   } catch (err) {
+    console.log(err);
     return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
   }
 };
@@ -46,7 +72,7 @@ module.exports.getAllCategory = async function(req, res) {
  */
 module.exports.createCategory = async function (req, res) {
   try {
-    const { title, description, parent_id, category_type, created_by, updated_by } = req.body;
+    const { title, description, parent_id, category_type, status, rank, created_by, updated_by } = req.body;
     let imagePath;
     let bannerImage;
     let iconPath;
@@ -71,6 +97,8 @@ module.exports.createCategory = async function (req, res) {
           image_path: imagePath,
           banner_image: bannerImage,
           icon_path: iconPath,
+          status: status,
+          rank: rank,
           created_by: created_by,
           updated_by: updated_by,
         });
@@ -101,6 +129,8 @@ module.exports.createCategory = async function (req, res) {
         image_path: imagePath,
         banner_image: bannerImage,
         icon_path: iconPath,
+        status: status,
+        rank: rank,
         created_by: created_by,
         updated_by: updated_by,
       });
@@ -154,7 +184,7 @@ module.exports.getCategoryById = async function (req, res) {
 module.exports.updateCategory = async function (req, res) {
   try {
     const categoryId = req.params.categoryId;
-    const { title, description, parent_id, category_type, created_by, updated_by } = req.body;
+    const { title, description, parent_id, category_type, status, rank, created_by, updated_by } = req.body;
     let imagePath;
     let bannerImage;
     let iconPath;
@@ -227,6 +257,8 @@ module.exports.updateCategory = async function (req, res) {
           image_path: imagePath,
           banner_image: bannerImage,
           icon_path: iconPath,
+          status: status,
+          rank: rank,
           created_by: created_by,
           updated_by: updated_by,
         }, {
@@ -307,6 +339,8 @@ module.exports.updateCategory = async function (req, res) {
         image_path: imagePath,
         banner_image: bannerImage,
         icon_path: iconPath,
+        status: status,
+        rank: rank,
         created_by: created_by,
         updated_by: updated_by,
       }, {

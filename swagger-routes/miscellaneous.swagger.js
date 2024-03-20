@@ -76,7 +76,7 @@
  *       - city
  * /api/vendors/{type}/{location}:
  *   get:
- *     summary: Get vendors by type and location
+ *     summary: Get vendors by type and location and categoryId
  *     tags: [Miscellaneous]
  *     security:
  *       - BearerAuth: []
@@ -99,6 +99,21 @@
  *         required: true
  *         schema:
  *           type: string
+ *       - in: query
+ *         name: categoryId
+ *         description: categoryId
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: ratingMin
+ *         description: ratingMin
+ *         schema:
+ *           type: float
+ *       - in: query
+ *         name: ratingMax
+ *         description: ratingMax
+ *         schema:
+ *           type: float
  *     responses:
  *       '200':
  *         description: Vendors fetched successfully

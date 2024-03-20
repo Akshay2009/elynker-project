@@ -3,6 +3,7 @@ const Enquiry = db.enquiry;
 const Sequelize = db.Sequelize;
 const logErrorToFile = require('../logger');
 const serviceResponse = require('../config/serviceResponse');
+const Registration = db.registration;
 
 /**
  * Save Enquiry details to the database.
@@ -13,7 +14,13 @@ const serviceResponse = require('../config/serviceResponse');
  */
 module.exports.saveEnquiry = async function(req, res) {
     try {
-        const { email, name, phone_number, comments, status, created_by, updated_by } = req.body;
+        const { email, name, phone_number, comments, status, created_by, updated_by, registrationId } = req.body;
+        if(registrationId){
+            const registrationRecod = await Registration.findByPk(registrationId);
+            if(!registrationRecod){
+                return res.status(serviceResponse.notFound).json({ error: serviceResponse.registrationNotFound });
+            }
+        }
         const record = await Enquiry.create({
             name,
             email,
@@ -22,6 +29,7 @@ module.exports.saveEnquiry = async function(req, res) {
             status,
             created_by,
             updated_by,
+            registrationId,
         });
         if(record) {
             return res.status(serviceResponse.saveSuccess).json({ message: serviceResponse.createdMessage, data: record });
@@ -47,7 +55,14 @@ module.exports.saveEnquiry = async function(req, res) {
 module.exports.updateEnquiry = async function(req, res) {
     try{
         const id = req.params.id;
-        const { email, name, phone_number, comments, status, created_by, updated_by } = req.body;
+        const { email, name, phone_number, comments, status, created_by, updated_by, registrationId } = req.body;
+        
+        if(registrationId){
+            const registrationRecod = await Registration.findByPk(registrationId);
+            if(!registrationRecod){
+                return res.status(serviceResponse.notFound).json({ error: serviceResponse.registrationNotFound });
+            }
+        }
         const [row, record] = await Enquiry.update({
             name,
             email,
@@ -56,6 +71,7 @@ module.exports.updateEnquiry = async function(req, res) {
             status,
             created_by,
             updated_by,
+            registrationId,
         }, {
             where: {
                 id: id,

@@ -57,6 +57,10 @@ module.exports = (sequelize, Sequelize) => {
         max: 10,
       },
     },
+    status: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: true, 
+    },
     created_by: {
       type: Sequelize.NUMERIC,
     },
