@@ -16,6 +16,7 @@ const filterVendors = require('../routes/miscellaneous.routes')
 const languageMaster = require('../routes/master.routes')
 const educationMaster = require('../routes/master.routes')
 const enquiryRoutes = require('../routes/enquiry.routes');
+const moduleDetailsRoutes = require('../routes/moduleDetails.routes');
 
 module.exports = function initializeRoutes(app) {
   authRoutes(app);
@@ -35,4 +36,5 @@ module.exports = function initializeRoutes(app) {
   languageMaster(app);
   educationMaster(app);
   enquiryRoutes(app);
+  moduleDetailsRoutes(app);
 };
