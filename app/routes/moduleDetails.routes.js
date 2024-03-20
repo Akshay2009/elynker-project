@@ -1,21 +1,8 @@
 const { authJwt } = require('../middleware');
 const moduleDetailsController = require('../controllers/moduleDetails.controller');
 
-module.exports = function(app) {
-    /**
-     * Create new Module Details Record
-     */
-    app.post('/api/moduleDetails',
-        [authJwt.verifyToken],
-        moduleDetailsController.saveModuleDetails,
-    );
-    /**
-     * Update Module Details Record
-    */
-    app.put('/api/moduleDetails',
-        [authJwt.verifyToken],
-        moduleDetailsController.updateModuleDetails,
-    );
+module.exports = function (app) {
+
     /**
      * Delete Module Details Record
     */
@@ -26,7 +13,7 @@ module.exports = function(app) {
     /**
      * Get All Module Details Record
     */
-   app.get('/api/moduleDetails',
+    app.get('/api/moduleDetails',
         [authJwt.verifyToken],
         moduleDetailsController.getAll,
     );
@@ -42,13 +29,27 @@ module.exports = function(app) {
         moduleDetailsController.search,
     );
 
-    app.get('/api/moduleDetails/adminModules/:admin_module_id',
+    app.get('/api/moduleDetails/miscellaneous/:admin_module_id',
         [authJwt.verifyToken],
         moduleDetailsController.getByAdminModuleId,
     );
 
-    app.delete('/api/moduleDetails/adminModules/:admin_module_id',
+    app.delete('/api/moduleDetails/miscellaneous/:admin_module_id',
         [authJwt.verifyToken],
         moduleDetailsController.deleteByAdminModuleId,
+    );
+    /**
+    * Create new Module Details Record
+    */
+    app.post('/api/moduleDetails/miscellaneous',
+        [authJwt.verifyToken],
+        moduleDetailsController.saveModuleDetails,
+    );
+    /**
+     * Update Module Details Record
+    */
+    app.put('/api/moduleDetails/miscellaneous',
+        [authJwt.verifyToken],
+        moduleDetailsController.updateModuleDetails,
     );
 };

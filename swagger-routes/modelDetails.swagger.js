@@ -48,7 +48,7 @@
  *           required: true
  *           schema:
  *             type: string
- * /api/moduleDetails:
+ * /api/moduleDetails/miscellaneous:
  *   post:
  *     summary: Create a new admin module record and module details record
  *     tags: [ModuleDetails]
@@ -125,6 +125,7 @@
  *         description: Bad request
  *       '500':
  *         description: Internal server error
+ * /api/moduleDetails:
  *   get:
  *     summary: Get all module details records
  *     tags: [ModuleDetails]
@@ -270,7 +271,7 @@
  *         description: No module details records found
  *       '500':
  *         description: Internal server error
- * /api/moduleDetails/adminModules/{admin_module_id}:
+ * /api/moduleDetails/miscellaneous/{admin_module_id}:
  *   get:
  *     summary: Get module details records by admin module ID
  *     tags: [ModuleDetails]
