@@ -12,9 +12,6 @@ module.exports = (sequelize, Sequelize) => {
     image_path: {
       type: Sequelize.TEXT,
     },
-    isActive: {
-      type: Sequelize.BOOLEAN,
-    },
     ip_address: {
       type: Sequelize.STRING(20),
       validate: {
@@ -180,6 +177,16 @@ module.exports = (sequelize, Sequelize) => {
           msg: 'Whatsapp Number Must Be Of 10 Characters',
         },
       },
+    },
+    status: {
+      type: Sequelize.ENUM('pending', 'approved','rejected'),
+      defaultValue: 'pending',
+      validate: {
+        isIn: [['pending', 'approved', 'rejected']], 
+      },
+    },
+    rejected_reason: {
+      type: Sequelize.TEXT,
     },
     created_by: {
       type: Sequelize.NUMERIC,

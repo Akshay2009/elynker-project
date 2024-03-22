@@ -134,4 +134,57 @@
  *         description: No vendors found
  *       '500':
  *         description: Internal server error
+ * /api/admin/vendors/{type}:
+ *   get:
+ *     summary: Get registration records by type (0-for both b2b and freelancer, 2-b2b, 3-freelancer)
+ *     tags: [Miscellaneous]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: type
+ *         description: Registration type
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: header
+ *         name: x-access-token
+ *         description: Access token for authentication
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: page
+ *         description: Page number
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: pageSize
+ *         description: Number of records per page
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: Registration records fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 totalRecords:
+ *                   type: integer
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/definitions/Vendor'
+ *       '400':
+ *         description: Bad request
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: Not found
+ *       '500':
+ *         description: Internal server error
  */

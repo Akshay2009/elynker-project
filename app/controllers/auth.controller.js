@@ -34,7 +34,6 @@ exports.signup = async (req, res) => {
     const registration = await Registration.create({
       name: req.body.name,
       city: req.body.city,
-      isActive: true,
       registration_type: req.body.registration_type || 1,
       userId: user.id,
       created_by: req.body.created_by,

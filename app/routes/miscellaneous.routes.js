@@ -14,4 +14,12 @@ module.exports = function (app) {
         [authJwt.verifyToken],
         filterVendors.getVendorsByLocation,
     );
+    /**
+    * Get  Registration Records by type 0-for both b2b and freelancer,2-b2b, 3-freelancer
+    */
+    app.get(
+        '/api/admin/vendors/:type',
+        [authJwt.verifyToken],
+        filterVendors.vendorsListingAdmin,
+    );
 }

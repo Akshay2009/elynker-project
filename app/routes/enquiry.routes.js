@@ -49,4 +49,12 @@ module.exports = function(app) {
         [authJwt.verifyToken],
         enquiryController.search,
     );
+
+    /**
+    * Get  Enquiry Record By RegistrationId
+    */
+    app.get('/api/enquiry/vendor/:registrationId',
+        [authJwt.verifyToken],
+        enquiryController.getEnquiryByRegistrationId,
+    );
 };

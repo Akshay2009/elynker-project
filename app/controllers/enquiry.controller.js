@@ -223,3 +223,33 @@ module.exports.search = async function(req, res) {
         return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     }
 };
+
+/**
+ * Search Enquiry details by registrationId from the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
+module.exports.getEnquiryByRegistrationId = async function(req, res) {
+    try {
+        const registrationId = req.params.registrationId;
+        const record = await Enquiry.findAll({
+            where: {
+                registrationId: registrationId,
+            },
+            order: [['updatedAt', 'DESC']],
+        });
+        if (record.length>0) {
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: record });
+        } else {
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
+    } catch (err) {
+        logErrorToFile.logErrorToFile(err, 'enquiry.controller', 'getEnquiryByRegistrationId');
+        if (err instanceof Sequelize.Error) {
+            return res.status(serviceResponse.badRequest).json({ error: err.message });
+        }
+        return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
+    }
+};

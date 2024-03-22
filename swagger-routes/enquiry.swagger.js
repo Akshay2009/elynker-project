@@ -301,4 +301,50 @@
  *           $ref: '#/components/responses/NotFoundError'
  *         '500':
  *           $ref: '#/components/responses/InternalServerError'
+ *   /api/enquiry/vendor/{registrationId}:
+ *     get:
+ *       summary: Search enquiry records by registrationId
+ *       tags: [Enquiries]
+ *       parameters:
+ *         - $ref: '#/components/parameters/xAccessTokenHeader'
+ *         - name: registrationId
+ *           in: path
+ *           required: true
+ *           description: registrationId
+ *       responses:
+ *         '200':
+ *           description: Successful response
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: Details fetched successfully
+ *                 data:
+ *                   - id: 1
+ *                     name: John Doe
+ *                     email: mailto:john@example.com
+ *                     phone_number: 1234567890
+ *                     comments: Some comments
+ *                     status: Pending
+ *                     created_by: 1
+ *                     updated_by: 1
+ *                     createdAt: '2024-02-28T12:00:00Z'
+ *                     updatedAt: '2024-02-28T12:00:00Z'
+ *                   - id: 2
+ *                     name: John Doe
+ *                     email: mailto:john@example.com
+ *                     phone_number: 1234567890
+ *                     comments: Some comments
+ *                     status: Pending
+ *                     created_by: 1
+ *                     updated_by: 1
+ *                     createdAt: '2024-02-28T12:00:00Z'
+ *                     updatedAt: '2024-02-28T12:00:00Z'
+ *         '400':
+ *           $ref: '#/components/responses/BadRequestError'
+ *         '401':
+ *           $ref: '#/components/responses/UnauthorizedError'
+ *         '404':
+ *           $ref: '#/components/responses/NotFoundError'
+ *         '500':
+ *           $ref: '#/components/responses/InternalServerError'
  */
