@@ -5,6 +5,19 @@ const Registration = db.registration;
 const serviceResponse = require('../config/serviceResponse');
 const Product = db.product;
 const Category = db.category;
+const logErrorToFile = require('../logger');
+const Sequelize = db.Sequelize;
+const FreelancerResume = db.freelancerResume;
+const FreelancerBannerProject = db.freelancerBannerProject;
+const Certificate = db.certificate;
+
+/**
+ *Endpoint to get filter vendors details -----
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
 
 module.exports.getVendorsByLocation = async (req, res) => {
     try {
@@ -46,9 +59,9 @@ module.exports.getVendorsByLocation = async (req, res) => {
                 'company_name',
                 [db.sequelize.fn('COUNT', db.sequelize.col('products.id')), 'productCount'],
             ],
-            group: ['registration.id', 'user.id', categoryId ? 'categories.id': 'user.id'],
+            group: ['registration.id', 'user.id', categoryId ? 'categories.id' : 'user.id'],
         });
-        
+
         const staticRating = 3.5;
         const staticMember = 10;
         const formattedData = vendors.map(vendor => ({
@@ -85,5 +98,76 @@ module.exports.getVendorsByLocation = async (req, res) => {
     } catch (error) {
         console.error("Error fetching vendor types:", error);
         return res.status(serviceResponse.internalServerError).json({ message: serviceResponse.internalServerErrorMessage });
+    }
+};
+
+/**
+ * End point to get freelancer profile details by registration id--
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
+
+module.exports.getFreelancerProfileDetailsByRegId = async function (req, res) {
+    try {
+        const {reg_id}=req.params;
+        let whereCondition = {
+            id: reg_id
+        };
+        let includeOptions = [
+            {
+                model: User,
+                attributes: ['id','mobile_number','email'],
+            },
+            {
+                model: FreelancerResume,
+                attributes: ['id','freelancer_resume'],
+            },
+            {
+                model: FreelancerBannerProject,
+                attributes: ['id','banner_name'],
+            },
+            {
+                model: Product,
+                attributes: ['id','title','default_image','description','budget','type'],
+            },
+            {
+                model: Category,
+                through: { attributes: [] },
+                attributes: ['id', 'title']
+            },
+            {
+                model: Certificate,
+                attributes: ['id','name'],
+            }
+        ];
+        const vendor = await Registration.findOne({
+            where: whereCondition,
+            include: includeOptions,
+            attributes: [
+                'id',
+                'name',
+                'dob',
+                'education',
+                'registration_type',
+                'language',
+                'freelancer_role',
+                'freelancer_bio',
+                'hourly_rate',
+            ],
+        });
+
+        if(vendor){
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data:vendor });
+        }else{
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
+    } catch (err) {
+        logErrorToFile.logErrorToFile(err, 'miscellaneous.controller', 'getFreelancerProfileDetailsByRegId');
+        if (err instanceof Sequelize.Error) {
+            return res.status(serviceResponse.badRequest).json({ error: err.message });
+        }
+        return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     }
 };

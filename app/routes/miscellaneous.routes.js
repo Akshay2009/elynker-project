@@ -14,4 +14,15 @@ module.exports = function (app) {
         [authJwt.verifyToken],
         filterVendors.getVendorsByLocation,
     );
+    /**
+ * Endpoint to get filter vendors details By reg id
+ * @param {String} '/api/admin/vendorDetails/:reg_id' - API endpoint path.
+ * @param {Function[]} [authJwt.verifyToken,
+ * @param {Function} filterVendors.getFreelancerProfileDetailsByRegId, - Controller function to get filter vendors details by Reg id**/
+
+    app.get(
+        '/api/admin/vendorDetails/:reg_id',
+        [authJwt.verifyToken],
+        filterVendors.getFreelancerProfileDetailsByRegId,
+    );
 }
