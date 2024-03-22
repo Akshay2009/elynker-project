@@ -189,7 +189,7 @@
  *         description: Internal server error
 * /api/admin/vendorDetails/{reg_id}:
  *   get:
- *     summary: Get freelancer profile details by registration ID
+ *     summary: Get vendor profile details by registration ID
  *     tags: [Miscellaneous]
  *     security:
  *       - BearerAuth: []
@@ -208,7 +208,7 @@
  *           type: string
  *     responses:
  *       '200':
- *         description: Freelancer profile details fetched successfully
+ *         description: Vendor profile details fetched successfully
  *         content:
  *           application/json:
  *             schema:
