@@ -10,6 +10,7 @@ const Sequelize = db.Sequelize;
 const FreelancerResume = db.freelancerResume;
 const FreelancerBannerProject = db.freelancerBannerProject;
 const Certificate = db.certificate;
+const BusinessDetail = db.businessDetail;
 
 /**
  *Endpoint to get filter vendors details -----
@@ -198,22 +199,14 @@ module.exports.vendorsListingAdmin = async function (req, res) {
                 {
                     model: Certificate,
                     attributes: ['id', 'name'],
+                },
+                {
+                    model: BusinessDetail,
                 }
             ];
             const vendor = await Registration.findOne({
                 where: whereCondition,
                 include: includeOptions,
-                attributes: [
-                    'id',
-                    'name',
-                    'dob',
-                    'education',
-                    'registration_type',
-                    'language',
-                    'freelancer_role',
-                    'freelancer_bio',
-                    'hourly_rate',
-                ],
             });
 
             if (vendor) {
