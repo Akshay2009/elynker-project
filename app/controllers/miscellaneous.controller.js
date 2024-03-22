@@ -7,6 +7,17 @@ const Product = db.product;
 const Category = db.category;
 const logErrorToFile = require('../logger');
 const Sequelize = db.Sequelize;
+const FreelancerResume = db.freelancerResume;
+const FreelancerBannerProject = db.freelancerBannerProject;
+const Certificate = db.certificate;
+
+/**
+ *Endpoint to get filter vendors details -----
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
 
 module.exports.getVendorsByLocation = async (req, res) => {
     try {
@@ -48,9 +59,9 @@ module.exports.getVendorsByLocation = async (req, res) => {
                 'company_name',
                 [db.sequelize.fn('COUNT', db.sequelize.col('products.id')), 'productCount'],
             ],
-            group: ['registration.id', 'user.id', categoryId ? 'categories.id': 'user.id'],
+            group: ['registration.id', 'user.id', categoryId ? 'categories.id' : 'user.id'],
         });
-        
+
         const staticRating = 3.5;
         const staticMember = 10;
         const formattedData = vendors.map(vendor => ({
@@ -92,15 +103,17 @@ module.exports.getVendorsByLocation = async (req, res) => {
 
 /**
  * Get  Registration Records by type 0-for both b2b and freelancer,2-b2b, 3-freelancer
+ * End point to get freelancer profile details by registration id--
  *
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
  */
-module.exports.vendorsListingAdmin = async function(req,res) {
-    try{
+
+module.exports.vendorsListingAdmin = async function (req, res) {
+    try {
         const type = parseInt(req.params.type);
-        if (type !== 0 && type !== 2 && type !== 3){
+        if (type !== 0 && type !== 2 && type !== 3) {
             return res.status(serviceResponse.badRequest).json({ error: 'Incorrect Type Provided' });
         };
 
@@ -123,8 +136,8 @@ module.exports.vendorsListingAdmin = async function(req,res) {
         page = page ? page : 1;
         let offset = 0;
         if (page && pageSize) {
-          pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
-          offset = (page - 1) * pageSize;
+            pageSize = pageSize <= maxLimit ? pageSize : maxLimit;
+            offset = (page - 1) * pageSize;
         }
         const { count, rows } = await Registration.findAndCountAll({
             where: whereClause,
@@ -145,11 +158,74 @@ module.exports.vendorsListingAdmin = async function(req,res) {
         } else {
             return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
-    }catch(err){
+    } catch (err) {
         logErrorToFile.logErrorToFile(err, 'miscellaneous.controller', 'vendorsListing');
-        if (err instanceof Sequelize.Error) {
-            return res.status(serviceResponse.badRequest).json({ error: err.message });
-        }
-        return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
+            if (err instanceof Sequelize.Error) {
+                return res.status(serviceResponse.badRequest).json({ error: err.message });
+            }
+            return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     }
-};
+}
+
+    module.exports.getFreelancerProfileDetailsByRegId = async function (req, res) {
+        try {
+            const { reg_id } = req.params;
+            let whereCondition = {
+                id: reg_id
+            };
+            let includeOptions = [
+                {
+                    model: User,
+                    attributes: ['id', 'mobile_number', 'email'],
+                },
+                {
+                    model: FreelancerResume,
+                    attributes: ['id', 'freelancer_resume'],
+                },
+                {
+                    model: FreelancerBannerProject,
+                    attributes: ['id', 'banner_name'],
+                },
+                {
+                    model: Product,
+                    attributes: ['id', 'title', 'default_image', 'description', 'budget', 'type'],
+                },
+                {
+                    model: Category,
+                    through: { attributes: [] },
+                    attributes: ['id', 'title']
+                },
+                {
+                    model: Certificate,
+                    attributes: ['id', 'name'],
+                }
+            ];
+            const vendor = await Registration.findOne({
+                where: whereCondition,
+                include: includeOptions,
+                attributes: [
+                    'id',
+                    'name',
+                    'dob',
+                    'education',
+                    'registration_type',
+                    'language',
+                    'freelancer_role',
+                    'freelancer_bio',
+                    'hourly_rate',
+                ],
+            });
+
+            if (vendor) {
+                return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: vendor });
+            } else {
+                return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+            }
+        } catch (err) {
+            logErrorToFile.logErrorToFile(err, 'miscellaneous.controller', 'getFreelancerProfileDetailsByRegId');
+            if (err instanceof Sequelize.Error) {
+                return res.status(serviceResponse.badRequest).json({ error: err.message });
+            }
+            return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
+        }
+}
