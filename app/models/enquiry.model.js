@@ -38,6 +38,9 @@ module.exports = (sequelize, Sequelize) => {
         isIn: [['Pending', 'Contacted']], // Ensures only 'pending' or 'contacted' values are accepted
       },
     },
+    user_comment: {
+      type: Sequelize.STRING(500),
+    },
     created_by: {
       type: Sequelize.NUMERIC,
     },

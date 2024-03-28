@@ -33,6 +33,8 @@
  *         updatedAt:
  *           type: string
  *           format: date-time
+ *         user_comment:
+ *           type: string
  *   parameters:
  *     pageQueryParam:
  *       name: page
