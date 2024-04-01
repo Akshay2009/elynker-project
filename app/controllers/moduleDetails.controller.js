@@ -296,7 +296,7 @@ module.exports.deleteByAdminModuleId = async function(req,res){
 
 /**
  * Search Module Details details by Name from the database.
- *
+ * 
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
  * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
