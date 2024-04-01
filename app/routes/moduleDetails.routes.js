@@ -66,7 +66,7 @@ module.exports = function (app) {
    * @param {Function[]} [authJwt.verifyToken,
    * @param {Function}moduleDetailsController.getModuleDetailsByname- Controller function Endpoint to get Admin module details By Name*/
   app.get(
-    "/api/moduleDetails/miscellaneous/search/:name",
+    "/api/moduleDetails/miscellaneous/searchByName/:name",
     [authJwt.verifyToken],
     moduleDetailsController.getModuleDetailsByname
   );

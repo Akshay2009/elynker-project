@@ -312,7 +312,7 @@
  *         description: Module details records not found
  *       '500':
  *         description: Internal server error
- * /api/moduleDetails/miscellaneous/search/{name}:
+ * /api/moduleDetails/miscellaneous/searchByName/{name}:
  *   get:
  *     summary: Get module details records by admin module Name
  *     tags: [ModuleDetails]
