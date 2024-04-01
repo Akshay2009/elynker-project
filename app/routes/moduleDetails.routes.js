@@ -52,4 +52,16 @@ module.exports = function (app) {
         [authJwt.verifyToken],
         moduleDetailsController.updateModuleDetails,
     );
+
+    
+        /**
+* Endpoint to get Admin module details By Name
+* @param {String} '/api/moduleDetails/miscellaneous/search/:name' - API endpoint path.
+* @param {Function[]} [authJwt.verifyToken,
+* @param {Function}moduleDetailsController.getModuleDetailsByname- Controller function Endpoint to get Admin module details By Name*/
+app.get(
+    '/api/moduleDetails/miscellaneous/search/:name',
+    [authJwt.verifyToken],
+    moduleDetailsController.getModuleDetailsByname,
+);
 };

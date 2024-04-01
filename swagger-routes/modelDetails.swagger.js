@@ -312,6 +312,47 @@
  *         description: Module details records not found
  *       '500':
  *         description: Internal server error
+ * /api/moduleDetails/miscellaneous/search/{name}:
+ *   get:
+ *     summary: Get module details records by admin module Name
+ *     tags: [ModuleDetails]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         description: Admin module Name
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: header
+ *         name: x-access-token
+ *         description: Token
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       '200':
+ *         description: Module details records fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 admin:
+ *                   $ref: '#/definitions/AdminModule'
+ *                 module:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/definitions/ModuleDetail'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: Module details records not found
+ *       '500':
+ *         description: Internal server error
  *   delete:
  *     summary: Delete module details records by admin module ID
  *     tags: [ModuleDetails]

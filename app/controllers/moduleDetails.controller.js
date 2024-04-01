@@ -292,3 +292,44 @@ module.exports.deleteByAdminModuleId = async function(req,res){
         return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     }
 }
+
+
+/**
+ * Search Module Details details by Name from the database.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
+module.exports.getModuleDetailsByname = async function (req, res) {
+    try {
+        const name = req.params.name;
+        const adminModuleRecord = await AdminModules.findOne(
+            {
+                where:{
+                    name:name,
+                },
+            },
+        );
+        if (!adminModuleRecord) {
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
+        const record = await ModuleDetails.findAll({
+            where: {
+                admin_module_id: adminModuleRecord.id,
+            },
+            order: [['createdAt', 'ASC']],
+        });
+        if (record.length > 0) {
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, admin: adminModuleRecord, module: record });
+        } else {
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
+    } catch (err) {
+        logErrorToFile.logErrorToFile(err, 'moduleDetails.controller', 'getByAdminModuleId');
+        if (err instanceof Sequelize.Error) {
+            return res.status(serviceResponse.badRequest).json({ error: err.message });
+        }
+        return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
+    }
+};
