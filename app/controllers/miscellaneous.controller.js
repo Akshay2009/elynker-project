@@ -151,11 +151,20 @@ module.exports.vendorsListingAdmin = async function (req, res) {
                 'registration_type',
                 'city',
                 'status',
+                'createdAt',
+                'updatedAt',
             ],
-            order: [['createdAt', 'ASC']],
+            order: [['updatedAt', 'DESC']],
         });
         if (count > 0) {
-            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: rows });
+            const categorizedData = rows.map(entry => {
+                const registrationType = entry.registration_type == 2 ? "Business" : "Freelancer";
+                return { 
+                    ...entry.toJSON(),
+                    registration_type: registrationType 
+                };
+            });
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: categorizedData });
         } else {
             return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
