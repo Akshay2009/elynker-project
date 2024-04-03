@@ -10,7 +10,7 @@ module.exports = function (app) {
  * @param {Function} Registration.getVendorsByFilter, - Controller function to get filter vendors details**/
 
     app.get(
-        '/api/vendors/:type/:location/',
+        '/api/vendors/:type/',
         [authJwt.verifyToken],
         filterVendors.getVendorsByLocation,
     );

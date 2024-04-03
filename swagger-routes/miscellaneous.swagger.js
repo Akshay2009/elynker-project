@@ -74,7 +74,7 @@
  *       - name
  *       - registration_type
  *       - city
- * /api/vendors/{type}/{location}:
+ * /api/vendors/{type}:
  *   get:
  *     summary: Get vendors by type and location and categoryId
  *     tags: [Miscellaneous]
@@ -87,16 +87,15 @@
  *         required: true
  *         schema:
  *           type: string
- *       - in: path
- *         name: location
- *         description: Vendor location
- *         required: true
- *         schema:
- *           type: string
  *       - in: header
  *         name: x-access-token
  *         description: Access token for authentication
  *         required: true
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: location
+ *         description: location
  *         schema:
  *           type: string
  *       - in: query
@@ -105,13 +104,8 @@
  *         schema:
  *           type: integer
  *       - in: query
- *         name: ratingMin
- *         description: ratingMin
- *         schema:
- *           type: float
- *       - in: query
- *         name: ratingMax
- *         description: ratingMax
+ *         name: rating
+ *         description: rating
  *         schema:
  *           type: float
  *     responses:

@@ -11,9 +11,10 @@ const FreelancerResume = db.freelancerResume;
 const FreelancerBannerProject = db.freelancerBannerProject;
 const Certificate = db.certificate;
 const BusinessDetail = db.businessDetail;
+const Enquiry = db.enquiry;
 
 /**
- *Endpoint to get filter vendors details -----
+ *Endpoint to get filter vendors details based on type location category rating -----
  *
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
@@ -22,12 +23,23 @@ const BusinessDetail = db.businessDetail;
 
 module.exports.getVendorsByLocation = async (req, res) => {
     try {
-        const { type, location } = req.params;
-        const { categoryId, ratingMin, ratingMax } = req.query;
+        const { type } = req.params;
+        const { location, categoryId, rating, sortBy } = req.query;
+        
         let whereCondition = {
             registration_type: type,
-            city: location,
         };
+
+        if (location) {
+            whereCondition.city = Array.isArray(location) ? location : [location];
+        }
+        let minRatings = [];
+        let minRating = 0.0;
+        if (rating) {
+            minRatings = Array.isArray(rating) ? rating.map(ele => parseFloat(ele)) : [parseFloat(rating)];
+            minRating = Math.min(...minRatings);
+        }
+
         let includeOptions = [
             {
                 model: User,
@@ -36,13 +48,16 @@ module.exports.getVendorsByLocation = async (req, res) => {
             {
                 model: Product,
                 attributes: []
-            }
+            },
         ];
+
+
         if (categoryId) {
             includeOptions.push({
                 model: Category,
-                where: { id: categoryId },
-                through: { attributes: [] }
+                attributes: [],
+                through: { attributes: [] }, //  no attributes are selected from the join table
+                where: { id: Array.isArray(categoryId) ? categoryId : [categoryId] }
             });
         }
         const vendors = await Registration.findAll({
@@ -60,11 +75,14 @@ module.exports.getVendorsByLocation = async (req, res) => {
                 'company_name',
                 [db.sequelize.fn('COUNT', db.sequelize.col('products.id')), 'productCount'],
             ],
-            group: ['registration.id', 'user.id', categoryId ? 'categories.id' : 'user.id'],
+            group: ['registration.id', 'user.id', categoryId ? 'categories.id' : 'user.id','products.budget'],  
+            //order: sortBy === 'budget-low-to-high' ? [[{ model: Product }, 'budget', 'ASC']] : null 
+            order: sortBy === 'price-low-to-high' ? [[{ model: Product }, 'budget', 'ASC']] :
+                   sortBy === 'price-high-to-low' ? [[{ model: Product }, 'budget', 'DESC']] : null 
         });
-
+        
         const staticRating = 3.5;
-        const staticMember = 10;
+        const staticMember = 26529;
         const formattedData = vendors.map(vendor => ({
             id: vendor.id,
             name: vendor.name,
@@ -78,22 +96,15 @@ module.exports.getVendorsByLocation = async (req, res) => {
             mobile_number: vendor.user.dataValues.mobile_number,
             product_count: vendor.dataValues.productCount,
             rating: staticRating,
-            enquiry_count: staticMember,
+            member_count: staticMember,
         }));
-        // Filter based on rating range if provided
-        if (ratingMin && ratingMax) {
-            const filteredData = formattedData.filter(vendor => vendor.rating >= parseFloat(ratingMin) && vendor.rating <= parseFloat(ratingMax));
-            if (filteredData.length > 0) {
-                return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: filteredData });
-            } else {
-                return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-            }
+        // Filter vendors based on the minimum rating
+        const filteredVendors = formattedData.filter(vendor => vendor.rating >= minRating);
+
+        if (filteredVendors.length > 0) {
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.ok, data: filteredVendors });
         } else {
-            if (formattedData.length > 0) {
-                return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: formattedData });
-            } else {
-                return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
-            }
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
 
     } catch (error) {
