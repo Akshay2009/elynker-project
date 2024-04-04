@@ -32,10 +32,10 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING(500),
     },
     status: {
-      type: Sequelize.ENUM('Pending', 'Contacted'),
-      defaultValue: 'Pending',
+      type: Sequelize.ENUM('pending', 'contacted', 'closed'),
+      defaultValue: 'pending',
       validate: {
-        isIn: [['Pending', 'Contacted']], // Ensures only 'pending' or 'contacted' values are accepted
+        isIn: [['pending', 'contacted', 'closed']], // Ensures only 'pending' or 'contacted' or 'closed values are accepted
       },
     },
     user_comment: {
