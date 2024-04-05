@@ -12,6 +12,7 @@ const FreelancerBannerProject = db.freelancerBannerProject;
 const Certificate = db.certificate;
 const BusinessDetail = db.businessDetail;
 const Enquiry = db.enquiry;
+const SocialLinks = db.sociallinks;
 
 /**
  *Endpoint to get filter vendors details based on type location category rating -----
@@ -28,6 +29,7 @@ module.exports.getVendorsByLocation = async (req, res) => {
         
         let whereCondition = {
             registration_type: type,
+            status: 'approved',
         };
 
         if (location) {
@@ -102,7 +104,7 @@ module.exports.getVendorsByLocation = async (req, res) => {
         const filteredVendors = formattedData.filter(vendor => vendor.rating >= minRating);
 
         if (filteredVendors.length > 0) {
-            return res.status(serviceResponse.ok).json({ message: serviceResponse.ok, data: filteredVendors });
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: filteredVendors });
         } else {
             return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
@@ -187,7 +189,13 @@ module.exports.vendorsListingAdmin = async function (req, res) {
             return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
     }
 }
-
+/**
+ * End point to get freelancer profile details by registration id--
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
     module.exports.getFreelancerProfileDetailsByRegId = async function (req, res) {
         try {
             const { reg_id } = req.params;
@@ -241,4 +249,57 @@ module.exports.vendorsListingAdmin = async function (req, res) {
             }
             return res.status(serviceResponse.internalServerError).json({ error: serviceResponse.internalServerErrorMessage });
         }
+}
+
+/*
+ * End point to get vendor Details by registration id-
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @return {Promise<void>} - Promise representing the completion of the retrieval operation.
+ */
+module.exports.getVendorByRegId = async function(req, res) {
+    try {
+        const { reg_id } = req.params;
+        let whereCondition = {
+            id: reg_id
+        };
+        let includeOptions = [
+            {
+                model: Product,
+            },
+            {
+                model: BusinessDetail,
+            },
+            {
+                model: SocialLinks
+            },
+        ];
+        const vendor = await Registration.findAll({
+            where: whereCondition,
+            include: includeOptions,
+        });
+
+        if (vendor.length>0) {
+            // Mock reviews data
+            const returnData = vendor.map((entry)=>{
+                return {
+                    ...entry.toJSON(),
+                    reviews: [{"review":"Static Review 1"},{"review":"Static Review 2"}]
+                }
+            });
+
+            // Send response with both vendor details and reviews
+            return res.status(serviceResponse.ok).json({ 
+                message: serviceResponse.getMessage, 
+                data: returnData[0],
+            });
+        } else {
+            return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
+        }
+    } catch (err) {
+        console.error(err); // Log the error for debugging
+        logErrorToFile.logErrorToFile(err, 'miscellaneous.controller', 'getVendorByRegId');
+        return res.status(serviceResponse.internalServerError).json({ error: 'Internal server error' });
+    }
 }
