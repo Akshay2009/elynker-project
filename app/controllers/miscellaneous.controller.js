@@ -285,7 +285,8 @@ module.exports.getVendorByRegId = async function(req, res) {
             const returnData = vendor.map((entry)=>{
                 return {
                     ...entry.toJSON(),
-                    reviews: [{"review":"Static Review 1"},{"review":"Static Review 2"}]
+                    reviews: [{"review":"Static Review 1"},{"review":"Static Review 2"}],
+                    member_count: 26529,
                 }
             });
 
