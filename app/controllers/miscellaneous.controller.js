@@ -13,6 +13,7 @@ const Certificate = db.certificate;
 const BusinessDetail = db.businessDetail;
 const Enquiry = db.enquiry;
 const SocialLinks = db.sociallinks;
+const MembersContacted = db.membersContacted;
 
 /**
  *Endpoint to get filter vendors details based on type location category rating -----
@@ -51,6 +52,10 @@ module.exports.getVendorsByLocation = async (req, res) => {
                 model: Product,
                 attributes: []
             },
+            {
+                model: MembersContacted,
+                attributes: []
+            }
         ];
 
 
@@ -75,16 +80,22 @@ module.exports.getVendorsByLocation = async (req, res) => {
                 'business_description',
                 'whatsapp_number',
                 'company_name',
-                [db.sequelize.fn('COUNT', db.sequelize.col('products.id')), 'productCount'],
+                [
+                    db.sequelize.fn('COUNT', db.sequelize.fn('DISTINCT', db.sequelize.col('products.id'))),
+                    'productCount'
+                ],
+                [
+                    db.sequelize.fn('COUNT', db.sequelize.fn('DISTINCT', db.sequelize.col('contacted_members.id'))),
+                    'memberCount'
+                ],
             ],
             group: ['registration.id', 'user.id', categoryId ? 'categories.id' : 'user.id','products.budget'],  
             //order: sortBy === 'budget-low-to-high' ? [[{ model: Product }, 'budget', 'ASC']] : null 
             order: sortBy === 'price-low-to-high' ? [[{ model: Product }, 'budget', 'ASC']] :
                    sortBy === 'price-high-to-low' ? [[{ model: Product }, 'budget', 'DESC']] : null 
         });
-        
+
         const staticRating = 3.5;
-        const staticMember = 26529;
         const formattedData = vendors.map(vendor => ({
             id: vendor.id,
             name: vendor.name,
@@ -98,7 +109,7 @@ module.exports.getVendorsByLocation = async (req, res) => {
             mobile_number: vendor.user.dataValues.mobile_number,
             product_count: vendor.dataValues.productCount,
             rating: staticRating,
-            member_count: staticMember,
+            member_count: vendor.dataValues.memberCount,
         }));
         // Filter vendors based on the minimum rating
         const filteredVendors = formattedData.filter(vendor => vendor.rating >= minRating);
@@ -274,6 +285,9 @@ module.exports.getVendorByRegId = async function(req, res) {
             {
                 model: SocialLinks
             },
+            {
+                model: MembersContacted,
+            }
         ];
         const vendor = await Registration.findAll({
             where: whereCondition,
@@ -286,7 +300,7 @@ module.exports.getVendorByRegId = async function(req, res) {
                 return {
                     ...entry.toJSON(),
                     reviews: [{"review":"Static Review 1"},{"review":"Static Review 2"}],
-                    member_count: 26529,
+                    contacted_members: entry.contacted_members.length,
                 }
             });
 

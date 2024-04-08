@@ -43,6 +43,7 @@ db.languageMaster=require('../models/languageMaster.model.js')(sequelize, Sequel
 db.educationMaster=require('../models/educationMaster.model.js')(sequelize, Sequelize);
 db.enquiry = require('../models/enquiry.model.js')(sequelize, Sequelize);
 db.moduleDetails = require('../models/moduleDetails.model.js')(sequelize, Sequelize);
+db.membersContacted = require('../models/membersContacted.js')(sequelize, Sequelize);
 
 
 db.role.belongsToMany(db.user, {
@@ -110,5 +111,9 @@ db.category.belongsToMany(db.registration, {
 // associate Registration and freelancerBannerProject as 1 to m
 db.registration.hasMany(db.enquiry, { onDelete: 'CASCADE' });
 db.enquiry.belongsTo(db.registration);
+
+// associate registration and product as 1:m 
+db.registration.hasMany(db.membersContacted, { onDelete: 'CASCADE' });
+db.membersContacted.belongsTo(db.registration);
 
 module.exports = db;
