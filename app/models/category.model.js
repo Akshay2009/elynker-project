@@ -51,10 +51,10 @@ module.exports = (sequelize, Sequelize) => {
     },
     rank: {
       type: Sequelize.INTEGER,
-      allowNull: true,
+      defaultValue: 0, 
       validate: {
-        min: 1,
-        max: 10,
+        min: 0,
+        max: 20,
       },
     },
     status: {

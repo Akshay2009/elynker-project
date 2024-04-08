@@ -102,6 +102,13 @@ exports.signin = async (req, res) => {
     where: {
       mobile_number: req.body.mobile_number,
     },
+    include: [
+      {
+        model: Role,
+        attributes: ['name', 'permissions'], 
+        through: { attributes: [], },
+      },
+    ],
   })
       .then(async (user) => {
         if (!user) {
@@ -124,9 +131,9 @@ exports.signin = async (req, res) => {
           result.last_login = Date.now();
           await result.save();
         }
-        
-        const roleOfUser = await user.getRoles();
-        const roleNames = roleOfUser.map((role) => role.dataValues.name);
+
+
+        const roleNames = user.roles.map((role) => role.dataValues.name);
         let token;
             if(roleNames.includes('user')) {
               token = jwt.sign({ id: user.id },
@@ -146,18 +153,30 @@ exports.signin = async (req, res) => {
                 });
             }
 
-      const authorities = [];
-      user.getRoles().then((roles) => {
-        for (let i = 0; i < roles.length; i++) {
-          authorities.push('ROLE_' + roles[i].name.toUpperCase());
-        }
+      const roleNameAndPermission = user.roles.map((role) => role.dataValues);
+
+        const modifiedUser = {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          city: user.city,
+          country_code: user.country_code,
+          mobile_number: user.mobile_number,
+          username: user.username,
+          is_active: user.is_active,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+          created_by: user.created_by,
+          updated_by: user.updated_by,
+          //permissions: rolePermission.join(','),
+        };
         return res.status(serviceResponse.ok).send({
-          user: user,
-          roles: authorities,
+          user: modifiedUser,
+          roles: roleNameAndPermission,
           accessToken: token,
           registration: result,
         });
-      });
+
     })
     .catch((err) => {
       return res.status(serviceResponse.internalServerError).send({ message: serviceResponse.internalServerErrorMessage });
