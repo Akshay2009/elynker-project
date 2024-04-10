@@ -80,6 +80,13 @@ module.exports.getVendorsByLocation = async (req, res) => {
                 'business_description',
                 'whatsapp_number',
                 'company_name',
+                'education',
+                'available_hrs_per_week',
+                'hourly_rate',
+                'service_fee',
+                'freelancer_role',
+                'freelancer_bio',
+                'language',
                 [
                     db.sequelize.fn('COUNT', db.sequelize.fn('DISTINCT', db.sequelize.col('products.id'))),
                     'productCount'
@@ -110,6 +117,13 @@ module.exports.getVendorsByLocation = async (req, res) => {
             product_count: vendor.dataValues.productCount,
             rating: staticRating,
             member_count: vendor.dataValues.memberCount,
+            education: vendor.education,
+            available_hrs_per_week: vendor.available_hrs_per_week,
+            hourly_rate: vendor.hourly_rate,
+            service_fee: vendor.service_fee,
+            freelancer_role: vendor.freelancer_role,
+            freelancer_bio: vendor.freelancer_bio,
+            language: vendor.language,
         }));
         // Filter vendors based on the minimum rating
         const filteredVendors = formattedData.filter(vendor => vendor.rating >= minRating);
@@ -278,6 +292,11 @@ module.exports.getVendorByRegId = async function(req, res) {
         let includeOptions = [
             {
                 model: Product,
+                include:{
+                    model: Category,
+                    attributes: ['id','title'],
+                    through: { attributes: [] },
+                }
             },
             {
                 model: BusinessDetail,
@@ -295,12 +314,21 @@ module.exports.getVendorByRegId = async function(req, res) {
         });
 
         if (vendor.length>0) {
+            const categories = vendor.flatMap((entry) => {
+                return entry.products.flatMap((product) => {
+                    return product.categories.map((category) => ({
+                        id: category.id,
+                        title: category.title
+                    }));
+                });
+            });
             // Mock reviews data
             const returnData = vendor.map((entry)=>{
                 return {
                     ...entry.toJSON(),
                     reviews: [{"review":"Static Review 1"},{"review":"Static Review 2"}],
                     contacted_members: entry.contacted_members.length,
+                    categories: categories
                 }
             });
 
