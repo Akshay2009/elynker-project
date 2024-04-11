@@ -46,7 +46,7 @@ module.exports.getVendorsByLocation = async (req, res) => {
         let includeOptions = [
             {
                 model: User,
-                attributes: ['id', 'mobile_number']
+                attributes: ['id', 'mobile_number', 'country_code']
             },
             {
                 model: Product,
@@ -113,6 +113,7 @@ module.exports.getVendorsByLocation = async (req, res) => {
             business_description: vendor.business_description,
             last_login: vendor.last_login,
             whatsapp_number: vendor.whatsapp_number,
+            country_code: vendor.user.dataValues.country_code.substring(1),
             mobile_number: vendor.user.dataValues.mobile_number,
             product_count: vendor.dataValues.productCount,
             rating: staticRating,
