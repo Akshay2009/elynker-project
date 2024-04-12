@@ -14,6 +14,12 @@ const BusinessDetail = db.businessDetail;
 const Enquiry = db.enquiry;
 const SocialLinks = db.sociallinks;
 const MembersContacted = db.membersContacted;
+const fs = require("fs");
+const path = require("path");
+const CardSharing = db.cardSharing;
+const CARD_IMAGE_PATH = path.join(
+  process.env.CARD_IMAGE_PATH
+);
 
 /**
  *Endpoint to get filter vendors details based on type location category rating -----
@@ -318,3 +324,43 @@ module.exports.getVendorByRegId = async function(req, res) {
         return res.status(serviceResponse.internalServerError).json({ error: 'Internal server error' });
     }
 }
+
+//End point to upload card images--
+
+module.exports.cardImageUpload = async function (req, res) {
+  try {
+    const { posted_by } = req.body;
+    let cardImage;
+    if (req.files!==undefined && req.files["image"]) {
+      cardImage = req.files["image"];
+    } else {
+      res
+        .status(serviceResponse.badRequest)
+        .json({ error: "Image not provided" });
+    }
+
+    if (cardImage && cardImage.length > 0) {
+        const imageUrl = req.protocol + "://" + req.get("host") + CARD_IMAGE_PATH.replace(/\\/g, '/') + "/" + cardImage[0].filename;
+      const record = await CardSharing.create({
+        image_url: imageUrl, // Corrected to image_url
+        image: cardImage[0].filename ,
+        posted_by: posted_by,
+      });
+
+      if (record) {
+        return res.status(serviceResponse.saveSuccess).json({
+          message: serviceResponse.createdMessage,
+          data: record // Including imageUrl in data
+        });
+      } else {
+        return res
+          .status(serviceResponse.badRequest)
+          .json({ error: serviceResponse.errorCreatingRecord });
+      }
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ error:serviceResponse.internalServerError + error.message });
+  }
+};
