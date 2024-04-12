@@ -44,7 +44,7 @@ db.educationMaster=require('../models/educationMaster.model.js')(sequelize, Sequ
 db.enquiry = require('../models/enquiry.model.js')(sequelize, Sequelize);
 db.moduleDetails = require('../models/moduleDetails.model.js')(sequelize, Sequelize);
 db.membersContacted = require('../models/membersContacted.js')(sequelize, Sequelize);
-
+db.cardSharing = require('./cardSharing.model.js')(sequelize,Sequelize);
 
 db.role.belongsToMany(db.user, {
   through: 'user_roles',
