@@ -12,7 +12,7 @@ module.exports = function (app) {
 
   app.get(
     "/api/vendors/:type/",
-    [authJwt.verifyToken],
+    //[authJwt.verifyToken],
     filterVendors.getVendorsByLocation
   );
   /**

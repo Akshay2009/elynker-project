@@ -13,7 +13,7 @@ module.exports = function(app) {
     */
   app.get(
       '/api/categories',
-      [authJwt.verifyToken],
+      //[authJwt.verifyToken],
       categoryController.getAllCategory,
   );
 
@@ -35,7 +35,7 @@ module.exports = function(app) {
     */
   app.get(
       '/api/categories/:categoryId',
-      [authJwt.verifyToken],
+      //[authJwt.verifyToken],
       categoryController.getCategoryById,
   );
 
@@ -88,7 +88,7 @@ module.exports = function(app) {
     */
   app.get(
       '/api/categories/subcategories/:parent_id',
-      [authJwt.verifyToken],
+      //[authJwt.verifyToken],
       categoryController.getSubcategories,
   );
 
@@ -107,7 +107,7 @@ module.exports = function(app) {
    * Search Category details by fieldName and  fieldValue from the database.
   */
   app.get('/api/categories/search/:fieldName/:fieldValue',
-      [authJwt.verifyToken],
+      //[authJwt.verifyToken],
       categoryController.search,
   );
 };

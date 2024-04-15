@@ -56,11 +56,11 @@ module.exports.getVendorsByLocation = async (req, res) => {
             },
             {
                 model: Product,
-                attributes: []
+                attributes: ['id']
             },
             {
                 model: MembersContacted,
-                attributes: []
+                attributes: ['id']
             }
         ];
 
@@ -93,50 +93,50 @@ module.exports.getVendorsByLocation = async (req, res) => {
                 'freelancer_role',
                 'freelancer_bio',
                 'language',
-                [
-                    db.sequelize.fn('COUNT', db.sequelize.fn('DISTINCT', db.sequelize.col('products.id'))),
-                    'productCount'
-                ],
-                [
-                    db.sequelize.fn('COUNT', db.sequelize.fn('DISTINCT', db.sequelize.col('contacted_members.id'))),
-                    'memberCount'
-                ],
             ],
-            group: ['registration.id', 'user.id', categoryId ? 'categories.id' : 'user.id','products.budget'],  
-            //order: sortBy === 'budget-low-to-high' ? [[{ model: Product }, 'budget', 'ASC']] : null 
-            order: sortBy === 'price-low-to-high' ? [[{ model: Product }, 'budget', 'ASC']] :
-                   sortBy === 'price-high-to-low' ? [[{ model: Product }, 'budget', 'DESC']] : null 
+            order: [
+                sortBy === 'price-low-to-high' ? [{ model: Product }, 'budget', 'ASC'] :
+                sortBy === 'price-high-to-low' ? [{ model: Product }, 'budget', 'DESC'] : 
+                ['name', 'ASC'] // Sort by name in ascending order
+            ].filter(Boolean) // Filter out any null values from the array
+        });
+        
+        const staticRating = 3.5;
+        const formattedData = vendors.map(vendor => {
+            const productCount = vendor.products.length; // Calculate product_count based on the number of products
+            const memberCount = vendor.contacted_members.length; // Calculate member_count based on the number of contacted_members
+            return {
+                id: vendor.id,
+                name: vendor.name,
+                company_name: vendor.company_name,
+                image_path: vendor.image_path,
+                registration_type: vendor.registration_type,
+                city: vendor.city,
+                business_description: vendor.business_description,
+                last_login: vendor.last_login,
+                whatsapp_number: vendor.whatsapp_number,
+                country_code: vendor.user.dataValues.country_code.substring(1),
+                mobile_number: vendor.user.dataValues.mobile_number,
+                product_count: productCount,
+                rating: staticRating,
+                member_count: memberCount,
+                education: vendor.education,
+                available_hrs_per_week: vendor.available_hrs_per_week,
+                hourly_rate: vendor.hourly_rate,
+                service_fee: vendor.service_fee,
+                freelancer_role: vendor.freelancer_role,
+                freelancer_bio: vendor.freelancer_bio,
+                language: vendor.language,
+            };
         });
 
-        const staticRating = 3.5;
-        const formattedData = vendors.map(vendor => ({
-            id: vendor.id,
-            name: vendor.name,
-            company_name: vendor.company_name,
-            image_path: vendor.image_path,
-            registration_type: vendor.registration_type,
-            city: vendor.city,
-            business_description: vendor.business_description,
-            last_login: vendor.last_login,
-            whatsapp_number: vendor.whatsapp_number,
-            country_code: vendor.user.dataValues.country_code.substring(1),
-            mobile_number: vendor.user.dataValues.mobile_number,
-            product_count: vendor.dataValues.productCount,
-            rating: staticRating,
-            member_count: vendor.dataValues.memberCount,
-            education: vendor.education,
-            available_hrs_per_week: vendor.available_hrs_per_week,
-            hourly_rate: vendor.hourly_rate,
-            service_fee: vendor.service_fee,
-            freelancer_role: vendor.freelancer_role,
-            freelancer_bio: vendor.freelancer_bio,
-            language: vendor.language,
-        }));
+        
         // Filter vendors based on the minimum rating
-        const filteredVendors = formattedData.filter(vendor => vendor.rating >= minRating);
+        const filteredVendors = formattedData.filter(vendor => vendor.rating >= minRating && vendor.product_count>0);
+        const cities = [...new Set(filteredVendors.map(vendor => vendor.city))];
 
         if (filteredVendors.length > 0) {
-            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: filteredVendors });
+            return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, data: filteredVendors, cities: cities });
         } else {
             return res.status(serviceResponse.notFound).json({ error: serviceResponse.errorNotFound });
         }
