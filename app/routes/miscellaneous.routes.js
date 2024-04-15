@@ -45,7 +45,7 @@ module.exports = function (app) {
    **/
   app.get(
     "/api/vendorDetails/:reg_id",
-    [authJwt.verifyToken],
+    //[authJwt.verifyToken],
     filterVendors.getVendorByRegId
   );
 
