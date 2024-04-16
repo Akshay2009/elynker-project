@@ -196,7 +196,16 @@ module.exports = (sequelize, Sequelize) => {
     },
     last_login: {
       type: Sequelize.DATE
-    }
+    },
+    additional_detail1: {
+      type: Sequelize.STRING(200),
+    },
+    additional_detail2: {
+      type: Sequelize.STRING(200),
+    },
+    additional_detail3: {
+      type: Sequelize.STRING(200),
+    },
   }, {
     indexes: [
       {

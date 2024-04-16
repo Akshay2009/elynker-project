@@ -211,6 +211,10 @@ module.exports.putRegDetail = async function (req, res) {
     rejected_reason,
     created_by,
     updated_by,
+    company_name,
+    additional_detail1,
+    additional_detail2,
+    additional_detail3,
   } = req.body;
 
   const registrationId = req.params.reg_id;
@@ -250,6 +254,10 @@ module.exports.putRegDetail = async function (req, res) {
         rejected_reason,
         created_by,
         updated_by,
+        company_name,
+        additional_detail1,
+        additional_detail2,
+        additional_detail3,
       },
       {
         where: {
