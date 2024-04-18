@@ -283,13 +283,13 @@
  *
  *   /api/registration/{user_id}:
  *     get:
- *       summary: Get Registration Record
+ *       summary: Get Registration Record by user_id
  *       tags: [Registration]
  *       parameters:
  *         - name: user_id
  *           in: path
  *           required: true
- *           description: Registration ID
+ *           description: User ID
  *           schema:
  *             type: string
  *       security:
