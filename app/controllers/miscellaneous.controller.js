@@ -196,6 +196,8 @@ module.exports.vendorsListingAdmin = async function (req, res) {
                 'registration_type',
                 'city',
                 'status',
+                'company_name',
+                'freelancer_role',
                 'createdAt',
                 'updatedAt',
             ],
@@ -204,10 +206,18 @@ module.exports.vendorsListingAdmin = async function (req, res) {
         if (count > 0) {
             const categorizedData = rows.map(entry => {
                 const registrationType = entry.registration_type == 2 ? "Business" : "Freelancer";
-                return { 
+                let responseData = { 
                     ...entry.toJSON(),
                     registration_type: registrationType 
                 };
+
+                if (registrationType === "Business") {
+                    delete responseData.freelancer_role;
+                } else if (registrationType === "Freelancer") {
+                    delete responseData.company_name;
+                }
+        
+                return responseData;
             });
             return res.status(serviceResponse.ok).json({ message: serviceResponse.getMessage, totalRecords: count, data: categorizedData });
         } else {

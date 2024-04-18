@@ -41,6 +41,86 @@
  *           type: string
  *         file_name:
  *           type: string
+ *     Registration:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *         image_path:
+ *           type: string
+ *         ip_address:
+ *           type: string
+ *         registration_type:
+ *           type: integer
+ *         dob:
+ *           type: string
+ *           format: date
+ *         latitude:
+ *           type: string
+ *         longitude:
+ *           type: string
+ *         steps_completed:
+ *           type: boolean
+ *         active_steps:
+ *           type: integer
+ *         city:
+ *           type: string
+ *         address1:
+ *           type: string
+ *         address2:
+ *           type: string
+ *         state:
+ *           type: string
+ *         country:
+ *           type: string
+ *         company_name:
+ *           type: string
+ *         business_type:
+ *           type: integer
+ *         business_description:
+ *           type: string
+ *         education:
+ *           type: string
+ *         available_hrs_per_week:
+ *           type: integer
+ *         hourly_rate:
+ *           type: number
+ *         service_fee:
+ *           type: number
+ *         currency_id:
+ *           type: integer
+ *         cover_image:
+ *           type: string
+ *         category_ids:
+ *           type: string
+ *         freelancer_role:
+ *           type: string
+ *         freelancer_bio:
+ *           type: string
+ *         language:
+ *           type: string
+ *         about_company:
+ *           type: string
+ *         whatsapp_number:
+ *           type: string
+ *         status:
+ *           type: string
+ *           enum: [pending, approved, rejected]
+ *         rejected_reason:
+ *           type: string
+ *         created_by:
+ *           type: number
+ *         updated_by:
+ *           type: number
+ *         last_login:
+ *           type: string
+ *           format: date-time
+ *         additional_detail1:
+ *           type: string
+ *         additional_detail2:
+ *           type: string
+ *         additional_detail3:
+ *           type: string
  * paths:
  *   /api/update/companyLogo/{reg_id}:
  *     put:
@@ -167,7 +247,7 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/RegistrationInput'
+ *               $ref: '#/components/schemas/Registration'
  *       responses:
  *         '200':
  *           description: Registration record updated successfully
@@ -203,10 +283,10 @@
  *
  *   /api/registration/{user_id}:
  *     get:
- *       summary: Update Registration Record
+ *       summary: Get Registration Record
  *       tags: [Registration]
  *       parameters:
- *         - name: reg_id
+ *         - name: user_id
  *           in: path
  *           required: true
  *           description: Registration ID
@@ -219,7 +299,7 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/RegistrationInput'
+ *               $ref: '#/components/schemas/Registration'
  *       responses:
  *         '200':
  *           description: Registration record updated successfully
