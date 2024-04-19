@@ -17,7 +17,8 @@ const languageMaster = require('../routes/master.routes')
 const educationMaster = require('../routes/master.routes')
 const enquiryRoutes = require('../routes/enquiry.routes');
 const moduleDetailsRoutes = require('../routes/moduleDetails.routes');
-const membersContactedRoute =require('../routes/membersContacted.routes');
+const membersContactedRoute = require('../routes/membersContacted.routes');
+const widgets = require('../routes/widgets.routes');
 
 module.exports = function initializeRoutes(app) {
   authRoutes(app);
@@ -39,4 +40,5 @@ module.exports = function initializeRoutes(app) {
   enquiryRoutes(app);
   moduleDetailsRoutes(app);
   membersContactedRoute(app);
+  widgets(app);
 };
