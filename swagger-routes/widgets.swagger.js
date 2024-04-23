@@ -1,5 +1,19 @@
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     Widget:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         description:
+ *           type: string
+ *       required:
+ *         - name
+ *
  * /api/widgets:
  *   post:
  *     summary: Create a new widget
