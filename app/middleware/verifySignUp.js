@@ -25,12 +25,14 @@ checkDuplicateUsernameOrEmail = (req, res, next) => {
     }
     // Email
     if (email) {
+      console.log('inside line 28');
       User.findOne({
         where: {
           email: email,
         },
       }).then((user) => {
         if (user) {
+          console.log('at line 35');
           res.status(400).send({
             message: 'Failed! Email is already in use!',
           });
