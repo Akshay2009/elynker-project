@@ -1,0 +1,650 @@
+0 verbose cli /home/vagrant/.nvm/versions/node/v18.14.2/bin/node /home/vagrant/.nvm/versions/node/v18.14.2/bin/npm
+1 info using npm@9.5.0
+2 info using node@v18.14.2
+3 timing npm:load:whichnode Completed in 1ms
+4 timing config:load:defaults Completed in 2ms
+5 timing config:load:file:/home/vagrant/.nvm/versions/node/v18.14.2/lib/node_modules/npm/npmrc Completed in 2ms
+6 timing config:load:builtin Completed in 2ms
+7 timing config:load:cli Completed in 2ms
+8 timing config:load:env Completed in 0ms
+9 timing config:load:project Completed in 1ms
+10 timing config:load:file:/home/vagrant/.npmrc Completed in 0ms
+11 timing config:load:user Completed in 0ms
+12 timing config:load:file:/home/vagrant/.nvm/versions/node/v18.14.2/etc/npmrc Completed in 0ms
+13 timing config:load:global Completed in 0ms
+14 timing config:load:setEnvs Completed in 1ms
+15 timing config:load Completed in 9ms
+16 timing npm:load:configload Completed in 9ms
+17 timing npm:load:mkdirpcache Completed in 1ms
+18 timing npm:load:mkdirplogs Completed in 2ms
+19 verbose title npm install mocha
+20 verbose argv "install" "--save-dev" "mocha"
+21 timing npm:load:setTitle Completed in 1ms
+22 timing config:load:flatten Completed in 2ms
+23 timing npm:load:display Completed in 2ms
+24 verbose logfile logs-max:10 dir:/home/vagrant/.npm/_logs/2024-04-25T08_32_35_264Z-
+25 verbose logfile /home/vagrant/.npm/_logs/2024-04-25T08_32_35_264Z-debug-0.log
+26 timing npm:load:logFile Completed in 5ms
+27 timing npm:load:timers Completed in 0ms
+28 timing npm:load:configScope Completed in 0ms
+29 timing npm:load Completed in 21ms
+30 timing arborist:ctor Completed in 2ms
+31 silly logfile start cleaning logs, removing 1 files
+32 silly logfile done cleaning log files
+33 timing idealTree:init Completed in 271ms
+34 timing idealTree:userRequests Completed in 3ms
+35 silly idealTree buildDeps
+36 silly fetch manifest mocha@*
+37 timing arborist:ctor Completed in 0ms
+38 http fetch GET 200 https://registry.npmjs.org/mocha 621ms (cache revalidated)
+39 silly placeDep ROOT mocha@10.4.0 OK for: node-js-jwt-auth-postgresql@1.0.0 want: *
+40 silly fetch manifest ansi-colors@4.1.1
+41 silly fetch manifest browser-stdout@1.3.1
+42 silly fetch manifest chokidar@3.5.3
+43 silly fetch manifest debug@4.3.4
+44 silly fetch manifest diff@5.0.0
+45 silly fetch manifest glob@8.1.0
+46 silly fetch manifest he@1.2.0
+47 silly fetch manifest log-symbols@4.1.0
+48 silly fetch manifest minimatch@5.0.1
+49 silly fetch manifest ms@2.1.3
+50 silly fetch manifest serialize-javascript@6.0.0
+51 silly fetch manifest supports-color@8.1.1
+52 silly fetch manifest workerpool@6.2.1
+53 silly fetch manifest yargs@16.2.0
+54 silly fetch manifest yargs-parser@20.2.4
+55 silly fetch manifest yargs-unparser@2.0.0
+56 http fetch GET 200 https://registry.npmjs.org/browser-stdout 153ms (cache revalidated)
+57 http fetch GET 200 https://registry.npmjs.org/yargs 246ms (cache revalidated)
+58 http fetch GET 200 https://registry.npmjs.org/he 390ms (cache revalidated)
+59 http fetch GET 200 https://registry.npmjs.org/log-symbols 394ms (cache revalidated)
+60 http fetch GET 200 https://registry.npmjs.org/debug 397ms (cache revalidated)
+61 http fetch GET 200 https://registry.npmjs.org/ansi-colors 403ms (cache revalidated)
+62 http fetch GET 200 https://registry.npmjs.org/diff 400ms (cache revalidated)
+63 http fetch GET 200 https://registry.npmjs.org/yargs-parser 392ms (cache revalidated)
+64 http fetch GET 200 https://registry.npmjs.org/chokidar 407ms (cache revalidated)
+65 http fetch GET 200 https://registry.npmjs.org/minimatch 406ms (cache revalidated)
+66 http fetch GET 200 https://registry.npmjs.org/serialize-javascript 404ms (cache revalidated)
+67 http fetch GET 200 https://registry.npmjs.org/glob 410ms (cache revalidated)
+68 http fetch GET 200 https://registry.npmjs.org/ms 409ms (cache revalidated)
+69 http fetch GET 200 https://registry.npmjs.org/workerpool 406ms (cache revalidated)
+70 http fetch GET 200 https://registry.npmjs.org/yargs-unparser 406ms (cache revalidated)
+71 http fetch GET 200 https://registry.npmjs.org/supports-color 409ms (cache revalidated)
+72 timing idealTree:#root Completed in 1070ms
+73 silly placeDep ROOT ansi-colors@4.1.1 OK for: mocha@10.4.0 want: 4.1.1
+74 silly placeDep ROOT browser-stdout@1.3.1 OK for: mocha@10.4.0 want: 1.3.1
+75 silly placeDep ROOT chokidar@3.5.3 OK for: mocha@10.4.0 want: 3.5.3
+76 silly placeDep node_modules/mocha debug@4.3.4 OK for: mocha@10.4.0 want: 4.3.4
+77 silly placeDep ROOT diff@5.0.0 OK for: mocha@10.4.0 want: 5.0.0
+78 silly placeDep node_modules/mocha glob@8.1.0 OK for: mocha@10.4.0 want: 8.1.0
+79 silly placeDep ROOT he@1.2.0 OK for: mocha@10.4.0 want: 1.2.0
+80 silly placeDep ROOT log-symbols@4.1.0 OK for: mocha@10.4.0 want: 4.1.0
+81 silly placeDep node_modules/mocha minimatch@5.0.1 OK for: mocha@10.4.0 want: 5.0.1
+82 silly placeDep node_modules/mocha ms@2.1.3 OK for: mocha@10.4.0 want: 2.1.3
+83 silly placeDep ROOT serialize-javascript@6.0.0 OK for: mocha@10.4.0 want: 6.0.0
+84 silly placeDep node_modules/mocha supports-color@8.1.1 OK for: mocha@10.4.0 want: 8.1.1
+85 silly placeDep ROOT workerpool@6.2.1 OK for: mocha@10.4.0 want: 6.2.1
+86 silly placeDep ROOT yargs@16.2.0 OK for: mocha@10.4.0 want: 16.2.0
+87 silly placeDep ROOT yargs-parser@20.2.4 OK for: mocha@10.4.0 want: 20.2.4
+88 silly placeDep ROOT yargs-unparser@2.0.0 OK for: mocha@10.4.0 want: 2.0.0
+89 silly fetch manifest anymatch@~3.1.2
+90 silly fetch manifest braces@~3.0.2
+91 silly fetch manifest glob-parent@~5.1.2
+92 silly fetch manifest is-binary-path@~2.1.0
+93 silly fetch manifest normalize-path@~3.0.0
+94 silly fetch manifest readdirp@~3.6.0
+95 silly fetch manifest fsevents@~2.3.2
+96 silly fetch manifest ms@2.1.2
+97 silly fetch manifest is-unicode-supported@^0.1.0
+98 silly fetch manifest brace-expansion@^2.0.1
+99 silly fetch manifest randombytes@^2.1.0
+100 silly fetch manifest cliui@^7.0.2
+101 silly fetch manifest escalade@^3.1.1
+102 silly fetch manifest get-caller-file@^2.0.5
+103 silly fetch manifest require-directory@^2.1.1
+104 silly fetch manifest string-width@^4.2.0
+105 silly fetch manifest y18n@^5.0.5
+106 silly fetch manifest camelcase@^6.0.0
+107 silly fetch manifest decamelize@^4.0.0
+108 silly fetch manifest flat@^5.0.2
+109 silly fetch manifest is-plain-obj@^2.1.0
+110 http fetch GET 200 https://registry.npmjs.org/is-unicode-supported 105ms (cache revalidated)
+111 http fetch GET 200 https://registry.npmjs.org/string-width 126ms (cache revalidated)
+112 http fetch GET 200 https://registry.npmjs.org/anymatch 244ms (cache revalidated)
+113 http fetch GET 200 https://registry.npmjs.org/glob-parent 244ms (cache revalidated)
+114 http fetch GET 200 https://registry.npmjs.org/fsevents 244ms (cache revalidated)
+115 http fetch GET 200 https://registry.npmjs.org/normalize-path 247ms (cache revalidated)
+116 http fetch GET 200 https://registry.npmjs.org/randombytes 239ms (cache revalidated)
+117 http fetch GET 200 https://registry.npmjs.org/braces 249ms (cache revalidated)
+118 http fetch GET 200 https://registry.npmjs.org/escalade 242ms (cache revalidated)
+119 http fetch GET 200 https://registry.npmjs.org/y18n 241ms (cache revalidated)
+120 http fetch GET 200 https://registry.npmjs.org/cliui 246ms (cache revalidated)
+121 http fetch GET 200 https://registry.npmjs.org/readdirp 260ms (cache revalidated)
+122 http fetch GET 200 https://registry.npmjs.org/camelcase 252ms (cache revalidated)
+123 http fetch GET 200 https://registry.npmjs.org/brace-expansion 257ms (cache revalidated)
+124 http fetch GET 200 https://registry.npmjs.org/is-binary-path 265ms (cache revalidated)
+125 http fetch GET 200 https://registry.npmjs.org/get-caller-file 257ms (cache revalidated)
+126 http fetch GET 200 https://registry.npmjs.org/require-directory 258ms (cache revalidated)
+127 http fetch GET 200 https://registry.npmjs.org/flat 265ms (cache revalidated)
+128 http fetch GET 200 https://registry.npmjs.org/decamelize 268ms (cache revalidated)
+129 http fetch GET 200 https://registry.npmjs.org/is-plain-obj 283ms (cache revalidated)
+130 timing idealTree:node_modules/mocha Completed in 336ms
+131 timing idealTree:node_modules/ansi-colors Completed in 0ms
+132 timing idealTree:node_modules/browser-stdout Completed in 0ms
+133 silly placeDep ROOT anymatch@3.1.3 OK for: chokidar@3.5.3 want: ~3.1.2
+134 silly placeDep ROOT braces@3.0.2 OK for: chokidar@3.5.3 want: ~3.0.2
+135 silly placeDep ROOT fsevents@2.3.3 OK for: chokidar@3.5.3 want: ~2.3.2
+136 silly placeDep node_modules/chokidar glob-parent@5.1.2 OK for: chokidar@3.5.3 want: ~5.1.2
+137 silly placeDep ROOT is-binary-path@2.1.0 OK for: chokidar@3.5.3 want: ~2.1.0
+138 silly placeDep ROOT normalize-path@3.0.0 OK for: chokidar@3.5.3 want: ~3.0.0
+139 silly placeDep ROOT readdirp@3.6.0 OK for: chokidar@3.5.3 want: ~3.6.0
+140 silly fetch manifest picomatch@^2.0.4
+141 silly fetch manifest fill-range@^7.0.1
+142 silly fetch manifest binary-extensions@^2.0.0
+143 silly fetch manifest picomatch@^2.2.1
+144 http fetch GET 200 https://registry.npmjs.org/fill-range 146ms (cache revalidated)
+145 http fetch GET 200 https://registry.npmjs.org/binary-extensions 144ms (cache revalidated)
+146 http fetch GET 200 https://registry.npmjs.org/picomatch 150ms (cache revalidated)
+147 http fetch GET 200 https://registry.npmjs.org/picomatch 144ms (cache revalidated)
+148 timing idealTree:node_modules/chokidar Completed in 174ms
+149 silly placeDep ROOT picomatch@2.3.1 OK for: anymatch@3.1.3 want: ^2.0.4
+150 timing idealTree:node_modules/anymatch Completed in 1ms
+151 silly placeDep ROOT fill-range@7.0.1 OK for: braces@3.0.2 want: ^7.0.1
+152 silly fetch manifest to-regex-range@^5.0.1
+153 http fetch GET 200 https://registry.npmjs.org/to-regex-range 123ms (cache revalidated)
+154 timing idealTree:node_modules/braces Completed in 124ms
+155 timing idealTree:node_modules/diff Completed in 0ms
+156 silly placeDep ROOT to-regex-range@5.0.1 OK for: fill-range@7.0.1 want: ^5.0.1
+157 silly fetch manifest is-number@^7.0.0
+158 http fetch GET 200 https://registry.npmjs.org/is-number 124ms (cache revalidated)
+159 timing idealTree:node_modules/fill-range Completed in 128ms
+160 timing idealTree:node_modules/fsevents Completed in 0ms
+161 timing idealTree:node_modules/he Completed in 0ms
+162 silly placeDep ROOT binary-extensions@2.3.0 OK for: is-binary-path@2.1.0 want: ^2.0.0
+163 timing idealTree:node_modules/is-binary-path Completed in 2ms
+164 timing idealTree:node_modules/binary-extensions Completed in 0ms
+165 silly placeDep ROOT is-unicode-supported@0.1.0 OK for: log-symbols@4.1.0 want: ^0.1.0
+166 timing idealTree:node_modules/log-symbols Completed in 3ms
+167 timing idealTree:node_modules/is-unicode-supported Completed in 0ms
+168 timing idealTree:node_modules/normalize-path Completed in 0ms
+169 timing idealTree:node_modules/picomatch Completed in 0ms
+170 timing idealTree:node_modules/readdirp Completed in 0ms
+171 silly placeDep ROOT randombytes@2.1.0 OK for: serialize-javascript@6.0.0 want: ^2.1.0
+172 timing idealTree:node_modules/serialize-javascript Completed in 2ms
+173 timing idealTree:node_modules/randombytes Completed in 0ms
+174 silly placeDep ROOT is-number@7.0.0 OK for: to-regex-range@5.0.1 want: ^7.0.0
+175 timing idealTree:node_modules/to-regex-range Completed in 2ms
+176 timing idealTree:node_modules/is-number Completed in 0ms
+177 timing idealTree:node_modules/workerpool Completed in 0ms
+178 silly placeDep ROOT cliui@7.0.4 OK for: yargs@16.2.0 want: ^7.0.2
+179 silly placeDep ROOT escalade@3.1.2 OK for: yargs@16.2.0 want: ^3.1.1
+180 silly placeDep ROOT get-caller-file@2.0.5 OK for: yargs@16.2.0 want: ^2.0.5
+181 silly placeDep ROOT require-directory@2.1.1 OK for: yargs@16.2.0 want: ^2.1.1
+182 silly placeDep ROOT string-width@4.2.3 OK for: yargs@16.2.0 want: ^4.2.0
+183 silly placeDep ROOT y18n@5.0.8 OK for: yargs@16.2.0 want: ^5.0.5
+184 silly fetch manifest wrap-ansi@^7.0.0
+185 silly fetch manifest emoji-regex@^8.0.0
+186 silly fetch manifest is-fullwidth-code-point@^3.0.0
+187 http fetch GET 200 https://registry.npmjs.org/is-fullwidth-code-point 140ms (cache revalidated)
+188 http fetch GET 200 https://registry.npmjs.org/wrap-ansi 144ms (cache revalidated)
+189 http fetch GET 200 https://registry.npmjs.org/emoji-regex 147ms (cache revalidated)
+190 timing idealTree:node_modules/yargs Completed in 170ms
+191 silly placeDep ROOT wrap-ansi@7.0.0 OK for: cliui@7.0.4 want: ^7.0.0
+192 timing idealTree:node_modules/cliui Completed in 2ms
+193 timing idealTree:node_modules/escalade Completed in 0ms
+194 timing idealTree:node_modules/get-caller-file Completed in 0ms
+195 timing idealTree:node_modules/require-directory Completed in 0ms
+196 silly placeDep ROOT emoji-regex@8.0.0 OK for: string-width@4.2.3 want: ^8.0.0
+197 silly placeDep ROOT is-fullwidth-code-point@3.0.0 OK for: string-width@4.2.3 want: ^3.0.0
+198 timing idealTree:node_modules/string-width Completed in 2ms
+199 timing idealTree:node_modules/emoji-regex Completed in 0ms
+200 timing idealTree:node_modules/is-fullwidth-code-point Completed in 0ms
+201 timing idealTree:node_modules/wrap-ansi Completed in 0ms
+202 timing idealTree:node_modules/y18n Completed in 0ms
+203 timing idealTree:node_modules/yargs-parser Completed in 0ms
+204 silly placeDep ROOT camelcase@6.3.0 OK for: yargs-unparser@2.0.0 want: ^6.0.0
+205 silly placeDep ROOT decamelize@4.0.0 OK for: yargs-unparser@2.0.0 want: ^4.0.0
+206 silly placeDep ROOT flat@5.0.2 OK for: yargs-unparser@2.0.0 want: ^5.0.2
+207 silly placeDep ROOT is-plain-obj@2.1.0 OK for: yargs-unparser@2.0.0 want: ^2.1.0
+208 timing idealTree:node_modules/yargs-unparser Completed in 5ms
+209 timing idealTree:node_modules/camelcase Completed in 0ms
+210 timing idealTree:node_modules/decamelize Completed in 0ms
+211 timing idealTree:node_modules/flat Completed in 0ms
+212 timing idealTree:node_modules/is-plain-obj Completed in 0ms
+213 timing idealTree:node_modules/chokidar/node_modules/glob-parent Completed in 0ms
+214 silly placeDep node_modules/mocha/node_modules/debug ms@2.1.2 OK for: debug@4.3.4 want: 2.1.2
+215 timing idealTree:node_modules/mocha/node_modules/debug Completed in 1ms
+216 timing idealTree:node_modules/mocha/node_modules/glob Completed in 0ms
+217 silly placeDep node_modules/mocha brace-expansion@2.0.1 OK for: minimatch@5.0.1 want: ^2.0.1
+218 timing idealTree:node_modules/mocha/node_modules/minimatch Completed in 1ms
+219 timing idealTree:node_modules/mocha/node_modules/brace-expansion Completed in 0ms
+220 timing idealTree:node_modules/mocha/node_modules/ms Completed in 0ms
+221 timing idealTree:node_modules/mocha/node_modules/supports-color Completed in 0ms
+222 timing idealTree:node_modules/mocha/node_modules/debug/node_modules/ms Completed in 0ms
+223 timing idealTree:buildDeps Completed in 2028ms
+224 timing idealTree:fixDepFlags Completed in 8ms
+225 timing idealTree Completed in 2319ms
+226 timing reify:loadTrees Completed in 2320ms
+227 timing reify:diffTrees Completed in 31ms
+228 silly reify moves {}
+229 timing reify:retireShallow Completed in 2ms
+230 timing reify:createSparse Completed in 9ms
+231 timing reify:loadBundles Completed in 0ms
+232 silly audit bulk request {
+232 silly audit   '@aashutoshrathi/word-wrap': [ '1.2.6' ],
+232 silly audit   '@apidevtools/json-schema-ref-parser': [ '9.1.2' ],
+232 silly audit   '@apidevtools/openapi-schemas': [ '2.1.0' ],
+232 silly audit   '@apidevtools/swagger-methods': [ '3.0.2' ],
+232 silly audit   '@apidevtools/swagger-parser': [ '10.0.3' ],
+232 silly audit   '@eslint-community/eslint-utils': [ '4.4.0' ],
+232 silly audit   '@eslint-community/regexpp': [ '4.10.0' ],
+232 silly audit   '@eslint/eslintrc': [ '2.1.4' ],
+232 silly audit   debug: [ '4.3.4', '2.6.9' ],
+232 silly audit   ms: [ '2.1.2', '2.1.3', '2.0.0' ],
+232 silly audit   '@eslint/js': [ '8.57.0' ],
+232 silly audit   '@humanwhocodes/config-array': [ '0.11.14' ],
+232 silly audit   '@humanwhocodes/module-importer': [ '1.0.1' ],
+232 silly audit   '@humanwhocodes/object-schema': [ '2.0.3' ],
+232 silly audit   '@jsdevtools/ono': [ '7.1.3' ],
+232 silly audit   '@nodelib/fs.scandir': [ '2.1.5' ],
+232 silly audit   '@nodelib/fs.stat': [ '2.0.5' ],
+232 silly audit   '@nodelib/fs.walk': [ '1.2.8' ],
+232 silly audit   '@types/debug': [ '4.1.12' ],
+232 silly audit   '@types/json-schema': [ '7.0.15' ],
+232 silly audit   '@types/ms': [ '0.7.34' ],
+232 silly audit   '@types/node': [ '20.12.7' ],
+232 silly audit   '@types/validator': [ '13.11.9' ],
+232 silly audit   '@ungap/structured-clone': [ '1.2.0' ],
+232 silly audit   accepts: [ '1.3.8' ],
+232 silly audit   acorn: [ '8.11.3' ],
+232 silly audit   'acorn-jsx': [ '5.3.2' ],
+232 silly audit   ajv: [ '6.12.6' ],
+232 silly audit   'ansi-regex': [ '5.0.1' ],
+232 silly audit   'ansi-styles': [ '4.3.0' ],
+232 silly audit   'append-field': [ '1.0.0' ],
+232 silly audit   argparse: [ '2.0.1' ],
+232 silly audit   'array-flatten': [ '1.1.1' ],
+232 silly audit   async: [ '3.2.5' ],
+232 silly audit   asynckit: [ '0.4.0' ],
+232 silly audit   axios: [ '1.6.8' ],
+232 silly audit   'balanced-match': [ '1.0.2' ],
+232 silly audit   bcryptjs: [ '2.4.3' ],
+232 silly audit   'body-parser': [ '1.20.2' ],
+232 silly audit   'brace-expansion': [ '1.1.11', '2.0.1' ],
+232 silly audit   'buffer-equal-constant-time': [ '1.0.1' ],
+232 silly audit   'buffer-from': [ '1.1.2' ],
+232 silly audit   busboy: [ '1.6.0' ],
+232 silly audit   bytes: [ '3.1.2' ],
+232 silly audit   'call-bind': [ '1.0.7' ],
+232 silly audit   'call-me-maybe': [ '1.0.2' ],
+232 silly audit   callsites: [ '3.1.0' ],
+232 silly audit   chalk: [ '4.1.2' ],
+232 silly audit   'color-convert': [ '2.0.1' ],
+232 silly audit   'color-name': [ '1.1.4' ],
+232 silly audit   'combined-stream': [ '1.0.8' ],
+232 silly audit   commander: [ '6.2.0', '9.5.0' ],
+232 silly audit   'concat-map': [ '0.0.1' ],
+232 silly audit   'concat-stream': [ '1.6.2' ],
+232 silly audit   'content-disposition': [ '0.5.4' ],
+232 silly audit   'content-type': [ '1.0.5' ],
+232 silly audit   cookie: [ '0.6.0' ],
+232 silly audit   'cookie-signature': [ '1.0.6' ],
+232 silly audit   'core-util-is': [ '1.0.3' ],
+232 silly audit   cors: [ '2.8.5' ],
+232 silly audit   'cross-spawn': [ '7.0.3' ],
+232 silly audit   'csv-parser': [ '3.0.0' ],
+232 silly audit   'deep-is': [ '0.1.4' ],
+232 silly audit   'define-data-property': [ '1.1.4' ],
+232 silly audit   'delayed-stream': [ '1.0.0' ],
+232 silly audit   depd: [ '2.0.0' ],
+232 silly audit   destroy: [ '1.2.0' ],
+232 silly audit   doctrine: [ '3.0.0' ],
+232 silly audit   dotenv: [ '16.4.5' ],
+232 silly audit   dottie: [ '2.0.6' ],
+232 silly audit   'ecdsa-sig-formatter': [ '1.0.11' ],
+232 silly audit   'ee-first': [ '1.1.1' ],
+232 silly audit   ejs: [ '3.1.10' ],
+232 silly audit   encodeurl: [ '1.0.2' ],
+232 silly audit   'es-define-property': [ '1.0.0' ],
+232 silly audit   'es-errors': [ '1.3.0' ],
+232 silly audit   'escape-html': [ '1.0.3' ],
+232 silly audit   'escape-string-regexp': [ '4.0.0' ],
+232 silly audit   eslint: [ '8.57.0' ],
+232 silly audit   'eslint-config-google': [ '0.14.0' ],
+232 silly audit   'eslint-plugin-sequelize': [ '1.0.4' ],
+232 silly audit   'eslint-scope': [ '7.2.2' ],
+232 silly audit   'eslint-visitor-keys': [ '3.4.3' ],
+232 silly audit   espree: [ '9.6.1' ],
+232 silly audit   esquery: [ '1.5.0' ],
+232 silly audit   esrecurse: [ '4.3.0' ],
+232 silly audit   estraverse: [ '5.3.0' ],
+232 silly audit   esutils: [ '2.0.3' ],
+232 silly audit   etag: [ '1.8.1' ],
+232 silly audit   express: [ '4.19.2' ],
+232 silly audit   'express-async-errors': [ '3.1.1' ],
+232 silly audit   'fast-deep-equal': [ '3.1.3' ],
+232 silly audit   'fast-json-stable-stringify': [ '2.1.0' ],
+232 silly audit   'fast-levenshtein': [ '2.0.6' ],
+232 silly audit   fastq: [ '1.17.1' ],
+232 silly audit   'file-entry-cache': [ '6.0.1' ],
+232 silly audit   filelist: [ '1.0.4' ],
+232 silly audit   minimatch: [ '5.1.6', '3.1.2', '5.0.1' ],
+232 silly audit   finalhandler: [ '1.2.0' ],
+232 silly audit   'find-up': [ '5.0.0' ],
+232 silly audit   'flat-cache': [ '3.2.0' ],
+232 silly audit   flatted: [ '3.3.1' ],
+232 silly audit   'follow-redirects': [ '1.15.6' ],
+232 silly audit   'form-data': [ '4.0.0' ],
+232 silly audit   forwarded: [ '0.2.0' ],
+232 silly audit   fresh: [ '0.5.2' ],
+232 silly audit   'fs.realpath': [ '1.0.0' ],
+232 silly audit   'function-bind': [ '1.1.2' ],
+232 silly audit   'get-intrinsic': [ '1.2.4' ],
+232 silly audit   glob: [ '7.2.3', '7.1.6', '8.1.0' ],
+232 silly audit   'glob-parent': [ '6.0.2', '5.1.2' ],
+232 silly audit   globals: [ '13.24.0' ],
+232 silly audit   gopd: [ '1.0.1' ],
+232 silly audit   graphemer: [ '1.4.0' ],
+232 silly audit   'has-flag': [ '4.0.0' ],
+232 silly audit   'has-property-descriptors': [ '1.0.2' ],
+232 silly audit   'has-proto': [ '1.0.3' ],
+232 silly audit   'has-symbols': [ '1.0.3' ],
+232 silly audit   hasown: [ '2.0.2' ],
+232 silly audit   'http-errors': [ '2.0.0' ],
+232 silly audit   'iconv-lite': [ '0.4.24' ],
+232 silly audit   ignore: [ '5.3.1' ],
+232 silly audit   'import-fresh': [ '3.3.0' ],
+232 silly audit   imurmurhash: [ '0.1.4' ],
+232 silly audit   inflection: [ '1.13.4' ],
+232 silly audit   inflight: [ '1.0.6' ],
+232 silly audit   inherits: [ '2.0.4', '2.0.3' ],
+232 silly audit   'ipaddr.js': [ '1.9.1' ],
+232 silly audit   'is-extglob': [ '2.1.1' ],
+232 silly audit   'is-glob': [ '4.0.3' ],
+232 silly audit   'is-path-inside': [ '3.0.3' ],
+232 silly audit   isarray: [ '1.0.0' ],
+232 silly audit   isexe: [ '2.0.0' ],
+232 silly audit   jake: [ '10.8.7' ],
+232 silly audit   'js-yaml': [ '4.1.0' ],
+232 silly audit   'json-buffer': [ '3.0.1' ],
+232 silly audit   'json-schema-traverse': [ '0.4.1' ],
+232 silly audit   'json-stable-stringify-without-jsonify': [ '1.0.1' ],
+232 silly audit   jsonwebtoken: [ '9.0.2' ],
+232 silly audit   jwa: [ '1.4.1' ],
+232 silly audit   jws: [ '3.2.2' ],
+232 silly audit   keyv: [ '4.5.4' ],
+232 silly audit   levn: [ '0.4.1' ],
+232 silly audit   'locate-path': [ '6.0.0' ],
+232 silly audit   lodash: [ '4.17.21' ],
+232 silly audit   'lodash.get': [ '4.4.2' ],
+232 silly audit   'lodash.includes': [ '4.3.0' ],
+232 silly audit   'lodash.isboolean': [ '3.0.3' ],
+232 silly audit   'lodash.isequal': [ '4.5.0' ],
+232 silly audit   'lodash.isinteger': [ '4.0.4' ],
+232 silly audit   'lodash.isnumber': [ '3.0.3' ],
+232 silly audit   'lodash.isplainobject': [ '4.0.6' ],
+232 silly audit   'lodash.isstring': [ '4.0.1' ],
+232 silly audit   'lodash.merge': [ '4.6.2' ],
+232 silly audit   'lodash.mergewith': [ '4.6.2' ],
+232 silly audit   'lodash.once': [ '4.1.1' ],
+232 silly audit   'lru-cache': [ '6.0.0' ],
+232 silly audit   'media-typer': [ '0.3.0' ],
+232 silly audit   'merge-descriptors': [ '1.0.1' ],
+232 silly audit   methods: [ '1.1.2' ],
+232 silly audit   mime: [ '1.6.0' ],
+232 silly audit   'mime-db': [ '1.52.0' ],
+232 silly audit   'mime-types': [ '2.1.35' ],
+232 silly audit   minimist: [ '1.2.8' ],
+232 silly audit   mkdirp: [ '0.5.6' ],
+232 silly audit   moment: [ '2.30.1' ],
+232 silly audit   'moment-timezone': [ '0.5.45' ],
+232 silly audit   multer: [ '1.4.5-lts.1' ],
+232 silly audit   'natural-compare': [ '1.4.0' ],
+232 silly audit   negotiator: [ '0.6.3' ],
+232 silly audit   'object-assign': [ '4.1.1' ],
+232 silly audit   'object-inspect': [ '1.13.1' ],
+232 silly audit   'on-finished': [ '2.4.1' ],
+232 silly audit   once: [ '1.4.0' ],
+232 silly audit   'openapi-types': [ '12.1.3' ],
+232 silly audit   optionator: [ '0.9.3' ],
+232 silly audit   'p-limit': [ '3.1.0' ],
+232 silly audit   'p-locate': [ '5.0.0' ],
+232 silly audit   'parent-module': [ '1.0.1' ],
+232 silly audit   parseurl: [ '1.3.3' ],
+232 silly audit   path: [ '0.12.7' ],
+232 silly audit   'path-exists': [ '4.0.0' ],
+232 silly audit   'path-is-absolute': [ '1.0.1' ],
+232 silly audit   'path-key': [ '3.1.1' ],
+232 silly audit   'path-to-regexp': [ '0.1.7' ],
+232 silly audit   pg: [ '8.11.5' ],
+232 silly audit   'pg-cloudflare': [ '1.1.1' ],
+232 silly audit   'pg-connection-string': [ '2.6.4' ],
+232 silly audit   'pg-hstore': [ '2.3.4' ],
+232 silly audit   'pg-int8': [ '1.0.1' ],
+232 silly audit   'pg-pool': [ '3.6.2' ],
+232 silly audit   'pg-protocol': [ '1.6.1' ],
+232 silly audit   'pg-types': [ '2.2.0' ],
+232 silly audit   pgpass: [ '1.0.5' ],
+232 silly audit   'postgres-array': [ '2.0.0' ],
+232 silly audit   'postgres-bytea': [ '1.0.0' ],
+232 silly audit   'postgres-date': [ '1.0.7' ],
+232 silly audit   'postgres-interval': [ '1.2.0' ],
+232 silly audit   'prelude-ls': [ '1.2.1' ],
+232 silly audit   process: [ '0.11.10' ],
+232 silly audit   'process-nextick-args': [ '2.0.1' ],
+232 silly audit   'proxy-addr': [ '2.0.7' ],
+232 silly audit   'proxy-from-env': [ '1.1.0' ],
+232 silly audit   punycode: [ '2.3.1' ],
+232 silly audit   qs: [ '6.11.0' ],
+232 silly audit   'queue-microtask': [ '1.2.3' ],
+232 silly audit   'range-parser': [ '1.2.1' ],
+232 silly audit   'raw-body': [ '2.5.2' ],
+232 silly audit   'readable-stream': [ '2.3.8' ],
+232 silly audit   'safe-buffer': [ '5.1.2', '5.2.1' ],
+232 silly audit   'resolve-from': [ '4.0.0' ],
+232 silly audit   'retry-as-promised': [ '7.0.4' ],
+232 silly audit   reusify: [ '1.0.4' ],
+232 silly audit   rimraf: [ '3.0.2' ],
+232 silly audit   'run-parallel': [ '1.2.0' ],
+232 silly audit   'safer-buffer': [ '2.1.2' ],
+232 silly audit   semver: [ '7.6.0' ],
+232 silly audit   send: [ '0.18.0' ],
+232 silly audit   sequelize: [ '6.37.3' ],
+232 silly audit   'sequelize-pool': [ '7.1.0' ],
+232 silly audit   'serve-static': [ '1.15.0' ],
+232 silly audit   'set-function-length': [ '1.2.2' ],
+232 silly audit   setprototypeof: [ '1.2.0' ],
+232 silly audit   'shebang-command': [ '2.0.0' ],
+232 silly audit   'shebang-regex': [ '3.0.0' ],
+232 silly audit   'side-channel': [ '1.0.6' ],
+232 silly audit   split2: [ '4.2.0' ],
+232 silly audit   statuses: [ '2.0.1' ],
+232 silly audit   streamsearch: [ '1.1.0' ],
+232 silly audit   string_decoder: [ '1.1.1' ],
+232 silly audit   'strip-ansi': [ '6.0.1' ],
+232 silly audit   'strip-json-comments': [ '3.1.1' ],
+232 silly audit   'supports-color': [ '7.2.0', '8.1.1' ],
+232 silly audit   'swagger-jsdoc': [ '6.2.8' ],
+232 silly audit   'swagger-parser': [ '10.0.3' ],
+232 silly audit   'swagger-ui-dist': [ '5.17.0' ],
+232 silly audit   'swagger-ui-express': [ '5.0.0' ],
+232 silly audit   'text-table': [ '0.2.0' ],
+232 silly audit   toidentifier: [ '1.0.1' ],
+232 silly audit   'toposort-class': [ '1.0.1' ],
+232 silly audit   'type-check': [ '0.4.0' ],
+232 silly audit   'type-fest': [ '0.20.2' ],
+232 silly audit   'type-is': [ '1.6.18' ],
+232 silly audit   typedarray: [ '0.0.6' ],
+232 silly audit   underscore: [ '1.13.6' ],
+232 silly audit   'undici-types': [ '5.26.5' ],
+232 silly audit   unpipe: [ '1.0.0' ],
+232 silly audit   'uri-js': [ '4.4.1' ],
+232 silly audit   util: [ '0.10.4' ],
+232 silly audit   'util-deprecate': [ '1.0.2' ],
+232 silly audit   'utils-merge': [ '1.0.1' ],
+232 silly audit   uuid: [ '8.3.2' ],
+232 silly audit   validator: [ '13.11.0' ],
+232 silly audit   vary: [ '1.1.2' ],
+232 silly audit   which: [ '2.0.2' ],
+232 silly audit   wkx: [ '0.5.0' ],
+232 silly audit   wrappy: [ '1.0.2' ],
+232 silly audit   xtend: [ '4.0.2' ],
+232 silly audit   yallist: [ '4.0.0' ],
+232 silly audit   yaml: [ '2.0.0-1' ],
+232 silly audit   'yocto-queue': [ '0.1.0' ],
+232 silly audit   'z-schema': [ '5.0.5' ],
+232 silly audit   mocha: [ '10.4.0' ],
+232 silly audit   'ansi-colors': [ '4.1.1' ],
+232 silly audit   'browser-stdout': [ '1.3.1' ],
+232 silly audit   chokidar: [ '3.5.3' ],
+232 silly audit   diff: [ '5.0.0' ],
+232 silly audit   he: [ '1.2.0' ],
+232 silly audit   'log-symbols': [ '4.1.0' ],
+232 silly audit   'serialize-javascript': [ '6.0.0' ],
+232 silly audit   workerpool: [ '6.2.1' ],
+232 silly audit   yargs: [ '16.2.0' ],
+232 silly audit   'yargs-parser': [ '20.2.4' ],
+232 silly audit   'yargs-unparser': [ '2.0.0' ],
+232 silly audit   anymatch: [ '3.1.3' ],
+232 silly audit   braces: [ '3.0.2' ],
+232 silly audit   fsevents: [ '2.3.3' ],
+232 silly audit   'is-binary-path': [ '2.1.0' ],
+232 silly audit   'normalize-path': [ '3.0.0' ],
+232 silly audit   readdirp: [ '3.6.0' ],
+232 silly audit   picomatch: [ '2.3.1' ],
+232 silly audit   'fill-range': [ '7.0.1' ],
+232 silly audit   'to-regex-range': [ '5.0.1' ],
+232 silly audit   'binary-extensions': [ '2.3.0' ],
+232 silly audit   'is-unicode-supported': [ '0.1.0' ],
+232 silly audit   randombytes: [ '2.1.0' ],
+232 silly audit   'is-number': [ '7.0.0' ],
+232 silly audit   cliui: [ '7.0.4' ],
+232 silly audit   escalade: [ '3.1.2' ],
+232 silly audit   'get-caller-file': [ '2.0.5' ],
+232 silly audit   'require-directory': [ '2.1.1' ],
+232 silly audit   'string-width': [ '4.2.3' ],
+232 silly audit   y18n: [ '5.0.8' ],
+232 silly audit   'wrap-ansi': [ '7.0.0' ],
+232 silly audit   'emoji-regex': [ '8.0.0' ],
+232 silly audit   'is-fullwidth-code-point': [ '3.0.0' ],
+232 silly audit   camelcase: [ '6.3.0' ],
+232 silly audit   decamelize: [ '4.0.0' ],
+232 silly audit   flat: [ '5.0.2' ],
+232 silly audit   'is-plain-obj': [ '2.1.0' ]
+232 silly audit }
+233 verbose reify failed optional dependency /home/vagrant/node_modules/fsevents
+234 silly reify mark deleted [ '/home/vagrant/node_modules/fsevents' ]
+235 timing reifyNode:node_modules/fsevents Completed in 18ms
+236 timing reifyNode:node_modules/wrap-ansi Completed in 224ms
+237 timing reifyNode:node_modules/is-number Completed in 226ms
+238 timing reifyNode:node_modules/normalize-path Completed in 229ms
+239 timing reifyNode:node_modules/browser-stdout Completed in 233ms
+240 timing reifyNode:node_modules/is-plain-obj Completed in 237ms
+241 timing reifyNode:node_modules/decamelize Completed in 238ms
+242 timing reifyNode:node_modules/mocha/node_modules/ms Completed in 236ms
+243 timing reifyNode:node_modules/is-fullwidth-code-point Completed in 239ms
+244 timing reifyNode:node_modules/camelcase Completed in 239ms
+245 timing reifyNode:node_modules/string-width Completed in 239ms
+246 timing reifyNode:node_modules/fill-range Completed in 239ms
+247 timing reifyNode:node_modules/is-unicode-supported Completed in 239ms
+248 timing reifyNode:node_modules/to-regex-range Completed in 239ms
+249 timing reifyNode:node_modules/anymatch Completed in 239ms
+250 timing reifyNode:node_modules/is-binary-path Completed in 240ms
+251 timing reifyNode:node_modules/serialize-javascript Completed in 239ms
+252 timing reifyNode:node_modules/chokidar/node_modules/glob-parent Completed in 240ms
+253 timing reifyNode:node_modules/mocha/node_modules/supports-color Completed in 241ms
+254 timing reifyNode:node_modules/get-caller-file Completed in 245ms
+255 timing reifyNode:node_modules/mocha/node_modules/debug/node_modules/ms Completed in 245ms
+256 timing reifyNode:node_modules/yargs-unparser Completed in 246ms
+257 timing reifyNode:node_modules/log-symbols Completed in 247ms
+258 timing reifyNode:node_modules/mocha/node_modules/brace-expansion Completed in 247ms
+259 timing reifyNode:node_modules/readdirp Completed in 252ms
+260 timing reifyNode:node_modules/binary-extensions Completed in 252ms
+261 timing reifyNode:node_modules/require-directory Completed in 255ms
+262 timing reifyNode:node_modules/randombytes Completed in 254ms
+263 timing reifyNode:node_modules/mocha/node_modules/minimatch Completed in 255ms
+264 timing reifyNode:node_modules/ansi-colors Completed in 257ms
+265 timing reifyNode:node_modules/flat Completed in 260ms
+266 timing reifyNode:node_modules/mocha/node_modules/debug Completed in 259ms
+267 timing reifyNode:node_modules/escalade Completed in 263ms
+268 timing reifyNode:node_modules/emoji-regex Completed in 265ms
+269 timing reifyNode:node_modules/mocha/node_modules/glob Completed in 264ms
+270 timing reifyNode:node_modules/cliui Completed in 267ms
+271 timing reifyNode:node_modules/y18n Completed in 268ms
+272 timing reifyNode:node_modules/braces Completed in 269ms
+273 timing reifyNode:node_modules/he Completed in 269ms
+274 timing reifyNode:node_modules/picomatch Completed in 272ms
+275 timing reifyNode:node_modules/chokidar Completed in 272ms
+276 timing reifyNode:node_modules/yargs-parser Completed in 272ms
+277 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 308ms
+278 timing auditReport:getReport Completed in 319ms
+279 silly audit report {}
+280 timing auditReport:init Completed in 0ms
+281 timing reify:audit Completed in 320ms
+282 timing reifyNode:node_modules/workerpool Completed in 309ms
+283 timing reifyNode:node_modules/diff Completed in 329ms
+284 timing reifyNode:node_modules/yargs Completed in 343ms
+285 timing reifyNode:node_modules/mocha Completed in 443ms
+286 timing reify:unpack Completed in 447ms
+287 timing reify:unretire Completed in 0ms
+288 timing build:queue Completed in 3ms
+289 timing build:link:node_modules/flat Completed in 13ms
+290 timing build:link:node_modules/he Completed in 13ms
+291 timing build:link:node_modules/mocha Completed in 12ms
+292 timing build:link Completed in 14ms
+293 timing build:deps Completed in 17ms
+294 timing build Completed in 17ms
+295 timing reify:build Completed in 18ms
+296 timing reify:trash Completed in 2ms
+297 timing reify:save Completed in 186ms
+298 timing reify Completed in 3117ms
+299 silly ADD node_modules/is-plain-obj
+300 silly ADD node_modules/flat
+301 silly ADD node_modules/decamelize
+302 silly ADD node_modules/camelcase
+303 silly ADD node_modules/is-fullwidth-code-point
+304 silly ADD node_modules/emoji-regex
+305 silly ADD node_modules/wrap-ansi
+306 silly ADD node_modules/y18n
+307 silly ADD node_modules/string-width
+308 silly ADD node_modules/require-directory
+309 silly ADD node_modules/get-caller-file
+310 silly ADD node_modules/escalade
+311 silly ADD node_modules/cliui
+312 silly ADD node_modules/is-number
+313 silly ADD node_modules/randombytes
+314 silly ADD node_modules/is-unicode-supported
+315 silly ADD node_modules/binary-extensions
+316 silly ADD node_modules/to-regex-range
+317 silly ADD node_modules/fill-range
+318 silly ADD node_modules/picomatch
+319 silly ADD node_modules/readdirp
+320 silly ADD node_modules/normalize-path
+321 silly ADD node_modules/is-binary-path
+322 silly ADD
+323 silly ADD node_modules/braces
+324 silly ADD node_modules/anymatch
+325 silly ADD node_modules/yargs-unparser
+326 silly ADD node_modules/yargs-parser
+327 silly ADD node_modules/yargs
+328 silly ADD node_modules/workerpool
+329 silly ADD node_modules/serialize-javascript
+330 silly ADD node_modules/log-symbols
+331 silly ADD node_modules/he
+332 silly ADD node_modules/diff
+333 silly ADD node_modules/chokidar
+334 silly ADD node_modules/chokidar/node_modules/glob-parent
+335 silly ADD node_modules/browser-stdout
+336 silly ADD node_modules/ansi-colors
+337 silly ADD node_modules/mocha
+338 silly ADD node_modules/mocha/node_modules/brace-expansion
+339 silly ADD node_modules/mocha/node_modules/supports-color
+340 silly ADD node_modules/mocha/node_modules/ms
+341 silly ADD node_modules/mocha/node_modules/minimatch
+342 silly ADD node_modules/mocha/node_modules/glob
+343 silly ADD node_modules/mocha/node_modules/debug
+344 silly ADD node_modules/mocha/node_modules/debug/node_modules/ms
+345 timing command:install Completed in 3140ms
+346 verbose exit 0
+347 timing npm Completed in 3211ms
+348 info ok

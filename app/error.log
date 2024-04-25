@@ -450,3 +450,46 @@ Stack Trace: SequelizeValidationError: notNull Violation: widgets.widget_name ca
     at async widgets.create (D:\Elynker Project\elynker-services\node_modules\sequelize\lib\model.js:1362:12)
     at async module.exports.saveWidgets (D:\Elynker Project\elynker-services\app\controllers\widgets.controller.js:11:20)
 
+Timestamp: 2024-04-25T07:18:03.277Z
+File: undefined
+Function: undefined
+Error: insert or update on table "user_roles" violates foreign key constraint "user_roles_roleId_fkey"
+Stack Trace: Error
+    at Query.run (/home/vagrant/node_modules/sequelize/lib/dialects/postgres/query.js:50:25)
+    at /home/vagrant/node_modules/sequelize/lib/sequelize.js:315:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async PostgresQueryInterface.bulkInsert (/home/vagrant/node_modules/sequelize/lib/dialects/abstract/query-interface.js:346:21)
+    at async recursiveBulkCreate (/home/vagrant/node_modules/sequelize/lib/model.js:1697:25)
+    at async user_roles.bulkCreate (/home/vagrant/node_modules/sequelize/lib/model.js:1786:12)
+    at async Promise.all (index 0)
+    at async BelongsToMany.set (/home/vagrant/node_modules/sequelize/lib/associations/belongs-to-many.js:452:14)
+    at async exports.signup (/home/vagrant/app/controllers/auth.controller.js:53:7)
+
+Timestamp: 2024-04-25T07:20:50.250Z
+File: undefined
+Function: undefined
+Error: insert or update on table "user_roles" violates foreign key constraint "user_roles_roleId_fkey"
+Stack Trace: Error
+    at Query.run (/home/vagrant/node_modules/sequelize/lib/dialects/postgres/query.js:50:25)
+    at /home/vagrant/node_modules/sequelize/lib/sequelize.js:315:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async PostgresQueryInterface.bulkInsert (/home/vagrant/node_modules/sequelize/lib/dialects/abstract/query-interface.js:346:21)
+    at async recursiveBulkCreate (/home/vagrant/node_modules/sequelize/lib/model.js:1697:25)
+    at async user_roles.bulkCreate (/home/vagrant/node_modules/sequelize/lib/model.js:1786:12)
+    at async Promise.all (index 0)
+    at async BelongsToMany.set (/home/vagrant/node_modules/sequelize/lib/associations/belongs-to-many.js:452:14)
+    at async exports.signup (/home/vagrant/app/controllers/auth.controller.js:53:7)
+
+Timestamp: 2024-04-25T07:22:50.624Z
+File: undefined
+Function: undefined
+Error: Validation error
+Stack Trace: Error
+    at Query.run (/home/vagrant/node_modules/sequelize/lib/dialects/postgres/query.js:50:25)
+    at /home/vagrant/node_modules/sequelize/lib/sequelize.js:315:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async PostgresQueryInterface.insert (/home/vagrant/node_modules/sequelize/lib/dialects/abstract/query-interface.js:308:21)
+    at async model.save (/home/vagrant/node_modules/sequelize/lib/model.js:2490:35)
+    at async users.create (/home/vagrant/node_modules/sequelize/lib/model.js:1362:12)
+    at async exports.signup (/home/vagrant/app/controllers/auth.controller.js:23:16)
+
