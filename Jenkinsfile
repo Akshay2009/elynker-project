@@ -17,8 +17,12 @@ pipeline {
                 sh 'npm run build'
             }
         }
-        stage("Build Image"){
-            sh 'docker build -t node_pipeline:1.0 .'
-        }
+        stage("Build Image") {
+            steps {
+                script {
+                    sh 'docker build -t nodejs_pipeline .'
+                }
+            }
+    }
     }
 }
